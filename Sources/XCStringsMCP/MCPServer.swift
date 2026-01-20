@@ -156,6 +156,19 @@ public struct XCStringsMCPServer {
                 ])
             ),
             Tool(
+                name: "xcstrings_add_translations",
+                description: "Add translations for multiple languages at once",
+                inputSchema: .object([
+                    "type": .string("object"),
+                    "properties": .object([
+                        "file": .object(["type": .string("string"), "description": .string("Path to the xcstrings file")]),
+                        "key": .object(["type": .string("string"), "description": .string("The key to add translations for")]),
+                        "translations": .object(["type": .string("object"), "description": .string("Object mapping language codes to translation values, e.g. {\"ja\": \"こんにちは\", \"en\": \"Hello\"}")]),
+                    ]),
+                    "required": .array([.string("file"), .string("key"), .string("translations")]),
+                ])
+            ),
+            Tool(
                 name: "xcstrings_update_translation",
                 description: "Update a translation for a key",
                 inputSchema: .object([
@@ -167,6 +180,19 @@ public struct XCStringsMCPServer {
                         "value": .object(["type": .string("string"), "description": .string("New translation value")]),
                     ]),
                     "required": .array([.string("file"), .string("key"), .string("language"), .string("value")]),
+                ])
+            ),
+            Tool(
+                name: "xcstrings_update_translations",
+                description: "Update translations for multiple languages at once",
+                inputSchema: .object([
+                    "type": .string("object"),
+                    "properties": .object([
+                        "file": .object(["type": .string("string"), "description": .string("Path to the xcstrings file")]),
+                        "key": .object(["type": .string("string"), "description": .string("The key to update translations for")]),
+                        "translations": .object(["type": .string("object"), "description": .string("Object mapping language codes to translation values, e.g. {\"ja\": \"こんにちは\", \"en\": \"Hello\"}")]),
+                    ]),
+                    "required": .array([.string("file"), .string("key"), .string("translations")]),
                 ])
             ),
             Tool(
@@ -206,6 +232,19 @@ public struct XCStringsMCPServer {
                         "language": .object(["type": .string("string"), "description": .string("Language code to delete")]),
                     ]),
                     "required": .array([.string("file"), .string("key"), .string("language")]),
+                ])
+            ),
+            Tool(
+                name: "xcstrings_delete_translations",
+                description: "Delete translations for multiple languages at once",
+                inputSchema: .object([
+                    "type": .string("object"),
+                    "properties": .object([
+                        "file": .object(["type": .string("string"), "description": .string("Path to the xcstrings file")]),
+                        "key": .object(["type": .string("string"), "description": .string("The key to delete translations from")]),
+                        "languages": .object(["type": .string("array"), "items": .object(["type": .string("string")]), "description": .string("Array of language codes to delete, e.g. [\"ja\", \"en\", \"fr\"]")]),
+                    ]),
+                    "required": .array([.string("file"), .string("key"), .string("languages")]),
                 ])
             ),
         ]
@@ -296,6 +335,21 @@ public struct XCStringsMCPServer {
             try await parser.addTranslation(key: key, language: language, value: value)
             return "Translation added successfully"
 
+        case "xcstrings_add_translations":
+            guard let key = args["key"]?.stringValue,
+                  let translationsValue = args["translations"]?.objectValue
+            else {
+                throw XCStringsError.invalidJSON(reason: "Missing required parameters")
+            }
+            var translations: [String: String] = [:]
+            for (lang, value) in translationsValue {
+                if let stringValue = value.stringValue {
+                    translations[lang] = stringValue
+                }
+            }
+            try await parser.addTranslations(key: key, translations: translations)
+            return "Translations added successfully for \(translations.count) languages"
+
         case "xcstrings_update_translation":
             guard let key = args["key"]?.stringValue,
                   let language = args["language"]?.stringValue,
@@ -305,6 +359,21 @@ public struct XCStringsMCPServer {
             }
             try await parser.updateTranslation(key: key, language: language, value: value)
             return "Translation updated successfully"
+
+        case "xcstrings_update_translations":
+            guard let key = args["key"]?.stringValue,
+                  let translationsValue = args["translations"]?.objectValue
+            else {
+                throw XCStringsError.invalidJSON(reason: "Missing required parameters")
+            }
+            var translations: [String: String] = [:]
+            for (lang, value) in translationsValue {
+                if let stringValue = value.stringValue {
+                    translations[lang] = stringValue
+                }
+            }
+            try await parser.updateTranslations(key: key, translations: translations)
+            return "Translations updated successfully for \(translations.count) languages"
 
         case "xcstrings_rename_key":
             guard let oldKey = args["oldKey"]?.stringValue,
@@ -330,6 +399,16 @@ public struct XCStringsMCPServer {
             }
             try await parser.deleteTranslation(key: key, language: language)
             return "Translation for '\(language)' deleted successfully"
+
+        case "xcstrings_delete_translations":
+            guard let key = args["key"]?.stringValue,
+                  let languagesValue = args["languages"]?.arrayValue
+            else {
+                throw XCStringsError.invalidJSON(reason: "Missing required parameters")
+            }
+            let languages = languagesValue.compactMap { $0.stringValue }
+            try await parser.deleteTranslations(key: key, languages: languages)
+            return "Translations deleted successfully for \(languages.count) languages"
 
         default:
             throw XCStringsError.invalidJSON(reason: "Unknown tool: \(params.name)")

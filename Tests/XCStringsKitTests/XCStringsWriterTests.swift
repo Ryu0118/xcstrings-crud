@@ -90,6 +90,41 @@ struct XCStringsWriterTests {
         }
     }
 
+    // MARK: - updateTranslations
+
+    @Test("updateTranslations updates multiple languages")
+    func updateTranslationsMultiple() throws {
+        var file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
+
+        file = try XCStringsWriter.updateTranslations(in: file, key: "Hello", translations: [
+            "en": "Hi",
+            "ja": "やあ",
+            "de": "Hi",
+        ])
+
+        #expect(file.strings["Hello"]?.localizations?["en"]?.stringUnit?.value == "Hi")
+        #expect(file.strings["Hello"]?.localizations?["ja"]?.stringUnit?.value == "やあ")
+        #expect(file.strings["Hello"]?.localizations?["de"]?.stringUnit?.value == "Hi")
+    }
+
+    @Test("updateTranslations throws for non-existent key")
+    func updateTranslationsKeyNotFound() throws {
+        let file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
+
+        #expect(throws: XCStringsError.self) {
+            _ = try XCStringsWriter.updateTranslations(in: file, key: "NonExistent", translations: ["en": "Value"])
+        }
+    }
+
+    @Test("updateTranslations throws for non-existent language")
+    func updateTranslationsLanguageNotFound() throws {
+        let file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
+
+        #expect(throws: XCStringsError.self) {
+            _ = try XCStringsWriter.updateTranslations(in: file, key: "Hello", translations: ["fr": "Bonjour"])
+        }
+    }
+
     // MARK: - renameKey
 
     @Test("renameKey renames key")
@@ -168,6 +203,37 @@ struct XCStringsWriterTests {
 
         #expect(throws: XCStringsError.self) {
             _ = try XCStringsWriter.deleteTranslation(from: file, key: "Hello", language: "fr")
+        }
+    }
+
+    // MARK: - deleteTranslations
+
+    @Test("deleteTranslations removes multiple languages")
+    func deleteTranslationsMultiple() throws {
+        var file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
+
+        file = try XCStringsWriter.deleteTranslations(from: file, key: "Hello", languages: ["ja", "de"])
+
+        #expect(file.strings["Hello"]?.localizations?["ja"] == nil)
+        #expect(file.strings["Hello"]?.localizations?["de"] == nil)
+        #expect(file.strings["Hello"]?.localizations?["en"] != nil)
+    }
+
+    @Test("deleteTranslations throws for non-existent key")
+    func deleteTranslationsKeyNotFound() throws {
+        let file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
+
+        #expect(throws: XCStringsError.self) {
+            _ = try XCStringsWriter.deleteTranslations(from: file, key: "NonExistent", languages: ["en"])
+        }
+    }
+
+    @Test("deleteTranslations throws for non-existent language")
+    func deleteTranslationsLanguageNotFound() throws {
+        let file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
+
+        #expect(throws: XCStringsError.self) {
+            _ = try XCStringsWriter.deleteTranslations(from: file, key: "Hello", languages: ["fr"])
         }
     }
 

@@ -85,6 +85,31 @@ enum XCStringsWriter {
         return result
     }
 
+    /// Update translations for multiple languages
+    static func updateTranslations(
+        in file: XCStringsFile,
+        key: String,
+        translations: [String: String]
+    ) throws -> XCStringsFile {
+        var result = file
+
+        guard result.strings[key] != nil else {
+            throw XCStringsError.keyNotFound(key: key)
+        }
+
+        for (language, value) in translations {
+            guard result.strings[key]?.localizations?[language] != nil else {
+                throw XCStringsError.languageNotFound(language: language, key: key)
+            }
+
+            result.strings[key]?.localizations?[language] = Localization(
+                stringUnit: StringUnit(state: "translated", value: value)
+            )
+        }
+
+        return result
+    }
+
     /// Rename a key
     static func renameKey(
         in file: XCStringsFile,
@@ -140,6 +165,29 @@ enum XCStringsWriter {
         }
 
         result.strings[key]?.localizations?.removeValue(forKey: language)
+
+        return result
+    }
+
+    /// Delete translations for multiple languages
+    static func deleteTranslations(
+        from file: XCStringsFile,
+        key: String,
+        languages: [String]
+    ) throws -> XCStringsFile {
+        var result = file
+
+        guard result.strings[key] != nil else {
+            throw XCStringsError.keyNotFound(key: key)
+        }
+
+        for language in languages {
+            guard result.strings[key]?.localizations?[language] != nil else {
+                throw XCStringsError.languageNotFound(language: language, key: key)
+            }
+
+            result.strings[key]?.localizations?.removeValue(forKey: language)
+        }
 
         return result
     }
