@@ -223,3 +223,79 @@ package struct AggregatedCoverage: Codable, Sendable {
         self.averageCoverageByLanguage = averageCoverageByLanguage
     }
 }
+
+// MARK: - Compact Output Models (100% languages omitted)
+
+/// Compact stats info - only shows languages under 100%
+package struct CompactStatsInfo: Codable, Sendable {
+    package let totalKeys: Int
+    package let sourceLanguage: String
+    package let totalLanguages: Int
+    package let allComplete: Bool
+    package let incompleteLanguages: [String: LanguageStats]?  // nil if all complete
+    package let completeCount: Int  // number of languages at 100%
+
+    package init(from stats: StatsInfo) {
+        self.totalKeys = stats.totalKeys
+        self.sourceLanguage = stats.sourceLanguage
+        self.totalLanguages = stats.languages.count
+
+        let incomplete = stats.coverageByLanguage.filter { $0.value.coveragePercent < 100 }
+        self.allComplete = incomplete.isEmpty
+        self.incompleteLanguages = incomplete.isEmpty ? nil : incomplete
+        self.completeCount = stats.coverageByLanguage.count - incomplete.count
+    }
+}
+
+/// Compact file coverage summary - only shows languages under 100%
+package struct CompactFileCoverageSummary: Codable, Sendable {
+    package let file: String
+    package let totalKeys: Int
+    package let totalLanguages: Int
+    package let allComplete: Bool
+    package let incompleteLanguages: [String: Double]?  // nil if all complete
+    package let completeCount: Int
+
+    package init(from summary: FileCoverageSummary) {
+        self.file = summary.file
+        self.totalKeys = summary.totalKeys
+        self.totalLanguages = summary.languages.count
+
+        let incomplete = summary.languages.filter { $0.value < 100 }
+        self.allComplete = incomplete.isEmpty
+        self.incompleteLanguages = incomplete.isEmpty ? nil : incomplete
+        self.completeCount = summary.languages.count - incomplete.count
+    }
+}
+
+/// Compact batch coverage summary
+package struct CompactBatchCoverageSummary: Codable, Sendable {
+    package let files: [CompactFileCoverageSummary]
+    package let aggregated: CompactAggregatedCoverage
+
+    package init(from batch: BatchCoverageSummary) {
+        self.files = batch.files.map { CompactFileCoverageSummary(from: $0) }
+        self.aggregated = CompactAggregatedCoverage(from: batch.aggregated)
+    }
+}
+
+/// Compact aggregated coverage
+package struct CompactAggregatedCoverage: Codable, Sendable {
+    package let totalFiles: Int
+    package let totalKeys: Int
+    package let totalLanguages: Int
+    package let allComplete: Bool
+    package let incompleteLanguages: [String: Double]?
+    package let completeCount: Int
+
+    package init(from agg: AggregatedCoverage) {
+        self.totalFiles = agg.totalFiles
+        self.totalKeys = agg.totalKeys
+        self.totalLanguages = agg.averageCoverageByLanguage.count
+
+        let incomplete = agg.averageCoverageByLanguage.filter { $0.value < 100 }
+        self.allComplete = incomplete.isEmpty
+        self.incompleteLanguages = incomplete.isEmpty ? nil : incomplete
+        self.completeCount = agg.averageCoverageByLanguage.count - incomplete.count
+    }
+}

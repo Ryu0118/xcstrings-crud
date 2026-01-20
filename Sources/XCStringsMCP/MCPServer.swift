@@ -119,11 +119,12 @@ public struct XCStringsMCPServer {
             ),
             Tool(
                 name: "xcstrings_stats_coverage",
-                description: "Get overall translation statistics",
+                description: "Get overall translation statistics. Use compact mode to only show languages under 100%.",
                 inputSchema: .object([
                     "type": .string("object"),
                     "properties": .object([
                         "file": .object(["type": .string("string"), "description": .string("Path to the xcstrings file")]),
+                        "compact": .object(["type": .string("boolean"), "description": .string("If true, only show languages under 100% coverage (default: true)")]),
                     ]),
                     "required": .array([.string("file")]),
                 ])
@@ -142,11 +143,12 @@ public struct XCStringsMCPServer {
             ),
             Tool(
                 name: "xcstrings_batch_stats_coverage",
-                description: "Get token-efficient coverage statistics for multiple xcstrings files at once. Returns compact summary with coverage percentages per language for each file and aggregated totals.",
+                description: "Get token-efficient coverage statistics for multiple xcstrings files at once. Returns compact summary with coverage percentages per language for each file and aggregated totals. Use compact mode to only show languages under 100%.",
                 inputSchema: .object([
                     "type": .string("object"),
                     "properties": .object([
                         "files": .object(["type": .string("array"), "items": .object(["type": .string("string")]), "description": .string("Array of paths to xcstrings files")]),
+                        "compact": .object(["type": .string("boolean"), "description": .string("If true, only show languages under 100% coverage (default: true)")]),
                     ]),
                     "required": .array([.string("files")]),
                 ])
@@ -283,8 +285,14 @@ public struct XCStringsMCPServer {
                 throw XCStringsError.invalidJSON(reason: "Missing 'files' parameter")
             }
             let files = filesValue.compactMap { $0.stringValue }
-            let batchCoverage = try XCStringsParser.getBatchCoverage(paths: files)
-            return try String(data: encoder.encode(batchCoverage), encoding: .utf8) ?? "{}"
+            let compact = args["compact"]?.boolValue ?? true
+            if compact {
+                let batchCoverage = try XCStringsParser.getCompactBatchCoverage(paths: files)
+                return try String(data: encoder.encode(batchCoverage), encoding: .utf8) ?? "{}"
+            } else {
+                let batchCoverage = try XCStringsParser.getBatchCoverage(paths: files)
+                return try String(data: encoder.encode(batchCoverage), encoding: .utf8) ?? "{}"
+            }
         }
 
         guard let file = args["file"]?.stringValue else {
@@ -336,8 +344,14 @@ public struct XCStringsMCPServer {
             return try String(data: encoder.encode(coverage), encoding: .utf8) ?? "{}"
 
         case "xcstrings_stats_coverage":
-            let stats = try await parser.getStats()
-            return try String(data: encoder.encode(stats), encoding: .utf8) ?? "{}"
+            let compact = args["compact"]?.boolValue ?? true
+            if compact {
+                let stats = try await parser.getCompactStats()
+                return try String(data: encoder.encode(stats), encoding: .utf8) ?? "{}"
+            } else {
+                let stats = try await parser.getStats()
+                return try String(data: encoder.encode(stats), encoding: .utf8) ?? "{}"
+            }
 
         case "xcstrings_stats_progress":
             guard let language = args["language"]?.stringValue else {
