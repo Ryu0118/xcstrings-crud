@@ -109,7 +109,7 @@ Add to your Claude Code MCP settings:
 ```json
 {
   "mcpServers": {
-    "xcstrings": {
+    "xcstrings-crud-mcp": {
       "command": "xcstrings-crud-mcp"
     }
   }
