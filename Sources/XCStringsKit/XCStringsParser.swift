@@ -85,6 +85,16 @@ package actor XCStringsParser {
         return try XCStringsStatsCalculator(file: file).getProgress(for: language)
     }
 
+    /// Get batch coverage for multiple files (token-efficient)
+    package static func getBatchCoverage(paths: [String]) throws -> BatchCoverageSummary {
+        let files: [(path: String, file: XCStringsFile)] = try paths.map { path in
+            let handler = XCStringsFileHandler(path: path)
+            let file = try handler.load()
+            return (path, file)
+        }
+        return XCStringsStatsCalculator.getBatchCoverage(files: files)
+    }
+
     // MARK: - Write Operations
 
     /// Add a translation

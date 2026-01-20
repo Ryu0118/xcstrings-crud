@@ -140,6 +140,17 @@ public struct XCStringsMCPServer {
                     "required": .array([.string("file"), .string("language")]),
                 ])
             ),
+            Tool(
+                name: "xcstrings_batch_stats_coverage",
+                description: "Get token-efficient coverage statistics for multiple xcstrings files at once. Returns compact summary with coverage percentages per language for each file and aggregated totals.",
+                inputSchema: .object([
+                    "type": .string("object"),
+                    "properties": .object([
+                        "files": .object(["type": .string("array"), "items": .object(["type": .string("string")]), "description": .string("Array of paths to xcstrings files")]),
+                    ]),
+                    "required": .array([.string("files")]),
+                ])
+            ),
             // Write operations
             Tool(
                 name: "xcstrings_add_translation",
@@ -263,14 +274,24 @@ public struct XCStringsMCPServer {
 
     private static func executeToolCall(_ params: CallTool.Parameters) async throws -> String {
         let args = params.arguments ?? [:]
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+
+        // Handle batch operations that don't use single 'file' parameter
+        if params.name == "xcstrings_batch_stats_coverage" {
+            guard let filesValue = args["files"]?.arrayValue else {
+                throw XCStringsError.invalidJSON(reason: "Missing 'files' parameter")
+            }
+            let files = filesValue.compactMap { $0.stringValue }
+            let batchCoverage = try XCStringsParser.getBatchCoverage(paths: files)
+            return try String(data: encoder.encode(batchCoverage), encoding: .utf8) ?? "{}"
+        }
 
         guard let file = args["file"]?.stringValue else {
             throw XCStringsError.invalidJSON(reason: "Missing 'file' parameter")
         }
 
         let parser = XCStringsParser(path: file)
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
 
         switch params.name {
         case "xcstrings_list_keys":

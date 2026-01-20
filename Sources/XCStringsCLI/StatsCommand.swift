@@ -6,7 +6,7 @@ struct StatsCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "stats",
         abstract: "Get statistics about translations",
-        subcommands: [Coverage.self, Progress.self]
+        subcommands: [Coverage.self, Progress.self, BatchCoverage.self]
     )
 }
 
@@ -49,6 +49,30 @@ extension StatsCommand {
             let parser = XCStringsParser(path: file)
             let progress = try await parser.getProgress(for: lang)
             try CLIOutput.printJSON(progress, pretty: pretty)
+        }
+    }
+
+    struct BatchCoverage: AsyncParsableCommand {
+        static let configuration = CommandConfiguration(
+            commandName: "batch-coverage",
+            abstract: "Get token-efficient coverage statistics for multiple xcstrings files"
+        )
+
+        @Option(name: .shortAndLong, parsing: .upToNextOption, help: "Paths to xcstrings files")
+        var files: [String]
+
+        @Flag(name: .long, help: "Output in pretty-printed JSON format")
+        var pretty = false
+
+        func validate() throws {
+            if files.isEmpty {
+                throw ValidationError("At least one file path must be specified")
+            }
+        }
+
+        func run() async throws {
+            let batchCoverage = try XCStringsParser.getBatchCoverage(paths: files)
+            try CLIOutput.printJSON(batchCoverage, pretty: pretty)
         }
     }
 }
