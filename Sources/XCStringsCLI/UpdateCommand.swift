@@ -56,7 +56,7 @@ extension UpdateCommand {
             let parser = XCStringsParser(path: file)
 
             if !translations.isEmpty {
-                let translationsDict = try parseTranslations(translations)
+                let translationsDict = try TranslationParser.parse(translations)
                 try await parser.updateTranslations(key: key, translations: translationsDict)
                 let result = CLIResult.success(message: "Translations updated successfully for \(translationsDict.count) languages")
                 try output(result, pretty: pretty)
@@ -65,19 +65,6 @@ extension UpdateCommand {
                 let result = CLIResult.success(message: "Translation updated successfully")
                 try output(result, pretty: pretty)
             }
-        }
-
-        private func parseTranslations(_ translations: [String]) throws -> [String: String] {
-            var result: [String: String] = [:]
-            for translation in translations {
-                guard let colonIndex = translation.firstIndex(of: ":") else {
-                    throw ValidationError("Invalid translation format: '\(translation)'. Expected 'lang:value'")
-                }
-                let lang = String(translation[..<colonIndex])
-                let value = String(translation[translation.index(after: colonIndex)...])
-                result[lang] = value
-            }
-            return result
         }
     }
 }
