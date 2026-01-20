@@ -83,9 +83,6 @@ xcstrings-crud add key "Hello" --file path/to/Localizable.xcstrings --translatio
 # Update translation
 xcstrings-crud update key "Hello" --file path/to/Localizable.xcstrings --lang ja --value "こんにちは！"
 
-# Add or update translation (upsert)
-xcstrings-crud upsert key "Hello" --file path/to/Localizable.xcstrings --lang ja --value "こんにちは"
-
 # Rename key
 xcstrings-crud rename key "Hello" --file path/to/Localizable.xcstrings --to "Greeting"
 ```
@@ -143,7 +140,6 @@ Add to your Claude Code MCP settings:
 | `xcstrings_stats_progress` | Get translation progress by language |
 | `xcstrings_add_translation` | Add translation |
 | `xcstrings_update_translation` | Update translation |
-| `xcstrings_upsert_translation` | Add or update translation |
 | `xcstrings_rename_key` | Rename key |
 | `xcstrings_delete_key` | Delete entire key |
 | `xcstrings_delete_translation` | Delete translation for specific language |
