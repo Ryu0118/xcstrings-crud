@@ -2,6 +2,18 @@
 
 CLI tool and MCP server for CRUD operations on xcstrings (String Catalog) files.
 
+## Motivation
+
+Large xcstrings files can contain thousands of localization keys across multiple languages, resulting in massive JSON files. When AI assistants (like Claude Code) read these files directly, they consume a significant amount of tokens—potentially exceeding context limits or rapidly depleting token budgets.
+
+This tool provides a **token-efficient** approach by offering targeted CRUD operations:
+
+- **Query only what you need**: Fetch specific keys or languages instead of loading the entire file
+- **Incremental updates**: Add or update individual translations without reading the full content
+- **Statistics at a glance**: Get coverage and progress summaries without parsing all entries
+
+By using the MCP server or CLI, AI assistants can work with xcstrings files of any size while keeping token usage minimal.
+
 ## Installation
 
 ### Using Mise
