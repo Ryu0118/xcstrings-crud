@@ -1,9 +1,8 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
 
 permissions:
   contents: write
@@ -30,16 +29,16 @@ jobs:
             -output .build/universal/xcstrings-crud
 
           lipo -create \
-            .build/arm64-apple-macosx/release/xcstrings-mcp \
-            .build/x86_64-apple-macosx/release/xcstrings-mcp \
-            -output .build/universal/xcstrings-mcp
+            .build/arm64-apple-macosx/release/xcstrings-crud-mcp \
+            .build/x86_64-apple-macosx/release/xcstrings-crud-mcp \
+            -output .build/universal/xcstrings-crud-mcp
 
       - name: Create Archive
         env:
           TAG_NAME: ${{ github.ref_name }}
         run: |
           cd .build/universal
-          tar -czvf "xcstrings-crud-${TAG_NAME}-darwin-universal.tar.gz" xcstrings-crud xcstrings-mcp
+          tar -czvf "xcstrings-crud-${TAG_NAME}-darwin-universal.tar.gz" xcstrings-crud xcstrings-crud-mcp
 
       - name: Generate Checksums
         run: |
