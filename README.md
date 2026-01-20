@@ -70,7 +70,7 @@ xcstrings-crud stats coverage --file path/to/Localizable.xcstrings
 # Get progress for a language
 xcstrings-crud stats progress --file path/to/Localizable.xcstrings --lang ja
 
-# Get batch coverage for multiple files (token-efficient)
+# Get batch coverage for multiple files
 xcstrings-crud stats batch-coverage -f file1.xcstrings file2.xcstrings file3.xcstrings
 ```
 
@@ -147,7 +147,7 @@ Add to your Claude Code MCP settings:
 | `xcstrings_check_coverage` | Check key language coverage |
 | `xcstrings_stats_coverage` | Get overall coverage statistics |
 | `xcstrings_stats_progress` | Get translation progress by language |
-| `xcstrings_batch_stats_coverage` | Get token-efficient coverage for multiple files |
+| `xcstrings_batch_stats_coverage` | Get coverage for multiple files at once |
 | `xcstrings_add_translation` | Add translation for single language |
 | `xcstrings_add_translations` | Add translations for multiple languages |
 | `xcstrings_update_translation` | Update translation for single language |
