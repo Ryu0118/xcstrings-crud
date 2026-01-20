@@ -30,12 +30,27 @@ public enum TranslationParser {
 
         return (lang, value)
     }
+
+    /// Parse JSON string into a translations dictionary
+    /// - Parameter jsonString: JSON string in format `{"lang": "value", ...}`
+    /// - Returns: Dictionary mapping language codes to values
+    /// - Throws: `TranslationParseError.invalidJSON` if JSON is invalid
+    public static func parseJSON(_ jsonString: String) throws -> [String: String] {
+        guard let data = jsonString.data(using: .utf8) else {
+            throw TranslationParseError.invalidJSON(jsonString)
+        }
+        guard let dict = try? JSONDecoder().decode([String: String].self, from: data) else {
+            throw TranslationParseError.invalidJSON(jsonString)
+        }
+        return dict
+    }
 }
 
 /// Errors that can occur when parsing translation input
 public enum TranslationParseError: Error, LocalizedError, Equatable {
     case invalidFormat(String)
     case emptyLanguage(String)
+    case invalidJSON(String)
 
     public var errorDescription: String? {
         switch self {
@@ -43,6 +58,8 @@ public enum TranslationParseError: Error, LocalizedError, Equatable {
             return "Invalid translation format: '\(input)'. Expected 'lang:value'"
         case .emptyLanguage(let input):
             return "Empty language code in: '\(input)'"
+        case .invalidJSON(let input):
+            return "Invalid JSON format: '\(input)'. Expected '{\"lang\": \"value\", ...}'"
         }
     }
 }

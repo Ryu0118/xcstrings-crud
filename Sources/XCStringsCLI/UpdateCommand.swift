@@ -54,30 +54,20 @@ extension UpdateCommand {
 
         func run() async throws {
             let parser = XCStringsParser(path: file)
+            let result: CLIResult
 
             if !translations.isEmpty {
                 let translationsDict = try TranslationParser.parse(translations)
                 try await parser.updateTranslations(key: key, translations: translationsDict)
-                let result = CLIResult.success(message: "Translations updated successfully for \(translationsDict.count) languages")
-                try output(result, pretty: pretty)
+                result = .success(message: "Translations updated successfully for \(translationsDict.count) languages")
             } else if let lang = lang, let value = value {
                 try await parser.updateTranslation(key: key, language: lang, value: value)
-                let result = CLIResult.success(message: "Translation updated successfully")
-                try output(result, pretty: pretty)
+                result = .success(message: "Translation updated successfully")
+            } else {
+                return
             }
+
+            try CLIOutput.printJSON(result, pretty: pretty)
         }
-    }
-}
-
-// MARK: - Output Helper
-
-private func output<T: Encodable>(_ value: T, pretty: Bool) throws {
-    let encoder = JSONEncoder()
-    if pretty {
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-    }
-    let data = try encoder.encode(value)
-    if let json = String(data: data, encoding: .utf8) {
-        print(json)
     }
 }

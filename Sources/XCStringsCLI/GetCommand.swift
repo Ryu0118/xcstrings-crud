@@ -32,7 +32,7 @@ extension GetCommand {
         func run() async throws {
             let parser = XCStringsParser(path: file)
             let translations = try await parser.getTranslation(key: key, language: lang)
-            try output(translations, pretty: pretty)
+            try CLIOutput.printJSON(translations, pretty: pretty)
         }
     }
 
@@ -50,18 +50,5 @@ extension GetCommand {
             let sourceLanguage = try await parser.getSourceLanguage()
             print(sourceLanguage)
         }
-    }
-}
-
-// MARK: - Output Helper
-
-private func output<T: Encodable>(_ value: T, pretty: Bool) throws {
-    let encoder = JSONEncoder()
-    if pretty {
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-    }
-    let data = try encoder.encode(value)
-    if let json = String(data: data, encoding: .utf8) {
-        print(json)
     }
 }

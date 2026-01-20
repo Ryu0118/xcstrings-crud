@@ -51,20 +51,7 @@ extension CheckCommand {
         func run() async throws {
             let parser = XCStringsParser(path: file)
             let coverage = try await parser.checkCoverage(key)
-            try output(coverage, pretty: pretty)
+            try CLIOutput.printJSON(coverage, pretty: pretty)
         }
-    }
-}
-
-// MARK: - Output Helper
-
-private func output<T: Encodable>(_ value: T, pretty: Bool) throws {
-    let encoder = JSONEncoder()
-    if pretty {
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-    }
-    let data = try encoder.encode(value)
-    if let json = String(data: data, encoding: .utf8) {
-        print(json)
     }
 }

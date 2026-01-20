@@ -26,7 +26,7 @@ extension ListCommand {
         func run() async throws {
             let parser = XCStringsParser(path: file)
             let keys = try await parser.listKeys()
-            try output(keys, pretty: pretty)
+            try CLIOutput.printJSON(keys, pretty: pretty)
         }
     }
 
@@ -45,7 +45,7 @@ extension ListCommand {
         func run() async throws {
             let parser = XCStringsParser(path: file)
             let languages = try await parser.listLanguages()
-            try output(languages, pretty: pretty)
+            try CLIOutput.printJSON(languages, pretty: pretty)
         }
     }
 
@@ -67,20 +67,7 @@ extension ListCommand {
         func run() async throws {
             let parser = XCStringsParser(path: file)
             let untranslated = try await parser.listUntranslated(for: lang)
-            try output(untranslated, pretty: pretty)
+            try CLIOutput.printJSON(untranslated, pretty: pretty)
         }
-    }
-}
-
-// MARK: - Output Helper
-
-private func output<T: Encodable>(_ value: T, pretty: Bool) throws {
-    let encoder = JSONEncoder()
-    if pretty {
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-    }
-    let data = try encoder.encode(value)
-    if let json = String(data: data, encoding: .utf8) {
-        print(json)
     }
 }

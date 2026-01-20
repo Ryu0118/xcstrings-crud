@@ -26,7 +26,7 @@ extension StatsCommand {
         func run() async throws {
             let parser = XCStringsParser(path: file)
             let stats = try await parser.getStats()
-            try output(stats, pretty: pretty)
+            try CLIOutput.printJSON(stats, pretty: pretty)
         }
     }
 
@@ -48,20 +48,7 @@ extension StatsCommand {
         func run() async throws {
             let parser = XCStringsParser(path: file)
             let progress = try await parser.getProgress(for: lang)
-            try output(progress, pretty: pretty)
+            try CLIOutput.printJSON(progress, pretty: pretty)
         }
-    }
-}
-
-// MARK: - Output Helper
-
-private func output<T: Encodable>(_ value: T, pretty: Bool) throws {
-    let encoder = JSONEncoder()
-    if pretty {
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-    }
-    let data = try encoder.encode(value)
-    if let json = String(data: data, encoding: .utf8) {
-        print(json)
     }
 }

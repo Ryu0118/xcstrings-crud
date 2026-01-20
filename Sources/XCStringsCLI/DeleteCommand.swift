@@ -31,33 +31,21 @@ extension DeleteCommand {
 
         func run() async throws {
             let parser = XCStringsParser(path: file)
+            let result: CLIResult
 
-            if lang.isEmpty {
+            switch lang.count {
+            case 0:
                 try await parser.deleteKey(key)
-                let result = CLIResult.success(message: "Key deleted successfully")
-                try output(result, pretty: pretty)
-            } else if lang.count == 1 {
+                result = .success(message: "Key deleted successfully")
+            case 1:
                 try await parser.deleteTranslation(key: key, language: lang[0])
-                let result = CLIResult.success(message: "Translation for '\(lang[0])' deleted successfully")
-                try output(result, pretty: pretty)
-            } else {
+                result = .success(message: "Translation for '\(lang[0])' deleted successfully")
+            default:
                 try await parser.deleteTranslations(key: key, languages: lang)
-                let result = CLIResult.success(message: "Translations deleted successfully for \(lang.count) languages")
-                try output(result, pretty: pretty)
+                result = .success(message: "Translations deleted successfully for \(lang.count) languages")
             }
+
+            try CLIOutput.printJSON(result, pretty: pretty)
         }
-    }
-}
-
-// MARK: - Output Helper
-
-private func output<T: Encodable>(_ value: T, pretty: Bool) throws {
-    let encoder = JSONEncoder()
-    if pretty {
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-    }
-    let data = try encoder.encode(value)
-    if let json = String(data: data, encoding: .utf8) {
-        print(json)
     }
 }
