@@ -153,6 +153,20 @@ public struct XCStringsMCPServer {
                     "required": .array([.string("files")]),
                 ])
             ),
+            // Create operations
+            Tool(
+                name: "xcstrings_create_file",
+                description: "Create a new xcstrings file with the specified source language",
+                inputSchema: .object([
+                    "type": .string("object"),
+                    "properties": .object([
+                        "file": .object(["type": .string("string"), "description": .string("Path for the new xcstrings file")]),
+                        "sourceLanguage": .object(["type": .string("string"), "description": .string("Source language code (default: en)")]),
+                        "overwrite": .object(["type": .string("boolean"), "description": .string("Overwrite existing file if it exists (default: false)")]),
+                    ]),
+                    "required": .array([.string("file")]),
+                ])
+            ),
             // Write operations
             Tool(
                 name: "xcstrings_add_translation",
@@ -297,6 +311,14 @@ public struct XCStringsMCPServer {
 
         guard let file = args["file"]?.stringValue else {
             throw XCStringsError.invalidJSON(reason: "Missing 'file' parameter")
+        }
+
+        // Handle create operation (doesn't need existing file)
+        if params.name == "xcstrings_create_file" {
+            let sourceLanguage = args["sourceLanguage"]?.stringValue ?? "en"
+            let overwrite = args["overwrite"]?.boolValue ?? false
+            try XCStringsParser.createFile(at: file, sourceLanguage: sourceLanguage, overwrite: overwrite)
+            return "Created xcstrings file at '\(file)' with source language '\(sourceLanguage)'"
         }
 
         let parser = XCStringsParser(path: file)
