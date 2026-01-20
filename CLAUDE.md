@@ -18,7 +18,7 @@ Then run:
 mise install
 ```
 
-This installs both `xcstrings-crud` and `xcstrings-mcp` commands.
+This installs both `xcstrings-crud` and `xcstrings-crud-mcp` commands.
 
 ### Using SPM directly
 
@@ -107,7 +107,7 @@ xcstrings-crud delete key "Hello" --file path/to/Localizable.xcstrings --lang ja
 ### Start
 
 ```bash
-xcstrings-mcp
+xcstrings-crud-mcp
 ```
 
 ### Available Tools
@@ -165,7 +165,7 @@ xcstrings-crud/
 │   ├── xcstrings-crud/            # CLI executable
 │   │   └── main.swift
 │   │
-│   └── xcstrings-mcp/             # MCP executable
+│   └── xcstrings-crud-mcp/        # MCP executable
 │       └── main.swift
 │
 └── Tests/

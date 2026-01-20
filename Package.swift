@@ -8,7 +8,7 @@ let package = Package(
     platforms: [.macOS(.v13)],
     products: [
         .executable(name: "xcstrings-crud", targets: ["xcstrings-crud"]),
-        .executable(name: "xcstrings-mcp", targets: ["xcstrings-mcp"]),
+        .executable(name: "xcstrings-crud-mcp", targets: ["xcstrings-crud-mcp"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.0"),
@@ -44,7 +44,7 @@ let package = Package(
 
         // MCP実行ファイル
         .executableTarget(
-            name: "xcstrings-mcp",
+            name: "xcstrings-crud-mcp",
             dependencies: ["XCStringsMCP"]
         ),
 

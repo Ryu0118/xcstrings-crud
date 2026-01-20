@@ -13,7 +13,7 @@ CLI tool and MCP server for CRUD operations on xcstrings (String Catalog) files.
 mise x github:Ryu0118/xcstrings-crud@0.1.0 -- xcstrings-crud --help
 
 # Run MCP server
-mise x github:Ryu0118/xcstrings-crud@0.1.0 -- xcstrings-mcp --help
+mise x github:Ryu0118/xcstrings-crud@0.1.0 -- xcstrings-crud-mcp --help
 ```
 
 #### Install globally
@@ -30,7 +30,7 @@ cd xcstrings-crud
 swift build -c release
 ```
 
-Binaries will be at `.build/release/xcstrings-crud` and `.build/release/xcstrings-mcp`.
+Binaries will be at `.build/release/xcstrings-crud` and `.build/release/xcstrings-crud-mcp`.
 
 ## CLI Usage
 
@@ -110,7 +110,7 @@ Add to your Claude Code MCP settings:
 {
   "mcpServers": {
     "xcstrings": {
-      "command": "xcstrings-mcp"
+      "command": "xcstrings-crud-mcp"
     }
   }
 }
