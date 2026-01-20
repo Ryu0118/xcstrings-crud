@@ -19,7 +19,7 @@ By using the MCP server or CLI, AI assistants can work with xcstrings files of a
 ### Using Mise
 
 ```bash
-mise use -g github:Ryu0118/xcstrings-crud@0.1.0
+mise use -g ubi:Ryu0118/xcstrings-crud
 ```
 
 This installs two binaries: `xcstrings-crud` (CLI) and `xcstrings-crud-mcp` (MCP server).
