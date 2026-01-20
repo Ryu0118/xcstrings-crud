@@ -22,6 +22,11 @@ By using the MCP server or CLI, AI assistants can work with xcstrings files of a
 mise use -g ubi:Ryu0118/xcstrings-crud
 ```
 
+### Using nest ([mtj0928/nest](https://github.com/mtj0928/nest))
+```bash
+nest install Ryu0118/xcstrings-crud
+```
+
 ### Build from source
 
 ```bash
