@@ -34,20 +34,7 @@ extension RenameCommand {
             try await parser.renameKey(from: key, to: to)
 
             let result = CLIResult.success(message: "Key renamed from '\(key)' to '\(to)' successfully")
-            try output(result, pretty: pretty)
+            try CLIOutput.printJSON(result, pretty: pretty)
         }
-    }
-}
-
-// MARK: - Output Helper
-
-private func output<T: Encodable>(_ value: T, pretty: Bool) throws {
-    let encoder = JSONEncoder()
-    if pretty {
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-    }
-    let data = try encoder.encode(value)
-    if let json = String(data: data, encoding: .utf8) {
-        print(json)
     }
 }
