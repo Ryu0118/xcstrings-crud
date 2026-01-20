@@ -14,7 +14,7 @@ extension DeleteCommand {
     struct Key: AsyncParsableCommand {
         static let configuration = CommandConfiguration(
             commandName: "key",
-            abstract: "Delete a key or a specific translation"
+            abstract: "Delete a key or specific translation(s)"
         )
 
         @Argument(help: "The key to delete")
@@ -23,8 +23,8 @@ extension DeleteCommand {
         @Option(name: .shortAndLong, help: "Path to the xcstrings file")
         var file: String
 
-        @Option(name: .shortAndLong, help: "Specific language to delete (optional, deletes entire key if not specified)")
-        var lang: String?
+        @Option(name: .shortAndLong, parsing: .upToNextOption, help: "Language(s) to delete (e.g., -l ja en fr). If not specified, deletes entire key")
+        var lang: [String] = []
 
         @Flag(name: .long, help: "Output in pretty-printed JSON format")
         var pretty = false
@@ -32,17 +32,19 @@ extension DeleteCommand {
         func run() async throws {
             let parser = XCStringsParser(path: file)
 
-            if let lang = lang {
-                try await parser.deleteTranslation(key: key, language: lang)
-            } else {
+            if lang.isEmpty {
                 try await parser.deleteKey(key)
+                let result = CLIResult.success(message: "Key deleted successfully")
+                try output(result, pretty: pretty)
+            } else if lang.count == 1 {
+                try await parser.deleteTranslation(key: key, language: lang[0])
+                let result = CLIResult.success(message: "Translation for '\(lang[0])' deleted successfully")
+                try output(result, pretty: pretty)
+            } else {
+                try await parser.deleteTranslations(key: key, languages: lang)
+                let result = CLIResult.success(message: "Translations deleted successfully for \(lang.count) languages")
+                try output(result, pretty: pretty)
             }
-
-            let message = lang != nil
-                ? "Translation for '\(lang!)' deleted successfully"
-                : "Key deleted successfully"
-            let result = CLIResult.success(message: message)
-            try output(result, pretty: pretty)
         }
     }
 }

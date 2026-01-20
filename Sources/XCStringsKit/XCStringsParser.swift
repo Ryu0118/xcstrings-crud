@@ -108,6 +108,13 @@ package actor XCStringsParser {
         try save(updated)
     }
 
+    /// Update translations for multiple languages
+    package func updateTranslations(key: String, translations: [String: String]) throws {
+        let file = try load()
+        let updated = try XCStringsWriter.updateTranslations(in: file, key: key, translations: translations)
+        try save(updated)
+    }
+
     /// Rename a key
     package func renameKey(from oldKey: String, to newKey: String) throws {
         let file = try load()
@@ -128,6 +135,13 @@ package actor XCStringsParser {
     package func deleteTranslation(key: String, language: String) throws {
         let file = try load()
         let updated = try XCStringsWriter.deleteTranslation(from: file, key: key, language: language)
+        try save(updated)
+    }
+
+    /// Delete translations for multiple languages
+    package func deleteTranslations(key: String, languages: [String]) throws {
+        let file = try load()
+        let updated = try XCStringsWriter.deleteTranslations(from: file, key: key, languages: languages)
         try save(updated)
     }
 }

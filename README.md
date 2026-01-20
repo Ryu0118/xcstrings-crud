@@ -80,8 +80,11 @@ xcstrings-crud add key "Hello" --file path/to/Localizable.xcstrings --lang ja --
 # Add translation (multiple languages)
 xcstrings-crud add key "Hello" --file path/to/Localizable.xcstrings --translations '{"ja":"こんにちは","en":"Hello"}'
 
-# Update translation
+# Update translation (single language)
 xcstrings-crud update key "Hello" --file path/to/Localizable.xcstrings --lang ja --value "こんにちは！"
+
+# Update translations (multiple languages)
+xcstrings-crud update key "Hello" --file path/to/Localizable.xcstrings -t ja:こんにちは en:Hello de:Hallo
 
 # Rename key
 xcstrings-crud rename key "Hello" --file path/to/Localizable.xcstrings --to "Greeting"
@@ -94,7 +97,10 @@ xcstrings-crud rename key "Hello" --file path/to/Localizable.xcstrings --to "Gre
 xcstrings-crud delete key "Hello" --file path/to/Localizable.xcstrings
 
 # Delete translation for specific language only
-xcstrings-crud delete key "Hello" --file path/to/Localizable.xcstrings --lang ja
+xcstrings-crud delete key "Hello" --file path/to/Localizable.xcstrings -l ja
+
+# Delete translations for multiple languages
+xcstrings-crud delete key "Hello" --file path/to/Localizable.xcstrings -l ja en fr
 ```
 
 ### Common Options
@@ -138,11 +144,14 @@ Add to your Claude Code MCP settings:
 | `xcstrings_check_coverage` | Check key language coverage |
 | `xcstrings_stats_coverage` | Get overall coverage statistics |
 | `xcstrings_stats_progress` | Get translation progress by language |
-| `xcstrings_add_translation` | Add translation |
-| `xcstrings_update_translation` | Update translation |
+| `xcstrings_add_translation` | Add translation for single language |
+| `xcstrings_add_translations` | Add translations for multiple languages |
+| `xcstrings_update_translation` | Update translation for single language |
+| `xcstrings_update_translations` | Update translations for multiple languages |
 | `xcstrings_rename_key` | Rename key |
 | `xcstrings_delete_key` | Delete entire key |
-| `xcstrings_delete_translation` | Delete translation for specific language |
+| `xcstrings_delete_translation` | Delete translation for single language |
+| `xcstrings_delete_translations` | Delete translations for multiple languages |
 
 ## Requirements
 
