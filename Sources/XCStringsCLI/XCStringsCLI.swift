@@ -7,6 +7,7 @@ public struct XCStringsCLI: AsyncParsableCommand {
         abstract: "A CLI tool for CRUD operations on xcstrings files",
         version: "1.0.0",
         subcommands: [
+            CreateCommand.self,
             ListCommand.self,
             GetCommand.self,
             CheckCommand.self,

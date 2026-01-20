@@ -50,4 +50,30 @@ struct XCStringsFileHandler: Sendable {
             throw XCStringsError.writeError(path: path, reason: error.localizedDescription)
         }
     }
+
+    /// Create a new xcstrings file
+    func create(sourceLanguage: String, overwrite: Bool = false) throws {
+        let url = URL(fileURLWithPath: path)
+
+        if !overwrite && FileManager.default.fileExists(atPath: path) {
+            throw XCStringsError.fileAlreadyExists(path: path)
+        }
+
+        let file = XCStringsFile(sourceLanguage: sourceLanguage)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+
+        let data: Data
+        do {
+            data = try encoder.encode(file)
+        } catch {
+            throw XCStringsError.writeError(path: path, reason: error.localizedDescription)
+        }
+
+        do {
+            try data.write(to: url, options: .atomic)
+        } catch {
+            throw XCStringsError.writeError(path: path, reason: error.localizedDescription)
+        }
+    }
 }

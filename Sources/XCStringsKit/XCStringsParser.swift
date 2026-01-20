@@ -21,6 +21,17 @@ package actor XCStringsParser {
         try fileHandler.save(file)
     }
 
+    /// Create a new xcstrings file
+    package func createFile(sourceLanguage: String, overwrite: Bool = false) throws {
+        try fileHandler.create(sourceLanguage: sourceLanguage, overwrite: overwrite)
+    }
+
+    /// Create a new xcstrings file (static version for convenience)
+    package static func createFile(at path: String, sourceLanguage: String, overwrite: Bool = false) throws {
+        let handler = XCStringsFileHandler(path: path)
+        try handler.create(sourceLanguage: sourceLanguage, overwrite: overwrite)
+    }
+
     // MARK: - Read Operations
 
     /// Get all keys sorted alphabetically

@@ -3,6 +3,7 @@ import Foundation
 /// Errors thrown by XCStringsKit
 package enum XCStringsError: Error, LocalizedError, Sendable {
     case fileNotFound(path: String)
+    case fileAlreadyExists(path: String)
     case invalidFileFormat(path: String, reason: String)
     case keyNotFound(key: String)
     case keyAlreadyExists(key: String)
@@ -14,6 +15,8 @@ package enum XCStringsError: Error, LocalizedError, Sendable {
         switch self {
         case let .fileNotFound(path):
             return "File not found: \(path)"
+        case let .fileAlreadyExists(path):
+            return "File already exists: \(path)"
         case let .invalidFileFormat(path, reason):
             return "Invalid file format at '\(path)': \(reason)"
         case let .keyNotFound(key):
