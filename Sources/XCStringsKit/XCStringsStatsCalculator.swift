@@ -101,4 +101,16 @@ struct XCStringsStatsCalculator: Sendable {
             )
         )
     }
+
+    // MARK: - Compact Output (100% languages omitted)
+
+    /// Get compact stats (only shows incomplete languages)
+    func getCompactStats() -> CompactStatsInfo {
+        CompactStatsInfo(from: getStats())
+    }
+
+    /// Get compact batch coverage for multiple files
+    static func getCompactBatchCoverage(files: [(path: String, file: XCStringsFile)]) -> CompactBatchCoverageSummary {
+        CompactBatchCoverageSummary(from: getBatchCoverage(files: files))
+    }
 }

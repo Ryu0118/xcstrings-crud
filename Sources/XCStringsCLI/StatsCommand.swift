@@ -23,10 +23,18 @@ extension StatsCommand {
         @Flag(name: .long, help: "Output in pretty-printed JSON format")
         var pretty = false
 
+        @Flag(name: .long, help: "Compact output: only show languages under 100%")
+        var compact = false
+
         func run() async throws {
             let parser = XCStringsParser(path: file)
-            let stats = try await parser.getStats()
-            try CLIOutput.printJSON(stats, pretty: pretty)
+            if compact {
+                let stats = try await parser.getCompactStats()
+                try CLIOutput.printJSON(stats, pretty: pretty)
+            } else {
+                let stats = try await parser.getStats()
+                try CLIOutput.printJSON(stats, pretty: pretty)
+            }
         }
     }
 
@@ -64,6 +72,9 @@ extension StatsCommand {
         @Flag(name: .long, help: "Output in pretty-printed JSON format")
         var pretty = false
 
+        @Flag(name: .long, help: "Compact output: only show languages under 100%")
+        var compact = false
+
         func validate() throws {
             if files.isEmpty {
                 throw ValidationError("At least one file path must be specified")
@@ -71,8 +82,13 @@ extension StatsCommand {
         }
 
         func run() async throws {
-            let batchCoverage = try XCStringsParser.getBatchCoverage(paths: files)
-            try CLIOutput.printJSON(batchCoverage, pretty: pretty)
+            if compact {
+                let batchCoverage = try XCStringsParser.getCompactBatchCoverage(paths: files)
+                try CLIOutput.printJSON(batchCoverage, pretty: pretty)
+            } else {
+                let batchCoverage = try XCStringsParser.getBatchCoverage(paths: files)
+                try CLIOutput.printJSON(batchCoverage, pretty: pretty)
+            }
         }
     }
 }

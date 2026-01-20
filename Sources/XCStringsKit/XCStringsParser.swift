@@ -95,6 +95,24 @@ package actor XCStringsParser {
         return XCStringsStatsCalculator.getBatchCoverage(files: files)
     }
 
+    // MARK: - Compact Stats Operations (100% languages omitted)
+
+    /// Get compact statistics (only shows incomplete languages)
+    package func getCompactStats() throws -> CompactStatsInfo {
+        let file = try load()
+        return XCStringsStatsCalculator(file: file).getCompactStats()
+    }
+
+    /// Get compact batch coverage for multiple files
+    package static func getCompactBatchCoverage(paths: [String]) throws -> CompactBatchCoverageSummary {
+        let files: [(path: String, file: XCStringsFile)] = try paths.map { path in
+            let handler = XCStringsFileHandler(path: path)
+            let file = try handler.load()
+            return (path, file)
+        }
+        return XCStringsStatsCalculator.getCompactBatchCoverage(files: files)
+    }
+
     // MARK: - Write Operations
 
     /// Add a translation
