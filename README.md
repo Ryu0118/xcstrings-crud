@@ -78,7 +78,7 @@ xcstrings-crud stats progress --file path/to/Localizable.xcstrings --lang ja
 xcstrings-crud add key "Hello" --file path/to/Localizable.xcstrings --lang ja --value "こんにちは"
 
 # Add translation (multiple languages)
-xcstrings-crud add key "Hello" --file path/to/Localizable.xcstrings --translations '{"ja":"こんにちは","en":"Hello"}'
+xcstrings-crud add key "Hello" --file path/to/Localizable.xcstrings -t ja:こんにちは en:Hello
 
 # Update translation (single language)
 xcstrings-crud update key "Hello" --file path/to/Localizable.xcstrings --lang ja --value "こんにちは！"
