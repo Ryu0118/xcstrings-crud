@@ -26,6 +26,7 @@ public struct XCStringsMCPServer {
 
         let transport = StdioTransport()
         try await server.start(transport: transport)
+        await server.waitUntilCompleted()
     }
 
     // MARK: - Tool Definitions
