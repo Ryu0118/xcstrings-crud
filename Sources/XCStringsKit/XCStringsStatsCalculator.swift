@@ -60,4 +60,45 @@ struct XCStringsStatsCalculator: Sendable {
 
         return langStats
     }
+
+    /// Get compact coverage summary (token-efficient)
+    func getCoverageSummary(fileName: String) -> FileCoverageSummary {
+        let stats = getStats()
+        let languages = stats.coverageByLanguage.mapValues { $0.coveragePercent }
+        return FileCoverageSummary(
+            file: fileName,
+            totalKeys: stats.totalKeys,
+            languages: languages
+        )
+    }
+
+    /// Get batch coverage for multiple files
+    static func getBatchCoverage(files: [(path: String, file: XCStringsFile)]) -> BatchCoverageSummary {
+        let summaries = files.map { (path, file) in
+            XCStringsStatsCalculator(file: file).getCoverageSummary(fileName: path)
+        }
+
+        // Aggregate stats
+        let totalFiles = summaries.count
+        let totalKeys = summaries.reduce(0) { $0 + $1.totalKeys }
+
+        // Calculate weighted average coverage by language
+        var languageTotals: [String: (sum: Double, count: Int)] = [:]
+        for summary in summaries {
+            for (lang, coverage) in summary.languages {
+                let current = languageTotals[lang] ?? (sum: 0, count: 0)
+                languageTotals[lang] = (sum: current.sum + coverage, count: current.count + 1)
+            }
+        }
+        let averageCoverage = languageTotals.mapValues { $0.sum / Double($0.count) }
+
+        return BatchCoverageSummary(
+            files: summaries,
+            aggregated: AggregatedCoverage(
+                totalFiles: totalFiles,
+                totalKeys: totalKeys,
+                averageCoverageByLanguage: averageCoverage
+            )
+        )
+    }
 }

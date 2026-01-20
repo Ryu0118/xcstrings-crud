@@ -186,3 +186,40 @@ package struct LanguageStats: Codable, Sendable {
         self.coveragePercent = coveragePercent
     }
 }
+
+/// Token-efficient batch coverage summary for multiple files
+package struct BatchCoverageSummary: Codable, Sendable {
+    package let files: [FileCoverageSummary]
+    package let aggregated: AggregatedCoverage
+
+    package init(files: [FileCoverageSummary], aggregated: AggregatedCoverage) {
+        self.files = files
+        self.aggregated = aggregated
+    }
+}
+
+/// Compact coverage summary for a single file
+package struct FileCoverageSummary: Codable, Sendable {
+    package let file: String
+    package let totalKeys: Int
+    package let languages: [String: Double]  // lang -> coveragePercent
+
+    package init(file: String, totalKeys: Int, languages: [String: Double]) {
+        self.file = file
+        self.totalKeys = totalKeys
+        self.languages = languages
+    }
+}
+
+/// Aggregated coverage across all files
+package struct AggregatedCoverage: Codable, Sendable {
+    package let totalFiles: Int
+    package let totalKeys: Int
+    package let averageCoverageByLanguage: [String: Double]
+
+    package init(totalFiles: Int, totalKeys: Int, averageCoverageByLanguage: [String: Double]) {
+        self.totalFiles = totalFiles
+        self.totalKeys = totalKeys
+        self.averageCoverageByLanguage = averageCoverageByLanguage
+    }
+}
