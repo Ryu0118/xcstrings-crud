@@ -22,8 +22,6 @@ By using the MCP server or CLI, AI assistants can work with xcstrings files of a
 mise use -g ubi:Ryu0118/xcstrings-crud
 ```
 
-This installs two binaries: `xcstrings-crud` (CLI) and `xcstrings-crud-mcp` (MCP server).
-
 ### Build from source
 
 ```bash
@@ -32,7 +30,7 @@ cd xcstrings-crud
 swift build -c release
 ```
 
-Binaries will be at `.build/release/xcstrings-crud` and `.build/release/xcstrings-crud-mcp`.
+Binary will be at `.build/release/xcstrings-crud`.
 
 ## CLI Usage
 
@@ -104,6 +102,12 @@ xcstrings-crud delete key "Hello" --file path/to/Localizable.xcstrings --lang ja
 
 ## MCP Server
 
+The MCP server is available as a subcommand:
+
+```bash
+xcstrings-crud mcp
+```
+
 ### Configuration
 
 Add to your Claude Code MCP settings:
@@ -111,8 +115,9 @@ Add to your Claude Code MCP settings:
 ```json
 {
   "mcpServers": {
-    "xcstrings-crud-mcp": {
-      "command": "xcstrings-crud-mcp"
+    "xcstrings-crud": {
+      "command": "xcstrings-crud",
+      "args": ["mcp"]
     }
   }
 }

@@ -19,35 +19,42 @@ jobs:
       - name: Build for arm64
         run: swift build -c release --arch arm64
 
-      - name: Create Universal Binaries
+      - name: Create Universal Binary
         run: |
           mkdir -p .build/universal
-
           lipo -create \
             .build/arm64-apple-macosx/release/xcstrings-crud \
             .build/x86_64-apple-macosx/release/xcstrings-crud \
             -output .build/universal/xcstrings-crud
-
-          lipo -create \
-            .build/arm64-apple-macosx/release/xcstrings-crud-mcp \
-            .build/x86_64-apple-macosx/release/xcstrings-crud-mcp \
-            -output .build/universal/xcstrings-crud-mcp
 
       - name: Create Archive
         env:
           TAG_NAME: ${{ github.ref_name }}
         run: |
           cd .build/universal
-          tar -czvf "xcstrings-crud-${TAG_NAME}-darwin-universal.tar.gz" xcstrings-crud xcstrings-crud-mcp
+          tar -czvf "xcstrings-crud-${TAG_NAME}-darwin-universal.tar.gz" xcstrings-crud
+
+      - name: Create Artifact Bundle
+        uses: giginet/github-action-artifactbundle@v2
+        id: artifactbundle
+        with:
+          artifact_name: xcstrings-crud
 
       - name: Generate Checksums
+        env:
+          BUNDLE_PATH: ${{ steps.artifactbundle.outputs.bundle_path }}
         run: |
           cd .build/universal
-          shasum -a 256 *.tar.gz > checksums.txt
+          cp "${BUNDLE_PATH}" .
+          shasum -a 256 *.tar.gz *.artifactbundle.zip > checksums.txt
 
       - name: Upload Release Assets
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            .build/universal/xcstrings-crud-*-darwin-universal.tar.gz
-            .build/universal/checksums.txt
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+          BUNDLE_FILENAME: ${{ steps.artifactbundle.outputs.bundle_filename }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${TAG_NAME}" \
+            ".build/universal/xcstrings-crud-${TAG_NAME}-darwin-universal.tar.gz" \
+            ".build/universal/${BUNDLE_FILENAME}" \
+            ".build/universal/checksums.txt"

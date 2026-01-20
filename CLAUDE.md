@@ -13,10 +13,9 @@ swift build -c release # Release build
 ## Architecture
 
 - `XCStringsKit/` - Core library (models, parser, reader, writer, stats)
-- `XCStringsCLI/` - CLI commands using ArgumentParser
+- `XCStringsCLI/` - CLI commands using ArgumentParser (includes MCP subcommand)
 - `XCStringsMCP/` - MCP server using swift-sdk
-- `xcstrings-crud/` - CLI entry point
-- `xcstrings-crud-mcp/` - MCP entry point
+- `xcstrings-crud/` - CLI entry point (`xcstrings-crud mcp` for MCP server)
 
 ## Code Style
 
