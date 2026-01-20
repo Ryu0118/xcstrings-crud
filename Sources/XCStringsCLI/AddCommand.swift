@@ -23,28 +23,45 @@ extension AddCommand {
         @Option(name: .shortAndLong, help: "Path to the xcstrings file")
         var file: String
 
-        @Option(name: .shortAndLong, help: "Language code for the translation")
+        @Option(name: .shortAndLong, help: "Language code for the translation (use with -v)")
         var lang: String?
 
-        @Option(name: .shortAndLong, help: "Translation value")
+        @Option(name: .shortAndLong, help: "Translation value (use with -l)")
         var value: String?
 
-        @Option(name: .long, help: "JSON object with multiple translations (e.g., '{\"ja\":\"こんにちは\",\"en\":\"Hello\"}')")
-        var translations: String?
+        @Option(name: .shortAndLong, parsing: .upToNextOption, help: "Translations in lang:value format (e.g., -t ja:こんにちは en:Hello)")
+        var translations: [String] = []
 
         @Flag(name: .long, help: "Output in pretty-printed JSON format")
         var pretty = false
 
+        func validate() throws {
+            let hasSingleLang = lang != nil && value != nil
+            let hasMultiple = !translations.isEmpty
+
+            if hasSingleLang && hasMultiple {
+                throw ValidationError("Cannot use both -l/-v and -t options together")
+            }
+
+            if !hasSingleLang && !hasMultiple {
+                throw ValidationError("Either -l and -v, or -t must be specified")
+            }
+
+            if (lang != nil) != (value != nil) {
+                throw ValidationError("Both -l and -v must be specified together")
+            }
+        }
+
         func run() async throws {
             let parser = XCStringsParser(path: file)
 
-            if let translationsJSON = translations {
-                let translationDict = try TranslationParser.parseJSON(translationsJSON)
-                try await parser.addTranslations(key: key, translations: translationDict)
+            if !translations.isEmpty {
+                let translationsDict = try TranslationParser.parse(translations)
+                try await parser.addTranslations(key: key, translations: translationsDict)
             } else if let lang = lang, let value = value {
                 try await parser.addTranslation(key: key, language: lang, value: value)
             } else {
-                throw ValidationError("Either --lang and --value, or --translations must be provided")
+                return
             }
 
             let result = CLIResult.success(message: "Translation added successfully")

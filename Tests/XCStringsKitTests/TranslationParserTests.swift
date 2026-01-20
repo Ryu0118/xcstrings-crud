@@ -94,49 +94,4 @@ struct TranslationParserTests {
         #expect(error.errorDescription?.contains("Empty language") == true)
     }
 
-    // MARK: - parseJSON
-
-    @Test("parseJSON converts JSON string to dictionary")
-    func parseJSONValid() throws {
-        let json = #"{"ja":"こんにちは","en":"Hello"}"#
-
-        let result = try TranslationParser.parseJSON(json)
-
-        #expect(result == ["ja": "こんにちは", "en": "Hello"])
-    }
-
-    @Test("parseJSON handles empty object")
-    func parseJSONEmpty() throws {
-        let json = "{}"
-
-        let result = try TranslationParser.parseJSON(json)
-
-        #expect(result.isEmpty)
-    }
-
-    @Test("parseJSON throws for invalid JSON")
-    func parseJSONInvalid() {
-        let json = "not valid json"
-
-        #expect(throws: TranslationParseError.self) {
-            _ = try TranslationParser.parseJSON(json)
-        }
-    }
-
-    @Test("parseJSON throws for non-string values")
-    func parseJSONNonStringValues() {
-        let json = #"{"ja":123}"#
-
-        #expect(throws: TranslationParseError.self) {
-            _ = try TranslationParser.parseJSON(json)
-        }
-    }
-
-    @Test("TranslationParseError.invalidJSON has descriptive message")
-    func errorInvalidJSON() {
-        let error = TranslationParseError.invalidJSON("bad json")
-
-        #expect(error.errorDescription?.contains("bad json") == true)
-        #expect(error.errorDescription?.contains("Invalid JSON") == true)
-    }
 }
