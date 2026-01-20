@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build for x86_64
+        run: swift build -c release --arch x86_64
+
+      - name: Build for arm64
+        run: swift build -c release --arch arm64
+
+      - name: Create Universal Binaries
+        run: |
+          mkdir -p .build/universal
+
+          lipo -create \
+            .build/arm64-apple-macosx/release/xcstrings-crud \
+            .build/x86_64-apple-macosx/release/xcstrings-crud \
+            -output .build/universal/xcstrings-crud
+
+          lipo -create \
+            .build/arm64-apple-macosx/release/xcstrings-mcp \
+            .build/x86_64-apple-macosx/release/xcstrings-mcp \
+            -output .build/universal/xcstrings-mcp
+
+      - name: Create Archive
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          cd .build/universal
+          tar -czvf "xcstrings-crud-${TAG_NAME}-darwin-universal.tar.gz" xcstrings-crud xcstrings-mcp
+
+      - name: Generate Checksums
+        run: |
+          cd .build/universal
+          shasum -a 256 *.tar.gz > checksums.txt
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            .build/universal/xcstrings-crud-*-darwin-universal.tar.gz
+            .build/universal/checksums.txt
