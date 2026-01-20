@@ -108,13 +108,6 @@ package actor XCStringsParser {
         try save(updated)
     }
 
-    /// Add or update a translation (upsert)
-    package func upsertTranslation(key: String, language: String, value: String) throws {
-        let file = try load()
-        let updated = try XCStringsWriter.upsertTranslation(in: file, key: key, language: language, value: value)
-        try save(updated)
-    }
-
     /// Rename a key
     package func renameKey(from oldKey: String, to newKey: String) throws {
         let file = try load()

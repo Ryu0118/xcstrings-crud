@@ -85,16 +85,6 @@ enum XCStringsWriter {
         return result
     }
 
-    /// Add or update a translation (upsert)
-    static func upsertTranslation(
-        in file: XCStringsFile,
-        key: String,
-        language: String,
-        value: String
-    ) throws -> XCStringsFile {
-        try addTranslation(to: file, key: key, language: language, value: value, allowOverwrite: true)
-    }
-
     /// Rename a key
     static func renameKey(
         in file: XCStringsFile,

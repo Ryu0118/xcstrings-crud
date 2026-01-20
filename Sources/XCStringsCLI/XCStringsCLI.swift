@@ -12,7 +12,6 @@ public struct XCStringsCLI: AsyncParsableCommand {
             CheckCommand.self,
             AddCommand.self,
             UpdateCommand.self,
-            UpsertCommand.self,
             DeleteCommand.self,
             RenameCommand.self,
             StatsCommand.self,

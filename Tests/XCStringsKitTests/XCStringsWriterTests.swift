@@ -90,26 +90,6 @@ struct XCStringsWriterTests {
         }
     }
 
-    // MARK: - upsertTranslation
-
-    @Test("upsertTranslation creates new translation")
-    func upsertCreates() throws {
-        var file = try loadFixture(TestFixtures.empty)
-
-        file = try XCStringsWriter.upsertTranslation(in: file, key: "NewKey", language: "en", value: "Value")
-
-        #expect(file.strings["NewKey"]?.localizations?["en"]?.stringUnit?.value == "Value")
-    }
-
-    @Test("upsertTranslation updates existing translation")
-    func upsertUpdates() throws {
-        var file = try loadFixture(TestFixtures.singleKeySingleLang)
-
-        file = try XCStringsWriter.upsertTranslation(in: file, key: "Hello", language: "en", value: "Updated")
-
-        #expect(file.strings["Hello"]?.localizations?["en"]?.stringUnit?.value == "Updated")
-    }
-
     // MARK: - renameKey
 
     @Test("renameKey renames key")

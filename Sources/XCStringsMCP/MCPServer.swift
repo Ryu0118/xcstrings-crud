@@ -170,20 +170,6 @@ public struct XCStringsMCPServer {
                 ])
             ),
             Tool(
-                name: "xcstrings_upsert_translation",
-                description: "Add or update a translation (upsert)",
-                inputSchema: .object([
-                    "type": .string("object"),
-                    "properties": .object([
-                        "file": .object(["type": .string("string"), "description": .string("Path to the xcstrings file")]),
-                        "key": .object(["type": .string("string"), "description": .string("The key to add or update translation for")]),
-                        "language": .object(["type": .string("string"), "description": .string("Language code for the translation")]),
-                        "value": .object(["type": .string("string"), "description": .string("Translation value")]),
-                    ]),
-                    "required": .array([.string("file"), .string("key"), .string("language"), .string("value")]),
-                ])
-            ),
-            Tool(
                 name: "xcstrings_rename_key",
                 description: "Rename a key",
                 inputSchema: .object([
@@ -319,16 +305,6 @@ public struct XCStringsMCPServer {
             }
             try await parser.updateTranslation(key: key, language: language, value: value)
             return "Translation updated successfully"
-
-        case "xcstrings_upsert_translation":
-            guard let key = args["key"]?.stringValue,
-                  let language = args["language"]?.stringValue,
-                  let value = args["value"]?.stringValue
-            else {
-                throw XCStringsError.invalidJSON(reason: "Missing required parameters")
-            }
-            try await parser.upsertTranslation(key: key, language: language, value: value)
-            return "Translation upserted successfully"
 
         case "xcstrings_rename_key":
             guard let oldKey = args["oldKey"]?.stringValue,
