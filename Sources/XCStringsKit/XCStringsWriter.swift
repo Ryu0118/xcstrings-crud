@@ -191,4 +191,58 @@ enum XCStringsWriter {
 
         return result
     }
+
+    // MARK: - Batch Operations
+
+    /// Add translations for multiple keys at once
+    static func addTranslationsBatch(
+        to file: XCStringsFile,
+        entries: [BatchTranslationEntry],
+        allowOverwrite: Bool = false
+    ) -> (file: XCStringsFile, result: BatchWriteResult) {
+        var result = file
+        var succeeded: [String] = []
+        var failed: [BatchWriteError] = []
+
+        for entry in entries {
+            do {
+                result = try addTranslations(
+                    to: result,
+                    key: entry.key,
+                    translations: entry.translations,
+                    allowOverwrite: allowOverwrite
+                )
+                succeeded.append(entry.key)
+            } catch {
+                failed.append(BatchWriteError(key: entry.key, error: error.localizedDescription))
+            }
+        }
+
+        return (result, BatchWriteResult(succeeded: succeeded, failed: failed))
+    }
+
+    /// Update translations for multiple keys at once
+    static func updateTranslationsBatch(
+        in file: XCStringsFile,
+        entries: [BatchTranslationEntry]
+    ) -> (file: XCStringsFile, result: BatchWriteResult) {
+        var result = file
+        var succeeded: [String] = []
+        var failed: [BatchWriteError] = []
+
+        for entry in entries {
+            do {
+                result = try updateTranslations(
+                    in: result,
+                    key: entry.key,
+                    translations: entry.translations
+                )
+                succeeded.append(entry.key)
+            } catch {
+                failed.append(BatchWriteError(key: entry.key, error: error.localizedDescription))
+            }
+        }
+
+        return (result, BatchWriteResult(succeeded: succeeded, failed: failed))
+    }
 }

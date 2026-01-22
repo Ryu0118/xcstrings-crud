@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("Error Handling")
+@Suite("Error handling for invalid files, malformed JSON, and edge cases")
 struct ErrorHandlingTests {
     @Test("Parser throws for non-existent file")
     func fileNotFound() async throws {

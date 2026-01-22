@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("Concurrent Access")
+@Suite("Thread safety for concurrent read operations")
 struct ConcurrentAccessTests {
     @Test("Concurrent reads are safe")
     func concurrentReads() async throws {

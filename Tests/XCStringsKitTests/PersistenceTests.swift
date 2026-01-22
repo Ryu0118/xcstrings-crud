@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("Persistence")
+@Suite("Verifying changes are correctly saved to disk after operations")
 struct PersistenceTests {
     @Test("Changes are persisted to file", arguments: [
         FixtureType.empty,

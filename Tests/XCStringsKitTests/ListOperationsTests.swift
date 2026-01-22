@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("List Operations")
+@Suite("Listing keys, languages, and untranslated entries from xcstrings files")
 struct ListOperationsTests {
     @Test("listKeys returns correct count", arguments: FixtureType.allCases)
     func listKeysCount(fixture: FixtureType) async throws {

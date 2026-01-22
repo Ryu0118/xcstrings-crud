@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("TranslationParser")
+@Suite("Parsing lang:value format strings into translation dictionaries")
 struct TranslationParserTests {
     // MARK: - parse
 

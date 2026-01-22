@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("Update Operations")
+@Suite("Updating existing translations in xcstrings files")
 struct UpdateOperationsTests {
     @Test("updateTranslation updates existing translation", arguments: [
         (FixtureType.singleKeySingleLang, "Hello", "en", "Hi there"),
