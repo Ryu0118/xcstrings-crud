@@ -70,13 +70,28 @@ public struct XCStringsMCPServer {
             ),
             Tool(
                 name: "xcstrings_list_stale",
-                description: "List keys with stale extraction state (potentially unused keys). Note: This only detects keys marked as 'stale' by Xcode. To verify if these keys are truly unused, you should search for their usage in the module or project's source code.",
+                description: "List keys with stale extraction state (potentially unused keys) in a single file. Note: This only detects keys marked as 'stale' by Xcode. To verify if these keys are truly unused, you should search for their usage in the module or project's source code.",
                 inputSchema: .object([
                     "type": .string("object"),
                     "properties": .object([
                         "file": .object(["type": .string("string"), "description": .string("Path to the xcstrings file")]),
                     ]),
                     "required": .array([.string("file")]),
+                ])
+            ),
+            Tool(
+                name: "xcstrings_batch_list_stale",
+                description: "List keys with stale extraction state across multiple xcstrings files at once. Returns stale keys per file and total count.",
+                inputSchema: .object([
+                    "type": .string("object"),
+                    "properties": .object([
+                        "files": .object([
+                            "type": .string("array"),
+                            "items": .object(["type": .string("string")]),
+                            "description": .string("Array of paths to xcstrings files"),
+                        ]),
+                    ]),
+                    "required": .array([.string("files")]),
                 ])
             ),
             Tool(

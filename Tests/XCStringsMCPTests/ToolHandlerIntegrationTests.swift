@@ -73,6 +73,27 @@ struct ToolHandlerIntegrationTests {
         #expect(!result.contains("\"ActiveKey\""))
     }
 
+    @Test("BatchListStaleHandler returns stale keys across multiple files")
+    func batchListStaleHandler() async throws {
+        let path1 = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)
+        let path2 = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
+        defer {
+            TestHelper.removeTempFile(at: path1)
+            TestHelper.removeTempFile(at: path2)
+        }
+
+        let handler = BatchListStaleHandler()
+        let context = ToolContext(arguments: ToolArguments(raw: [
+            "files": .array([.string(path1), .string(path2)])
+        ]))
+
+        let result = try await handler.execute(with: context)
+        #expect(result.contains("StaleKey1"))
+        #expect(result.contains("StaleKey2"))
+        #expect(result.contains("totalStaleKeys"))
+        #expect(result.contains("note"))
+    }
+
     // MARK: - Get Handlers
 
     @Test("GetSourceLanguageHandler returns source language")

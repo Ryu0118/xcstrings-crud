@@ -17,6 +17,7 @@ actor ToolHandlerRegistry {
         ListLanguagesHandler.toolName: ListLanguagesHandler(),
         ListUntranslatedHandler.toolName: ListUntranslatedHandler(),
         ListStaleHandler.toolName: ListStaleHandler(),
+        BatchListStaleHandler.toolName: BatchListStaleHandler(),
 
         // Get handlers
         GetSourceLanguageHandler.toolName: GetSourceLanguageHandler(),

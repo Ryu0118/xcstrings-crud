@@ -37,6 +37,58 @@ swift build -c release
 
 Binary will be at `.build/release/xcstrings-crud`.
 
+## MCP Server
+
+The MCP server is available as a subcommand:
+
+```bash
+xcstrings-crud mcp
+```
+
+### Configuration
+
+Add to your Claude Code MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "xcstrings-crud": {
+      "command": "xcstrings-crud",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+### Available Tools
+
+| Tool | Description |
+|------|-------------|
+| `xcstrings_create_file` | Create a new xcstrings file |
+| `xcstrings_list_keys` | List all keys |
+| `xcstrings_list_languages` | List supported languages |
+| `xcstrings_list_untranslated` | List untranslated keys |
+| `xcstrings_list_stale` | List keys with stale extraction state |
+| `xcstrings_batch_list_stale` | List stale keys across multiple files |
+| `xcstrings_get_source_language` | Get source language |
+| `xcstrings_get_key` | Get translations for a key |
+| `xcstrings_check_key` | Check if key exists |
+| `xcstrings_check_coverage` | Check key language coverage |
+| `xcstrings_stats_coverage` | Get overall coverage statistics |
+| `xcstrings_stats_progress` | Get translation progress by language |
+| `xcstrings_batch_stats_coverage` | Get coverage for multiple files at once |
+| `xcstrings_batch_check_keys` | Check if multiple keys exist |
+| `xcstrings_batch_add_translations` | Add translations for multiple keys at once |
+| `xcstrings_batch_update_translations` | Update translations for multiple keys at once |
+| `xcstrings_add_translation` | Add translation for single language |
+| `xcstrings_add_translations` | Add translations for multiple languages |
+| `xcstrings_update_translation` | Update translation for single language |
+| `xcstrings_update_translations` | Update translations for multiple languages |
+| `xcstrings_rename_key` | Rename key |
+| `xcstrings_delete_key` | Delete entire key |
+| `xcstrings_delete_translation` | Delete translation for single language |
+| `xcstrings_delete_translations` | Delete translations for multiple languages |
+
 ## CLI Usage
 
 ### Create Operations
@@ -66,6 +118,9 @@ xcstrings-crud list untranslated --file path/to/Localizable.xcstrings --lang ja
 
 # List stale keys (potentially unused)
 xcstrings-crud list stale --file path/to/Localizable.xcstrings
+
+# List stale keys across multiple files
+xcstrings-crud batch stale -f file1.xcstrings file2.xcstrings file3.xcstrings
 
 # Get source language
 xcstrings-crud get source-language --file path/to/Localizable.xcstrings
@@ -125,6 +180,9 @@ xcstrings-crud delete key "Hello" --file path/to/Localizable.xcstrings -l ja en 
 ### Batch Operations
 
 ```bash
+# List stale keys across multiple files
+xcstrings-crud batch stale -f file1.xcstrings file2.xcstrings file3.xcstrings
+
 # Check if multiple keys exist
 xcstrings-crud batch check --file path/to/Localizable.xcstrings -k Hello Goodbye Welcome
 
@@ -150,57 +208,6 @@ xcstrings-crud batch update --file path/to/Localizable.xcstrings \
 
 - `--file <path>`: xcstrings file path (required)
 - `--pretty`: Pretty-printed JSON output
-
-## MCP Server
-
-The MCP server is available as a subcommand:
-
-```bash
-xcstrings-crud mcp
-```
-
-### Configuration
-
-Add to your Claude Code MCP settings:
-
-```json
-{
-  "mcpServers": {
-    "xcstrings-crud": {
-      "command": "xcstrings-crud",
-      "args": ["mcp"]
-    }
-  }
-}
-```
-
-### Available Tools
-
-| Tool | Description |
-|------|-------------|
-| `xcstrings_create_file` | Create a new xcstrings file |
-| `xcstrings_list_keys` | List all keys |
-| `xcstrings_list_languages` | List supported languages |
-| `xcstrings_list_untranslated` | List untranslated keys |
-| `xcstrings_list_stale` | List keys with stale extraction state |
-| `xcstrings_get_source_language` | Get source language |
-| `xcstrings_get_key` | Get translations for a key |
-| `xcstrings_check_key` | Check if key exists |
-| `xcstrings_check_coverage` | Check key language coverage |
-| `xcstrings_stats_coverage` | Get overall coverage statistics |
-| `xcstrings_stats_progress` | Get translation progress by language |
-| `xcstrings_batch_stats_coverage` | Get coverage for multiple files at once |
-| `xcstrings_batch_check_keys` | Check if multiple keys exist |
-| `xcstrings_batch_add_translations` | Add translations for multiple keys at once |
-| `xcstrings_batch_update_translations` | Update translations for multiple keys at once |
-| `xcstrings_add_translation` | Add translation for single language |
-| `xcstrings_add_translations` | Add translations for multiple languages |
-| `xcstrings_update_translation` | Update translation for single language |
-| `xcstrings_update_translations` | Update translations for multiple languages |
-| `xcstrings_rename_key` | Rename key |
-| `xcstrings_delete_key` | Delete entire key |
-| `xcstrings_delete_translation` | Delete translation for single language |
-| `xcstrings_delete_translations` | Delete translations for multiple languages |
 
 ## Requirements
 
