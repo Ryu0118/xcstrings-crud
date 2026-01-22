@@ -59,4 +59,38 @@ struct ListOperationsTests {
 
         #expect(untranslated == expectedKeys)
     }
+
+    @Test("listStaleKeys returns keys with stale extraction state")
+    func listStaleKeys() async throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let parser = XCStringsParser(path: path)
+        let staleKeys = try await parser.listStaleKeys()
+
+        #expect(staleKeys == ["StaleKey1", "StaleKey2"])
+    }
+
+    @Test("listStaleKeys returns empty array when no stale keys")
+    func listStaleKeysEmpty() async throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let parser = XCStringsParser(path: path)
+        let staleKeys = try await parser.listStaleKeys()
+
+        #expect(staleKeys.isEmpty)
+    }
+
+    @Test("listStaleKeys ignores other extraction states")
+    func listStaleKeysIgnoresOtherStates() async throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.withComments)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let parser = XCStringsParser(path: path)
+        let staleKeys = try await parser.listStaleKeys()
+
+        // withComments has "manual" extraction state, not "stale"
+        #expect(staleKeys.isEmpty)
+    }
 }

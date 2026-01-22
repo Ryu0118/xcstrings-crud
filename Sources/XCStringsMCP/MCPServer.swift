@@ -69,6 +69,17 @@ public struct XCStringsMCPServer {
                 ])
             ),
             Tool(
+                name: "xcstrings_list_stale",
+                description: "List keys with stale extraction state (potentially unused keys). Note: This only detects keys marked as 'stale' by Xcode. To verify if these keys are truly unused, you should search for their usage in the module or project's source code.",
+                inputSchema: .object([
+                    "type": .string("object"),
+                    "properties": .object([
+                        "file": .object(["type": .string("string"), "description": .string("Path to the xcstrings file")]),
+                    ]),
+                    "required": .array([.string("file")]),
+                ])
+            ),
+            Tool(
                 name: "xcstrings_get_source_language",
                 description: "Get the source language of the xcstrings file",
                 inputSchema: .object([
@@ -338,6 +349,16 @@ public struct XCStringsMCPServer {
             }
             let untranslated = try await parser.listUntranslated(for: language)
             return try String(data: encoder.encode(untranslated), encoding: .utf8) ?? "[]"
+
+        case "xcstrings_list_stale":
+            let staleKeys = try await parser.listStaleKeys()
+            let response: [String: Any] = [
+                "staleKeys": staleKeys,
+                "count": staleKeys.count,
+                "note": "These keys are marked as 'stale' by Xcode, indicating they may no longer be used in source code. Please verify by searching for these keys in the module or project source code before deleting them."
+            ]
+            let jsonData = try JSONSerialization.data(withJSONObject: response, options: [.prettyPrinted, .sortedKeys])
+            return String(data: jsonData, encoding: .utf8) ?? "{}"
 
         case "xcstrings_get_source_language":
             return try await parser.getSourceLanguage()

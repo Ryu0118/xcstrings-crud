@@ -316,6 +316,40 @@ enum TestFixtures {
       "version": "1.0"
     }
     """
+
+    /// Keys with stale extraction state
+    static let withStaleKeys = """
+    {
+      "sourceLanguage": "en",
+      "strings": {
+        "ActiveKey": {
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Active" } }
+          }
+        },
+        "StaleKey1": {
+          "extractionState": "stale",
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Stale 1" } }
+          }
+        },
+        "StaleKey2": {
+          "extractionState": "stale",
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Stale 2" } },
+            "ja": { "stringUnit": { "state": "translated", "value": "古い2" } }
+          }
+        },
+        "ManualKey": {
+          "extractionState": "manual",
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Manual" } }
+          }
+        }
+      },
+      "version": "1.0"
+    }
+    """
 }
 
 /// Test helper utilities
