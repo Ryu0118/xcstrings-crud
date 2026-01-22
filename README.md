@@ -39,6 +39,19 @@ Binary will be at `.build/release/xcstrings-crud`.
 
 ## CLI Usage
 
+### Create Operations
+
+```bash
+# Create a new xcstrings file
+xcstrings-crud create path/to/Localizable.xcstrings
+
+# Create with specific source language
+xcstrings-crud create path/to/Localizable.xcstrings --source-language ja
+
+# Overwrite existing file
+xcstrings-crud create path/to/Localizable.xcstrings --overwrite
+```
+
 ### Read Operations
 
 ```bash
@@ -50,6 +63,9 @@ xcstrings-crud list languages --file path/to/Localizable.xcstrings
 
 # List untranslated keys for a language
 xcstrings-crud list untranslated --file path/to/Localizable.xcstrings --lang ja
+
+# List stale keys (potentially unused)
+xcstrings-crud list stale --file path/to/Localizable.xcstrings
 
 # Get source language
 xcstrings-crud get source-language --file path/to/Localizable.xcstrings
@@ -74,7 +90,7 @@ xcstrings-crud stats progress --file path/to/Localizable.xcstrings --lang ja
 xcstrings-crud stats batch-coverage -f file1.xcstrings file2.xcstrings file3.xcstrings
 ```
 
-### Create/Update Operations
+### Update Operations
 
 ```bash
 # Add translation (single language)
@@ -104,6 +120,30 @@ xcstrings-crud delete key "Hello" --file path/to/Localizable.xcstrings -l ja
 
 # Delete translations for multiple languages
 xcstrings-crud delete key "Hello" --file path/to/Localizable.xcstrings -l ja en fr
+```
+
+### Batch Operations
+
+```bash
+# Check if multiple keys exist
+xcstrings-crud batch check --file path/to/Localizable.xcstrings -k Hello Goodbye Welcome
+
+# Check with specific language
+xcstrings-crud batch check --file path/to/Localizable.xcstrings -k Hello Goodbye -l ja
+
+# Add translations for multiple keys at once
+xcstrings-crud batch add --file path/to/Localizable.xcstrings \
+  -e "Hello=ja:こんにちは,en:Hello" \
+  -e "Goodbye=ja:さようなら,en:Goodbye"
+
+# Add with overwrite (replace existing translations)
+xcstrings-crud batch add --file path/to/Localizable.xcstrings --overwrite \
+  -e "Hello=ja:こんにちは,en:Hello"
+
+# Update translations for multiple keys at once
+xcstrings-crud batch update --file path/to/Localizable.xcstrings \
+  -e "Hello=ja:こんにちは！,en:Hello!" \
+  -e "Goodbye=ja:さようなら！"
 ```
 
 ### Common Options
@@ -138,9 +178,11 @@ Add to your Claude Code MCP settings:
 
 | Tool | Description |
 |------|-------------|
+| `xcstrings_create_file` | Create a new xcstrings file |
 | `xcstrings_list_keys` | List all keys |
 | `xcstrings_list_languages` | List supported languages |
 | `xcstrings_list_untranslated` | List untranslated keys |
+| `xcstrings_list_stale` | List keys with stale extraction state |
 | `xcstrings_get_source_language` | Get source language |
 | `xcstrings_get_key` | Get translations for a key |
 | `xcstrings_check_key` | Check if key exists |
@@ -148,6 +190,9 @@ Add to your Claude Code MCP settings:
 | `xcstrings_stats_coverage` | Get overall coverage statistics |
 | `xcstrings_stats_progress` | Get translation progress by language |
 | `xcstrings_batch_stats_coverage` | Get coverage for multiple files at once |
+| `xcstrings_batch_check_keys` | Check if multiple keys exist |
+| `xcstrings_batch_add_translations` | Add translations for multiple keys at once |
+| `xcstrings_batch_update_translations` | Update translations for multiple keys at once |
 | `xcstrings_add_translation` | Add translation for single language |
 | `xcstrings_add_translations` | Add translations for multiple languages |
 | `xcstrings_update_translation` | Update translation for single language |
