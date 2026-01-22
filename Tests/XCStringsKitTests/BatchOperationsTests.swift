@@ -4,32 +4,116 @@ import Testing
 
 @Suite("Batch operations for checking, adding, and updating multiple keys at once")
 struct BatchOperationsTests {
+    // MARK: - Test Cases
+
+    struct CheckKeysTestCase: Sendable {
+        let fixture: FixtureType
+        let keys: [String]
+        let language: String?
+        let expectedExisting: [String]
+        let expectedMissing: [String]
+
+        static let allCases: [CheckKeysTestCase] = [
+            CheckKeysTestCase(
+                fixture: .multipleKeysPartialTranslations,
+                keys: ["Hello", "Goodbye", "Welcome", "NonExistent"],
+                language: nil,
+                expectedExisting: ["Goodbye", "Hello", "Welcome"],
+                expectedMissing: ["NonExistent"]
+            ),
+            CheckKeysTestCase(
+                fixture: .multipleKeysPartialTranslations,
+                keys: ["Hello", "Goodbye", "Welcome"],
+                language: "ja",
+                expectedExisting: ["Hello", "Welcome"],
+                expectedMissing: ["Goodbye"]
+            ),
+            CheckKeysTestCase(
+                fixture: .multipleKeysPartialTranslations,
+                keys: ["Hello", "Goodbye", "Welcome"],
+                language: "de",
+                expectedExisting: ["Welcome"],
+                expectedMissing: ["Goodbye", "Hello"]
+            ),
+            CheckKeysTestCase(
+                fixture: .singleKeySingleLang,
+                keys: [],
+                language: nil,
+                expectedExisting: [],
+                expectedMissing: []
+            ),
+        ]
+    }
+
+    struct BatchAddTestCase: Sendable {
+        let fixture: FixtureType
+        let allowOverwrite: Bool
+        let expectedSuccess: Int
+        let expectedFailed: Int
+        let expectedSucceeded: [String]
+        let expectedFailedKeys: [String]
+
+        static let allCases: [BatchAddTestCase] = [
+            BatchAddTestCase(
+                fixture: .singleKeySingleLang,
+                allowOverwrite: false,
+                expectedSuccess: 1,
+                expectedFailed: 1,
+                expectedSucceeded: ["NewKey"],
+                expectedFailedKeys: ["Hello"]
+            ),
+            BatchAddTestCase(
+                fixture: .singleKeySingleLang,
+                allowOverwrite: true,
+                expectedSuccess: 2,
+                expectedFailed: 0,
+                expectedSucceeded: ["Hello", "NewKey"],
+                expectedFailedKeys: []
+            ),
+        ]
+    }
+
+    struct BatchUpdateFailureTestCase: Sendable {
+        let fixture: FixtureType
+        let key: String
+        let translations: [String: String]
+        let expectedFailedKey: String
+
+        static let allCases: [BatchUpdateFailureTestCase] = [
+            BatchUpdateFailureTestCase(
+                fixture: .singleKeySingleLang,
+                key: "NonExistent",
+                translations: ["en": "Value"],
+                expectedFailedKey: "NonExistent"
+            ),
+            BatchUpdateFailureTestCase(
+                fixture: .singleKeySingleLang,
+                key: "Hello",
+                translations: ["fr": "Bonjour"],
+                expectedFailedKey: "Hello"
+            ),
+        ]
+    }
+
     // MARK: - Check Keys Tests
 
-    @Test("checkKeys returns correct results for multiple keys", arguments: [
-        (FixtureType.multipleKeysPartialTranslations, ["Hello", "Goodbye", "Welcome", "NonExistent"], nil as String?, ["Goodbye", "Hello", "Welcome"], ["NonExistent"]),
-        (FixtureType.multipleKeysPartialTranslations, ["Hello", "Goodbye", "Welcome"], "ja", ["Hello", "Welcome"], ["Goodbye"]),
-        (FixtureType.multipleKeysPartialTranslations, ["Hello", "Goodbye", "Welcome"], "de", ["Welcome"], ["Goodbye", "Hello"]),
-        (FixtureType.singleKeySingleLang, [], nil as String?, [] as [String], [] as [String]),
-    ])
-    func checkKeysMultiple(fixture: FixtureType, keys: [String], language: String?, expectedExisting: [String], expectedMissing: [String]) async throws {
-        let path = try TestHelper.createTempFile(content: fixture.content)
+    @Test("checkKeys returns correct results for multiple keys", arguments: CheckKeysTestCase.allCases)
+    func checkKeysMultiple(testCase: CheckKeysTestCase) async throws {
+        let path = try TestHelper.createTempFile(content: testCase.fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
 
         let parser = XCStringsParser(path: path)
-        let result = try await parser.checkKeys(keys, language: language)
+        let result = try await parser.checkKeys(testCase.keys, language: testCase.language)
 
-        #expect(result.existingKeys == expectedExisting)
-        #expect(result.missingKeys == expectedMissing)
+        #expect(result.existingKeys == testCase.expectedExisting)
+        #expect(result.missingKeys == testCase.expectedMissing)
     }
 
     // MARK: - Batch Add Translations Tests
 
-    @Test("addTranslationsBatch adds multiple keys successfully", arguments: [
-        FixtureType.empty,
-    ])
-    func addTranslationsBatchMultipleKeys(fixture: FixtureType) async throws {
-        let path = try TestHelper.createTempFile(content: fixture.content)
+    @Test("addTranslationsBatch adds multiple keys successfully")
+    func addTranslationsBatchMultipleKeys() async throws {
+        let path = try TestHelper.createTempFile(content: FixtureType.empty.content)
         defer { TestHelper.removeTempFile(at: path) }
 
         let parser = XCStringsParser(path: path)
@@ -54,12 +138,9 @@ struct BatchOperationsTests {
         #expect(translation["ja"]?.value == "こんにちは")
     }
 
-    @Test("addTranslationsBatch handles duplicate and overwrite scenarios", arguments: [
-        (FixtureType.singleKeySingleLang, false, 1, 1, ["NewKey"], ["Hello"]),
-        (FixtureType.singleKeySingleLang, true, 2, 0, ["Hello", "NewKey"], [] as [String]),
-    ])
-    func addTranslationsBatchDuplicateHandling(fixture: FixtureType, allowOverwrite: Bool, expectedSuccess: Int, expectedFailed: Int, expectedSucceeded: [String], expectedFailedKeys: [String]) async throws {
-        let path = try TestHelper.createTempFile(content: fixture.content)
+    @Test("addTranslationsBatch handles duplicate and overwrite scenarios", arguments: BatchAddTestCase.allCases)
+    func addTranslationsBatchDuplicateHandling(testCase: BatchAddTestCase) async throws {
+        let path = try TestHelper.createTempFile(content: testCase.fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
 
         let parser = XCStringsParser(path: path)
@@ -68,12 +149,12 @@ struct BatchOperationsTests {
             BatchTranslationEntry(key: "NewKey", translations: ["en": "New Value"]),
         ]
 
-        let result = try await parser.addTranslationsBatch(entries: entries, allowOverwrite: allowOverwrite)
+        let result = try await parser.addTranslationsBatch(entries: entries, allowOverwrite: testCase.allowOverwrite)
 
-        #expect(result.successCount == expectedSuccess)
-        #expect(result.failedCount == expectedFailed)
-        #expect(Set(result.succeeded) == Set(expectedSucceeded))
-        #expect(Set(result.failed.map(\.key)) == Set(expectedFailedKeys))
+        #expect(result.successCount == testCase.expectedSuccess)
+        #expect(result.failedCount == testCase.expectedFailed)
+        #expect(Set(result.succeeded) == Set(testCase.expectedSucceeded))
+        #expect(Set(result.failed.map(\.key)) == Set(testCase.expectedFailedKeys))
     }
 
     // MARK: - Batch Update Translations Tests
@@ -101,24 +182,21 @@ struct BatchOperationsTests {
         #expect(welcomeTranslation["en"]?.value == "Welcome!")
     }
 
-    @Test("updateTranslationsBatch fails for invalid scenarios", arguments: [
-        (FixtureType.singleKeySingleLang, "NonExistent", ["en": "Value"], "NonExistent"),
-        (FixtureType.singleKeySingleLang, "Hello", ["fr": "Bonjour"], "Hello"),
-    ])
-    func updateTranslationsBatchFailures(fixture: FixtureType, key: String, translations: [String: String], expectedFailedKey: String) async throws {
-        let path = try TestHelper.createTempFile(content: fixture.content)
+    @Test("updateTranslationsBatch fails for invalid scenarios", arguments: BatchUpdateFailureTestCase.allCases)
+    func updateTranslationsBatchFailures(testCase: BatchUpdateFailureTestCase) async throws {
+        let path = try TestHelper.createTempFile(content: testCase.fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
 
         let parser = XCStringsParser(path: path)
         let entries = [
-            BatchTranslationEntry(key: key, translations: translations),
+            BatchTranslationEntry(key: testCase.key, translations: testCase.translations),
         ]
 
         let result = try await parser.updateTranslationsBatch(entries: entries)
 
         #expect(result.successCount == 0)
         #expect(result.failedCount == 1)
-        #expect(result.failed[0].key == expectedFailedKey)
+        #expect(result.failed[0].key == testCase.expectedFailedKey)
     }
 
     @Test("updateTranslationsBatch with mixed success and failure")
