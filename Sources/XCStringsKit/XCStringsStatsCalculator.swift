@@ -13,34 +13,25 @@ struct XCStringsStatsCalculator: Sendable {
     /// Get overall statistics
     func getStats() -> StatsInfo {
         let allLanguages = reader.listLanguages()
+        let entries = file.strings.values
 
-        var coverageByLanguage: [String: LanguageStats] = [:]
+        let coverageByLanguage = Dictionary(uniqueKeysWithValues: allLanguages.lazy.map { language in
+            let translated = entries.lazy.filter { entry in
+                let localization = entry.localizations?[language]
+                return localization?.stringUnit?.value != nil || localization?.variations != nil
+            }.count
 
-        for language in allLanguages {
-            var translated = 0
-            var untranslated = 0
-
-            for entry in file.strings.values {
-                let isTranslated = entry.localizations?[language]?.stringUnit?.value != nil
-                    || entry.localizations?[language]?.variations != nil
-
-                if isTranslated {
-                    translated += 1
-                } else {
-                    untranslated += 1
-                }
-            }
-
-            let total = translated + untranslated
+            let total = entries.count
+            let untranslated = total - translated
             let coveragePercent = total == 0 ? 0 : Double(translated) / Double(total) * 100
 
-            coverageByLanguage[language] = LanguageStats(
+            return (language, LanguageStats(
                 translated: translated,
                 untranslated: untranslated,
                 total: total,
                 coveragePercent: coveragePercent
-            )
-        }
+            ))
+        })
 
         return StatsInfo(
             totalKeys: file.strings.count,
@@ -83,13 +74,12 @@ struct XCStringsStatsCalculator: Sendable {
         let totalKeys = summaries.reduce(0) { $0 + $1.totalKeys }
 
         // Calculate weighted average coverage by language
-        var languageTotals: [String: (sum: Double, count: Int)] = [:]
-        for summary in summaries {
-            for (lang, coverage) in summary.languages {
-                let current = languageTotals[lang] ?? (sum: 0, count: 0)
-                languageTotals[lang] = (sum: current.sum + coverage, count: current.count + 1)
+        let languageTotals = summaries.lazy
+            .flatMap(\.languages)
+            .reduce(into: [String: (sum: Double, count: Int)]()) { totals, pair in
+                let current = totals[pair.key] ?? (sum: 0, count: 0)
+                totals[pair.key] = (sum: current.sum + pair.value, count: current.count + 1)
             }
-        }
         let averageCoverage = languageTotals.mapValues { $0.sum / Double($0.count) }
 
         return BatchCoverageSummary(

@@ -82,6 +82,12 @@ package actor XCStringsParser {
         return XCStringsReader(file: file).checkKey(key, language: language)
     }
 
+    /// Check if multiple keys exist
+    package func checkKeys(_ keys: [String], language: String?) throws -> BatchCheckKeysResult {
+        let file = try load()
+        return XCStringsReader(file: file).checkKeys(keys, language: language)
+    }
+
     /// Check coverage for a key
     package func checkCoverage(_ key: String) throws -> CoverageInfo {
         let file = try load()
@@ -158,6 +164,24 @@ package actor XCStringsParser {
         let file = try load()
         let updated = try XCStringsWriter.updateTranslations(in: file, key: key, translations: translations)
         try save(updated)
+    }
+
+    // MARK: - Batch Operations (Multiple Keys)
+
+    /// Add translations for multiple keys at once
+    package func addTranslationsBatch(entries: [BatchTranslationEntry], allowOverwrite: Bool = false) throws -> BatchWriteResult {
+        let file = try load()
+        let (updated, result) = XCStringsWriter.addTranslationsBatch(to: file, entries: entries, allowOverwrite: allowOverwrite)
+        try save(updated)
+        return result
+    }
+
+    /// Update translations for multiple keys at once
+    package func updateTranslationsBatch(entries: [BatchTranslationEntry]) throws -> BatchWriteResult {
+        let file = try load()
+        let (updated, result) = XCStringsWriter.updateTranslationsBatch(in: file, entries: entries)
+        try save(updated)
+        return result
     }
 
     /// Rename a key

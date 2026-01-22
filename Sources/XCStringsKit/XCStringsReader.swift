@@ -15,32 +15,21 @@ struct XCStringsReader: Sendable {
 
     /// Get all languages used in the file
     func listLanguages() -> [String] {
-        var languages = Set<String>()
-        languages.insert(file.sourceLanguage)
-
-        for entry in file.strings.values {
-            if let localizations = entry.localizations {
-                languages.formUnion(localizations.keys)
-            }
-        }
-
-        return languages.sorted()
+        file.strings.values.lazy
+            .compactMap(\.localizations?.keys)
+            .reduce(into: Set([file.sourceLanguage])) { $0.formUnion($1) }
+            .sorted()
     }
 
     /// Get untranslated keys for a specific language
     func listUntranslated(for language: String) -> [String] {
-        var untranslated: [String] = []
-
-        for (key, entry) in file.strings {
-            let isTranslated = entry.localizations?[language]?.stringUnit?.value != nil
-                || entry.localizations?[language]?.variations != nil
-
-            if !isTranslated {
-                untranslated.append(key)
+        file.strings
+            .filter { _, entry in
+                let localization = entry.localizations?[language]
+                return localization?.stringUnit?.value == nil && localization?.variations == nil
             }
-        }
-
-        return untranslated.sorted()
+            .keys
+            .sorted()
     }
 
     /// Get keys with stale extraction state
@@ -92,18 +81,16 @@ struct XCStringsReader: Sendable {
             } else {
                 throw XCStringsError.languageNotFound(language: lang, key: key)
             }
-        } else {
-            if let localizations = entry.localizations {
-                for (lang, localization) in localizations {
-                    result[lang] = TranslationInfo(
-                        key: key,
-                        language: lang,
-                        value: localization.stringUnit?.value,
-                        state: localization.stringUnit?.state,
-                        hasVariations: localization.variations != nil
-                    )
-                }
-            }
+        } else if let localizations = entry.localizations {
+            result = Dictionary(uniqueKeysWithValues: localizations.map { lang, localization in
+                (lang, TranslationInfo(
+                    key: key,
+                    language: lang,
+                    value: localization.stringUnit?.value,
+                    state: localization.stringUnit?.state,
+                    hasVariations: localization.variations != nil
+                ))
+            })
         }
 
         return result
@@ -120,6 +107,12 @@ struct XCStringsReader: Sendable {
         }
 
         return true
+    }
+
+    /// Check if multiple keys exist
+    func checkKeys(_ keys: [String], language: String?) -> BatchCheckKeysResult {
+        let results = Dictionary(uniqueKeysWithValues: keys.lazy.map { ($0, checkKey($0, language: language)) })
+        return BatchCheckKeysResult(results: results)
     }
 
     /// Check coverage for a key

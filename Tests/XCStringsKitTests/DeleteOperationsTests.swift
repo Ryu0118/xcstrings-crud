@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("Delete Operations")
+@Suite("Deleting keys and translations from xcstrings files")
 struct DeleteOperationsTests {
     @Test("deleteKey removes key entirely", arguments: [
         (FixtureType.singleKeySingleLang, "Hello"),

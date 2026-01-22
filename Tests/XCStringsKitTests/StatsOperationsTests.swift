@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("Stats Operations")
+@Suite("Calculating translation coverage and progress statistics")
 struct StatsOperationsTests {
     @Test("getStats returns correct total keys", arguments: FixtureType.allCases)
     func getStatsTotalKeys(fixture: FixtureType) async throws {

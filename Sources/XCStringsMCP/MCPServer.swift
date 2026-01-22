@@ -164,6 +164,66 @@ public struct XCStringsMCPServer {
                     "required": .array([.string("files")]),
                 ])
             ),
+            Tool(
+                name: "xcstrings_batch_check_keys",
+                description: "Check if multiple keys exist in the xcstrings file. Returns results for each key.",
+                inputSchema: .object([
+                    "type": .string("object"),
+                    "properties": .object([
+                        "file": .object(["type": .string("string"), "description": .string("Path to the xcstrings file")]),
+                        "keys": .object(["type": .string("array"), "items": .object(["type": .string("string")]), "description": .string("Array of keys to check")]),
+                        "language": .object(["type": .string("string"), "description": .string("Optional specific language to check")]),
+                    ]),
+                    "required": .array([.string("file"), .string("keys")]),
+                ])
+            ),
+            Tool(
+                name: "xcstrings_batch_add_translations",
+                description: "Add translations for multiple keys at once. Each entry contains a key and its translations for multiple languages.",
+                inputSchema: .object([
+                    "type": .string("object"),
+                    "properties": .object([
+                        "file": .object(["type": .string("string"), "description": .string("Path to the xcstrings file")]),
+                        "entries": .object([
+                            "type": .string("array"),
+                            "items": .object([
+                                "type": .string("object"),
+                                "properties": .object([
+                                    "key": .object(["type": .string("string"), "description": .string("The key to add translations for")]),
+                                    "translations": .object(["type": .string("object"), "description": .string("Object mapping language codes to translation values")]),
+                                ]),
+                                "required": .array([.string("key"), .string("translations")]),
+                            ]),
+                            "description": .string("Array of entries, each with a key and translations object"),
+                        ]),
+                        "overwrite": .object(["type": .string("boolean"), "description": .string("Allow overwriting existing translations (default: false)")]),
+                    ]),
+                    "required": .array([.string("file"), .string("entries")]),
+                ])
+            ),
+            Tool(
+                name: "xcstrings_batch_update_translations",
+                description: "Update translations for multiple keys at once. Each entry contains a key and its translations for multiple languages.",
+                inputSchema: .object([
+                    "type": .string("object"),
+                    "properties": .object([
+                        "file": .object(["type": .string("string"), "description": .string("Path to the xcstrings file")]),
+                        "entries": .object([
+                            "type": .string("array"),
+                            "items": .object([
+                                "type": .string("object"),
+                                "properties": .object([
+                                    "key": .object(["type": .string("string"), "description": .string("The key to update translations for")]),
+                                    "translations": .object(["type": .string("object"), "description": .string("Object mapping language codes to translation values")]),
+                                ]),
+                                "required": .array([.string("key"), .string("translations")]),
+                            ]),
+                            "description": .string("Array of entries, each with a key and translations object"),
+                        ]),
+                    ]),
+                    "required": .array([.string("file"), .string("entries")]),
+                ])
+            ),
             // Create operations
             Tool(
                 name: "xcstrings_create_file",
@@ -487,6 +547,62 @@ public struct XCStringsMCPServer {
             let languages = languagesValue.compactMap { $0.stringValue }
             try await parser.deleteTranslations(key: key, languages: languages)
             return "Translations deleted successfully for \(languages.count) languages"
+
+        case "xcstrings_batch_check_keys":
+            guard let keysValue = args["keys"]?.arrayValue else {
+                throw XCStringsError.invalidJSON(reason: "Missing 'keys' parameter")
+            }
+            let keys = keysValue.compactMap { $0.stringValue }
+            let language = args["language"]?.stringValue
+            let result = try await parser.checkKeys(keys, language: language)
+            return try String(data: encoder.encode(result), encoding: .utf8) ?? "{}"
+
+        case "xcstrings_batch_add_translations":
+            guard let entriesValue = args["entries"]?.arrayValue else {
+                throw XCStringsError.invalidJSON(reason: "Missing 'entries' parameter")
+            }
+            let overwrite = args["overwrite"]?.boolValue ?? false
+            var entries: [BatchTranslationEntry] = []
+            for entryValue in entriesValue {
+                guard let entryObj = entryValue.objectValue,
+                      let key = entryObj["key"]?.stringValue,
+                      let translationsValue = entryObj["translations"]?.objectValue
+                else {
+                    throw XCStringsError.invalidJSON(reason: "Invalid entry format")
+                }
+                var translations: [String: String] = [:]
+                for (lang, value) in translationsValue {
+                    if let stringValue = value.stringValue {
+                        translations[lang] = stringValue
+                    }
+                }
+                entries.append(BatchTranslationEntry(key: key, translations: translations))
+            }
+            let result = try await parser.addTranslationsBatch(entries: entries, allowOverwrite: overwrite)
+            return try String(data: encoder.encode(result), encoding: .utf8) ?? "{}"
+
+        case "xcstrings_batch_update_translations":
+            guard let entriesValue = args["entries"]?.arrayValue else {
+                throw XCStringsError.invalidJSON(reason: "Missing 'entries' parameter")
+            }
+            var entries: [BatchTranslationEntry] = []
+            for entryValue in entriesValue {
+                guard let entryObj = entryValue.objectValue,
+                      let key = entryObj["key"]?.stringValue,
+                      let translationsValue = entryObj["translations"]?.objectValue
+                else {
+                    throw XCStringsError.invalidJSON(reason: "Invalid entry format")
+                }
+                var translations: [String: String] = [:]
+                for (lang, value) in translationsValue {
+                    if let stringValue = value.stringValue {
+                        translations[lang] = stringValue
+                    }
+                }
+                entries.append(BatchTranslationEntry(key: key, translations: translations))
+            }
+            let result = try await parser.updateTranslationsBatch(entries: entries)
+            return try String(data: encoder.encode(result), encoding: .utf8) ?? "{}"
 
         default:
             throw XCStringsError.invalidJSON(reason: "Unknown tool: \(params.name)")

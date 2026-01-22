@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("Add Operations")
+@Suite("Adding new keys and translations to xcstrings files")
 struct AddOperationsTests {
     @Test("addTranslation adds new translation to existing key", arguments: [
         (FixtureType.singleKeySingleLang, "Hello", "ja", "こんにちは"),

@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("Get Operations")
+@Suite("Retrieving translations, key info, and source language from xcstrings files")
 struct GetOperationsTests {
     @Test("getSourceLanguage returns correct language", arguments: FixtureType.allCases)
     func getSourceLanguage(fixture: FixtureType) async throws {

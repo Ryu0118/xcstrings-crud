@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("Check Operations")
+@Suite("Checking key existence and translation coverage")
 struct CheckOperationsTests {
     @Test("checkKey returns true for existing key", arguments: [
         (FixtureType.singleKeySingleLang, "Hello"),

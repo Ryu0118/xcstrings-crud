@@ -299,3 +299,55 @@ package struct CompactAggregatedCoverage: Codable, Sendable {
         self.completeCount = agg.averageCoverageByLanguage.count - incomplete.count
     }
 }
+
+// MARK: - Batch Operation Models
+
+/// Result of batch key existence check
+package struct BatchCheckKeysResult: Codable, Sendable {
+    package let results: [String: Bool]  // key -> exists
+    package let existingKeys: [String]
+    package let missingKeys: [String]
+
+    package init(results: [String: Bool]) {
+        self.results = results
+        self.existingKeys = results.filter { $0.value }.keys.sorted()
+        self.missingKeys = results.filter { !$0.value }.keys.sorted()
+    }
+}
+
+/// Single entry for batch add/update operations
+package struct BatchTranslationEntry: Codable, Sendable {
+    package let key: String
+    package let translations: [String: String]  // language -> value
+
+    package init(key: String, translations: [String: String]) {
+        self.key = key
+        self.translations = translations
+    }
+}
+
+/// Result of batch add/update operations
+package struct BatchWriteResult: Codable, Sendable {
+    package let successCount: Int
+    package let failedCount: Int
+    package let succeeded: [String]
+    package let failed: [BatchWriteError]
+
+    package init(succeeded: [String], failed: [BatchWriteError]) {
+        self.successCount = succeeded.count
+        self.failedCount = failed.count
+        self.succeeded = succeeded
+        self.failed = failed
+    }
+}
+
+/// Error info for batch write operations
+package struct BatchWriteError: Codable, Sendable {
+    package let key: String
+    package let error: String
+
+    package init(key: String, error: String) {
+        self.key = key
+        self.error = error
+    }
+}

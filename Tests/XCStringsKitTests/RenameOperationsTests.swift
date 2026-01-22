@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-@Suite("Rename Operations")
+@Suite("Renaming keys while preserving all translations")
 struct RenameOperationsTests {
     @Test("renameKey renames key preserving translations", arguments: [
         (FixtureType.singleKeySingleLang, "Hello", "Greeting"),
