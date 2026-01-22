@@ -51,13 +51,19 @@ struct ListStaleHandler: ToolHandler {
         let file = try context.arguments.requireString("file")
         let parser = XCStringsParser(path: file)
         let staleKeys = try await parser.listStaleKeys()
+        let result = StaleKeysResult(staleKeys: staleKeys)
+        return try JSONEncoderHelper.encode(result)
+    }
+}
 
-        let response: [String: Any] = [
-            "staleKeys": staleKeys,
-            "count": staleKeys.count,
-            "note": "These keys are marked as 'stale' by Xcode, indicating they may no longer be used in source code. Please verify by searching for these keys in the module or project source code before deleting them.",
-        ]
-        let jsonData = try JSONSerialization.data(withJSONObject: response, options: [.prettyPrinted, .sortedKeys])
-        return String(data: jsonData, encoding: .utf8) ?? "{}"
+// MARK: - Batch List Stale Handler
+
+struct BatchListStaleHandler: ToolHandler {
+    static let toolName = "xcstrings_batch_list_stale"
+
+    func execute(with context: ToolContext) async throws -> String {
+        let files = try context.arguments.requireStringArray("files")
+        let result = try XCStringsParser.getBatchStaleKeys(paths: files)
+        return try JSONEncoderHelper.encode(result)
     }
 }

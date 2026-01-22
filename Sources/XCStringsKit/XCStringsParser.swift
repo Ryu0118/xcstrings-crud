@@ -136,6 +136,17 @@ package actor XCStringsParser {
         return XCStringsStatsCalculator.getCompactBatchCoverage(files: files)
     }
 
+    /// Get batch stale keys for multiple files
+    package static func getBatchStaleKeys(paths: [String]) throws -> BatchStaleKeysSummary {
+        let fileSummaries: [FileStaleKeysSummary] = try paths.map { path in
+            let handler = XCStringsFileHandler(path: path)
+            let file = try handler.load()
+            let staleKeys = XCStringsReader(file: file).listStaleKeys()
+            return FileStaleKeysSummary(file: path, staleKeys: staleKeys)
+        }
+        return BatchStaleKeysSummary(files: fileSummaries)
+    }
+
     // MARK: - Write Operations
 
     /// Add a translation

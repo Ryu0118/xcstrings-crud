@@ -93,4 +93,47 @@ struct ListOperationsTests {
         // withComments has "manual" extraction state, not "stale"
         #expect(staleKeys.isEmpty)
     }
+
+    // MARK: - Batch Stale Keys Tests
+
+    @Test("getBatchStaleKeys returns stale keys across multiple files")
+    func batchListStaleKeys() async throws {
+        let path1 = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)
+        let path2 = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
+        defer {
+            TestHelper.removeTempFile(at: path1)
+            TestHelper.removeTempFile(at: path2)
+        }
+
+        let result = try XCStringsParser.getBatchStaleKeys(paths: [path1, path2])
+
+        #expect(result.files.count == 2)
+        #expect(result.totalStaleKeys == 2)
+
+        let file1Summary = result.files.first { $0.file == path1 }
+        #expect(file1Summary?.staleKeys == ["StaleKey1", "StaleKey2"])
+        #expect(file1Summary?.count == 2)
+
+        let file2Summary = result.files.first { $0.file == path2 }
+        #expect(file2Summary?.staleKeys.isEmpty == true)
+        #expect(file2Summary?.count == 0)
+    }
+
+    @Test("getBatchStaleKeys returns correct note message")
+    func batchListStaleKeysNote() async throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let result = try XCStringsParser.getBatchStaleKeys(paths: [path])
+
+        #expect(result.note == StaleKeysConstants.note)
+    }
+
+    @Test("getBatchStaleKeys handles empty file list")
+    func batchListStaleKeysEmptyFiles() async throws {
+        let result = try XCStringsParser.getBatchStaleKeys(paths: [])
+
+        #expect(result.files.isEmpty)
+        #expect(result.totalStaleKeys == 0)
+    }
 }

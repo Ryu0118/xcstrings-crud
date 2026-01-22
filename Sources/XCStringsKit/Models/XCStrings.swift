@@ -351,3 +351,49 @@ package struct BatchWriteError: Codable, Sendable {
         self.error = error
     }
 }
+
+// MARK: - Stale Keys Models
+
+/// Constants for stale keys messages
+package enum StaleKeysConstants {
+    package static let note = "These keys are marked as 'stale' by Xcode, indicating they may no longer be used in source code. Please verify by searching for these keys in the module or project source code before deleting them."
+}
+
+/// Stale keys for a single file
+package struct FileStaleKeysSummary: Codable, Sendable {
+    package let file: String
+    package let staleKeys: [String]
+    package let count: Int
+
+    package init(file: String, staleKeys: [String]) {
+        self.file = file
+        self.staleKeys = staleKeys
+        self.count = staleKeys.count
+    }
+}
+
+/// Stale keys result for a single file
+package struct StaleKeysResult: Codable, Sendable {
+    package let staleKeys: [String]
+    package let count: Int
+    package let note: String
+
+    package init(staleKeys: [String]) {
+        self.staleKeys = staleKeys
+        self.count = staleKeys.count
+        self.note = StaleKeysConstants.note
+    }
+}
+
+/// Batch stale keys summary for multiple files
+package struct BatchStaleKeysSummary: Codable, Sendable {
+    package let files: [FileStaleKeysSummary]
+    package let totalStaleKeys: Int
+    package let note: String
+
+    package init(files: [FileStaleKeysSummary]) {
+        self.files = files
+        self.totalStaleKeys = files.reduce(0) { $0 + $1.count }
+        self.note = StaleKeysConstants.note
+    }
+}

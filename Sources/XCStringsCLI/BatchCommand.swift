@@ -6,7 +6,7 @@ struct BatchCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "batch",
         abstract: "Batch operations for multiple keys",
-        subcommands: [Check.self, Add.self, Update.self]
+        subcommands: [Check.self, Add.self, Update.self, Stale.self]
     )
 }
 
@@ -99,6 +99,30 @@ extension BatchCommand {
             let parser = XCStringsParser(path: file)
             let batchEntries = try entries.map { try BatchEntryParser.parse($0) }
             let result = try await parser.updateTranslationsBatch(entries: batchEntries)
+            try CLIOutput.printJSON(result, pretty: pretty)
+        }
+    }
+
+    struct Stale: AsyncParsableCommand {
+        static let configuration = CommandConfiguration(
+            commandName: "stale",
+            abstract: "List stale keys across multiple xcstrings files"
+        )
+
+        @Option(name: .shortAndLong, parsing: .upToNextOption, help: "Paths to xcstrings files")
+        var files: [String]
+
+        @Flag(name: .long, help: "Output in pretty-printed JSON format")
+        var pretty = false
+
+        func validate() throws {
+            if files.isEmpty {
+                throw ValidationError("At least one file must be specified")
+            }
+        }
+
+        func run() async throws {
+            let result = try XCStringsParser.getBatchStaleKeys(paths: files)
             try CLIOutput.printJSON(result, pretty: pretty)
         }
     }
