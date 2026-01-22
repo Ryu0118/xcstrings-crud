@@ -43,6 +43,14 @@ struct XCStringsReader: Sendable {
         return untranslated.sorted()
     }
 
+    /// Get keys with stale extraction state
+    func listStaleKeys() -> [String] {
+        file.strings
+            .filter { $0.value.extractionState == "stale" }
+            .map { $0.key }
+            .sorted()
+    }
+
     /// Get source language
     func getSourceLanguage() -> String {
         file.sourceLanguage

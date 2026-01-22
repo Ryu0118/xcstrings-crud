@@ -52,6 +52,12 @@ package actor XCStringsParser {
         return XCStringsReader(file: file).listUntranslated(for: language)
     }
 
+    /// Get keys with stale extraction state
+    package func listStaleKeys() throws -> [String] {
+        let file = try load()
+        return XCStringsReader(file: file).listStaleKeys()
+    }
+
     /// Get source language
     package func getSourceLanguage() throws -> String {
         let file = try load()

@@ -5,8 +5,8 @@ import XCStringsKit
 struct ListCommand: AsyncParsableCommand {
     static let configuration = CommandConfiguration(
         commandName: "list",
-        abstract: "List keys, languages, or untranslated items",
-        subcommands: [Keys.self, Languages.self, Untranslated.self]
+        abstract: "List keys, languages, untranslated, or stale items",
+        subcommands: [Keys.self, Languages.self, Untranslated.self, Stale.self]
     )
 }
 
@@ -68,6 +68,25 @@ extension ListCommand {
             let parser = XCStringsParser(path: file)
             let untranslated = try await parser.listUntranslated(for: lang)
             try CLIOutput.printJSON(untranslated, pretty: pretty)
+        }
+    }
+
+    struct Stale: AsyncParsableCommand {
+        static let configuration = CommandConfiguration(
+            commandName: "stale",
+            abstract: "List keys with stale extraction state (potentially unused)"
+        )
+
+        @Option(name: .shortAndLong, help: "Path to the xcstrings file")
+        var file: String
+
+        @Flag(name: .long, help: "Output in pretty-printed JSON format")
+        var pretty = false
+
+        func run() async throws {
+            let parser = XCStringsParser(path: file)
+            let staleKeys = try await parser.listStaleKeys()
+            try CLIOutput.printJSON(staleKeys, pretty: pretty)
         }
     }
 }
