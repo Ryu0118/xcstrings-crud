@@ -10,7 +10,7 @@ This tool provides a **token-efficient** approach by offering targeted CRUD oper
 
 - **Query only what you need**: Fetch specific keys or languages instead of loading the entire file
 - **Incremental updates**: Add or update individual translations without reading the full content
-- **Statistics at a glance**: Get coverage and progress summaries without parsing all entries
+- **Quick stats**: Get coverage and progress summaries without parsing all entries
 
 By using the MCP server or CLI, AI assistants can work with xcstrings files of any size while keeping token usage minimal.
 
