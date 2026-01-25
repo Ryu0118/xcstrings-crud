@@ -328,16 +328,36 @@ package struct BatchTranslationEntry: Codable, Sendable {
 
 /// Result of batch add/update operations
 package struct BatchWriteResult: Codable, Sendable {
+    package let success: Bool
     package let successCount: Int
     package let failedCount: Int
     package let succeeded: [String]
     package let failed: [BatchWriteError]
 
     package init(succeeded: [String], failed: [BatchWriteError]) {
+        self.success = failed.isEmpty
         self.successCount = succeeded.count
         self.failedCount = failed.count
         self.succeeded = succeeded
         self.failed = failed
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case success, successCount, failedCount, succeeded, failed
+    }
+
+    package func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(success, forKey: .success)
+        try container.encode(successCount, forKey: .successCount)
+        try container.encode(failedCount, forKey: .failedCount)
+        // Only include non-empty arrays
+        if !succeeded.isEmpty {
+            try container.encode(succeeded, forKey: .succeeded)
+        }
+        if !failed.isEmpty {
+            try container.encode(failed, forKey: .failed)
+        }
     }
 }
 
