@@ -3,7 +3,11 @@ import MCP
 import XCStringsKit
 
 public struct XCStringsMCPServer {
-    public init() {}
+    private let defaultPath: String?
+
+    public init(defaultPath: String? = nil) {
+        self.defaultPath = defaultPath
+    }
 
     public func run() async throws {
         let server = Server(
@@ -16,12 +20,12 @@ public struct XCStringsMCPServer {
 
         // Register tool list handler
         await server.withMethodHandler(ListTools.self) { _ in
-            .init(tools: Self.allTools)
+            .init(tools: self.allTools)
         }
 
         // Register tool call handler
         await server.withMethodHandler(CallTool.self) { params in
-            await Self.handleToolCall(params)
+            await self.handleToolCall(params)
         }
 
         let transport = StdioTransport()
@@ -31,8 +35,8 @@ public struct XCStringsMCPServer {
 
     // MARK: - Tool Definitions
 
-    private static var allTools: [Tool] {
-        [
+    private var allTools: [Tool] {
+        var tools = [
             // Read operations
             Tool(
                 name: "xcstrings_list_keys",
@@ -361,13 +365,36 @@ public struct XCStringsMCPServer {
                 ])
             ),
         ]
+
+        if defaultPath != nil {
+            for i in 0..<tools.count {
+                if case .object(var schema) = tools[i].inputSchema,
+                   case .array(let requiredParams) = schema["required"] {
+                    schema["required"] = .array(requiredParams.filter { $0 != .string("file") && $0 != .string("files") })
+                    tools[i] = Tool(
+                        name: tools[i].name,
+                        description: tools[i].description,
+                        inputSchema: .object(schema)
+                    )
+                }
+            }
+        }
+        return tools
     }
 
     // MARK: - Tool Call Handler
 
-    private static func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
+    private func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
         do {
-            let args = params.arguments ?? [:]
+            var args = params.arguments ?? [:]
+            
+            if args["file"] == nil, let defaultPath = defaultPath {
+                args["file"] = .string(defaultPath)
+            }
+            if args["files"] == nil, let defaultPath = defaultPath {
+                args["files"] = .array([.string(defaultPath)])
+            }
+
             let result = try await ToolHandlerRegistry.shared.execute(toolName: params.name, arguments: args)
             return .init(content: [.text(result)], isError: false)
         } catch {

@@ -8,8 +8,11 @@ struct MCPCommand: AsyncParsableCommand {
         abstract: "Start the MCP server"
     )
 
+    @Option(name: .long, help: "Default path to the xcstrings file")
+    var path: String?
+
     func run() async throws {
-        let server = XCStringsMCPServer()
+        let server = XCStringsMCPServer(defaultPath: path)
         try await server.run()
     }
 }
