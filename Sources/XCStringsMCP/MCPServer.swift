@@ -35,7 +35,7 @@ public struct XCStringsMCPServer {
 
     // MARK: - Tool Definitions
 
-    private var allTools: [Tool] {
+    var allTools: [Tool] {
         var tools = [
             // Read operations
             Tool(
@@ -368,6 +368,7 @@ public struct XCStringsMCPServer {
 
         if defaultPath != nil {
             for i in 0..<tools.count {
+                guard tools[i].name != "xcstrings_create_file" else { continue }
                 if case .object(var schema) = tools[i].inputSchema,
                    case .array(let requiredParams) = schema["required"] {
                     schema["required"] = .array(requiredParams.filter { $0 != .string("file") && $0 != .string("files") })
@@ -384,17 +385,21 @@ public struct XCStringsMCPServer {
 
     // MARK: - Tool Call Handler
 
+    func resolvedArguments(_ args: [String: Value], toolName: String) -> [String: Value] {
+        var resolved = args
+        guard toolName != "xcstrings_create_file" else { return resolved }
+        if resolved["file"] == nil, let defaultPath {
+            resolved["file"] = .string(defaultPath)
+        }
+        if resolved["files"] == nil, let defaultPath {
+            resolved["files"] = .array([.string(defaultPath)])
+        }
+        return resolved
+    }
+
     private func handleToolCall(_ params: CallTool.Parameters) async -> CallTool.Result {
         do {
-            var args = params.arguments ?? [:]
-            
-            if args["file"] == nil, let defaultPath = defaultPath {
-                args["file"] = .string(defaultPath)
-            }
-            if args["files"] == nil, let defaultPath = defaultPath {
-                args["files"] = .array([.string(defaultPath)])
-            }
-
+            let args = resolvedArguments(params.arguments ?? [:], toolName: params.name)
             let result = try await ToolHandlerRegistry.shared.execute(toolName: params.name, arguments: args)
             return .init(content: [.text(result)], isError: false)
         } catch {
