@@ -17,11 +17,22 @@ package struct XCStringsFile: Codable {
 package struct StringEntry: Codable {
     var comment: String?
     var extractionState: String?
+    var shouldTranslate: Bool?
     var localizations: [String: Localization]?
 
-    package init(comment: String? = nil, extractionState: String? = nil, localizations: [String: Localization]? = nil) {
+    var requiresTranslation: Bool {
+        shouldTranslate != false
+    }
+
+    package init(
+        comment: String? = nil,
+        extractionState: String? = nil,
+        shouldTranslate: Bool? = nil,
+        localizations: [String: Localization]? = nil
+    ) {
         self.comment = comment
         self.extractionState = extractionState
+        self.shouldTranslate = shouldTranslate
         self.localizations = localizations
     }
 }
@@ -125,12 +136,14 @@ package struct KeyInfo: Codable {
     package let key: String
     package let comment: String?
     package let extractionState: String?
+    package let shouldTranslate: Bool?
     package let languages: [String]
 
-    package init(key: String, comment: String?, extractionState: String?, languages: [String]) {
+    package init(key: String, comment: String?, extractionState: String?, shouldTranslate: Bool?, languages: [String]) {
         self.key = key
         self.comment = comment
         self.extractionState = extractionState
+        self.shouldTranslate = shouldTranslate
         self.languages = languages
     }
 }

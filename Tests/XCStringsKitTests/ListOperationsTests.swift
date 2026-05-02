@@ -60,6 +60,17 @@ struct ListOperationsTests {
         #expect(untranslated == expectedKeys)
     }
 
+    @Test("listUntranslated excludes keys marked shouldTranslate false")
+    func listUntranslatedExcludesNonTranslatableKeys() async throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.withNonTranslatableKey)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let parser = XCStringsParser(path: path)
+        let untranslated = try await parser.listUntranslated(for: "ja")
+
+        #expect(untranslated == ["Greeting"])
+    }
+
     @Test("listStaleKeys returns keys with stale extraction state")
     func listStaleKeys() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)

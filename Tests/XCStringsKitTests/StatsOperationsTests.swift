@@ -42,4 +42,18 @@ struct StatsOperationsTests {
         #expect(progress.translated == translated)
         #expect(progress.untranslated == untranslated)
     }
+
+    @Test("getProgress excludes keys marked shouldTranslate false")
+    func getProgressExcludesNonTranslatableKeys() async throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.withNonTranslatableKey)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let parser = XCStringsParser(path: path)
+        let progress = try await parser.getProgress(for: "en")
+
+        #expect(progress.translated == 1)
+        #expect(progress.untranslated == 0)
+        #expect(progress.total == 1)
+        #expect(progress.coveragePercent == 100.0)
+    }
 }

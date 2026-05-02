@@ -59,4 +59,16 @@ struct GetOperationsTests {
             _ = try await parser.getTranslation(key: "NonExistentKey", language: nil)
         }
     }
+
+    @Test("getKey returns shouldTranslate metadata")
+    func getKeyShouldTranslate() async throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.withNonTranslatableKey)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let parser = XCStringsParser(path: path)
+        let info = try await parser.getKey("BrandName")
+
+        #expect(info.shouldTranslate == false)
+        #expect(info.comment == "Product name")
+    }
 }

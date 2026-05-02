@@ -269,6 +269,30 @@ enum TestFixtures {
     }
     """
 
+    /// Key marked as not requiring translation
+    static let withNonTranslatableKey = """
+    {
+      "sourceLanguage": "en",
+      "strings": {
+        "BrandName": {
+          "comment": "Product name",
+          "shouldTranslate": false
+        },
+        "Greeting": {
+          "localizations": {
+            "en": {
+              "stringUnit": {
+                "state": "translated",
+                "value": "Hello"
+              }
+            }
+          }
+        }
+      },
+      "version": "1.1"
+    }
+    """
+
     /// Many languages (5+ languages)
     static let manyLanguages = """
     {

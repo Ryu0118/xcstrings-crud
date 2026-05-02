@@ -11,6 +11,7 @@ This tool provides a **token-efficient** approach by offering targeted CRUD oper
 - **Query only what you need**: Fetch specific keys or languages instead of loading the entire file
 - **Incremental updates**: Add or update individual translations without reading the full content
 - **Quick stats**: Get coverage and progress summaries without parsing all entries
+- **String Catalog semantics**: Preserve Xcode metadata such as `shouldTranslate`, and exclude non-translatable keys from untranslated lists and coverage totals
 
 By using the MCP server or CLI, AI assistants can work with xcstrings files of any size while keeping token usage minimal.
 
@@ -115,6 +116,7 @@ xcstrings-crud list languages --file path/to/Localizable.xcstrings
 
 # List untranslated keys for a language
 xcstrings-crud list untranslated --file path/to/Localizable.xcstrings --lang ja
+# Keys marked `"shouldTranslate": false` are omitted from untranslated results.
 
 # List stale keys (potentially unused)
 xcstrings-crud list stale --file path/to/Localizable.xcstrings
@@ -134,9 +136,11 @@ xcstrings-crud check key "Hello" --file path/to/Localizable.xcstrings
 
 # Check key coverage
 xcstrings-crud check coverage "Hello" --file path/to/Localizable.xcstrings
+# Non-translatable keys are treated as complete.
 
 # Get overall statistics
 xcstrings-crud stats coverage --file path/to/Localizable.xcstrings
+# Coverage totals exclude keys marked `"shouldTranslate": false`.
 
 # Get progress for a language
 xcstrings-crud stats progress --file path/to/Localizable.xcstrings --lang ja

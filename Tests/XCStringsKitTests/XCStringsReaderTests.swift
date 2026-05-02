@@ -65,6 +65,17 @@ struct XCStringsReaderTests {
         #expect(untranslated.contains("Goodbye"))
     }
 
+    @Test("listUntranslated excludes keys marked shouldTranslate false")
+    func listUntranslatedExcludesNonTranslatableKeys() throws {
+        let file = try loadFixture(TestFixtures.withNonTranslatableKey)
+        let reader = XCStringsReader(file: file)
+
+        let untranslated = reader.listUntranslated(for: "ja")
+
+        #expect(!untranslated.contains("BrandName"))
+        #expect(untranslated.contains("Greeting"))
+    }
+
     // MARK: - getSourceLanguage
 
     @Test("getSourceLanguage returns correct language")
@@ -88,6 +99,17 @@ struct XCStringsReaderTests {
 
         #expect(info.key == "Hello")
         #expect(info.comment == "Greeting message shown on home screen")
+    }
+
+    @Test("getKey returns shouldTranslate metadata")
+    func getKeyShouldTranslate() throws {
+        let file = try loadFixture(TestFixtures.withNonTranslatableKey)
+        let reader = XCStringsReader(file: file)
+
+        let info = try reader.getKey("BrandName")
+
+        #expect(info.shouldTranslate == false)
+        #expect(info.comment == "Product name")
     }
 
     @Test("getKey throws for non-existent key")
@@ -167,6 +189,18 @@ struct XCStringsReaderTests {
 
         #expect(coverage.key == "Hello")
         #expect(coverage.translatedLanguages.count == 3)
+        #expect(coverage.coveragePercent == 100.0)
+    }
+
+    @Test("checkCoverage treats shouldTranslate false keys as complete")
+    func checkCoverageNonTranslatableKey() throws {
+        let file = try loadFixture(TestFixtures.withNonTranslatableKey)
+        let reader = XCStringsReader(file: file)
+
+        let coverage = try reader.checkCoverage("BrandName")
+
+        #expect(coverage.translatedLanguages.isEmpty)
+        #expect(coverage.missingLanguages.isEmpty)
         #expect(coverage.coveragePercent == 100.0)
     }
 

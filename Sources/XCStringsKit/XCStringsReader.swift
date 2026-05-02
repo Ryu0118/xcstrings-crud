@@ -25,6 +25,10 @@ struct XCStringsReader {
     func listUntranslated(for language: String) -> [String] {
         file.strings
             .filter { _, entry in
+                guard entry.requiresTranslation else {
+                    return false
+                }
+
                 let localization = entry.localizations?[language]
                 return localization?.stringUnit?.value == nil && localization?.variations == nil
             }
@@ -57,6 +61,7 @@ struct XCStringsReader {
             key: key,
             comment: entry.comment,
             extractionState: entry.extractionState,
+            shouldTranslate: entry.shouldTranslate,
             languages: languages
         )
     }
@@ -121,6 +126,15 @@ struct XCStringsReader {
 
         guard let entry = file.strings[key] else {
             throw XCStringsError.keyNotFound(key: key)
+        }
+
+        guard entry.requiresTranslation else {
+            return CoverageInfo(
+                key: key,
+                translatedLanguages: [],
+                missingLanguages: [],
+                coveragePercent: 100
+            )
         }
 
         let translatedLanguages = entry.localizations?.keys.sorted() ?? []

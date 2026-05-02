@@ -13,15 +13,15 @@ struct XCStringsStatsCalculator {
     /// Get overall statistics
     func getStats() -> StatsInfo {
         let allLanguages = reader.listLanguages()
-        let entries = file.strings.values
+        let translatableEntries = file.strings.values.filter(\.requiresTranslation)
 
         let coverageByLanguage = Dictionary(uniqueKeysWithValues: allLanguages.lazy.map { language in
-            let translated = entries.lazy.count(where: { entry in
+            let translated = translatableEntries.lazy.count(where: { entry in
                 let localization = entry.localizations?[language]
                 return localization?.stringUnit?.value != nil || localization?.variations != nil
             })
 
-            let total = entries.count
+            let total = translatableEntries.count
             let untranslated = total - translated
             let coveragePercent = total == 0 ? 0 : Double(translated) / Double(total) * 100
 
