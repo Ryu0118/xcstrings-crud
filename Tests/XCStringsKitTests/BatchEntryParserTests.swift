@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Parsing batch entry format strings into BatchTranslationEntry")
 struct BatchEntryParserTests {
-    @Test
+    @Test("parse converts key=lang:value format correctly")
     func parseSingleTranslation() throws {
         let result = try BatchEntryParser.parse("Hello=en:Hello World")
 
@@ -12,7 +12,7 @@ struct BatchEntryParserTests {
         #expect(result.translations == ["en": "Hello World"])
     }
 
-    @Test
+    @Test("parse converts multiple lang:value pairs")
     func parseMultipleTranslations() throws {
         let result = try BatchEntryParser.parse("Hello=ja:こんにちは,en:Hello")
 
@@ -21,7 +21,7 @@ struct BatchEntryParserTests {
         #expect(result.translations["en"] == "Hello")
     }
 
-    @Test
+    @Test("parse handles value containing colons")
     func parseValueWithColons() throws {
         let result = try BatchEntryParser.parse("Time=en:12:30:45")
 
@@ -29,7 +29,7 @@ struct BatchEntryParserTests {
         #expect(result.translations["en"] == "12:30:45")
     }
 
-    @Test
+    @Test("parse handles value containing equals sign")
     func parseValueWithEquals() throws {
         let result = try BatchEntryParser.parse("Math=en:1+1=2")
 
@@ -37,7 +37,7 @@ struct BatchEntryParserTests {
         #expect(result.translations["en"] == "1+1=2")
     }
 
-    @Test
+    @Test("parse handles empty value")
     func parseEmptyValue() throws {
         let result = try BatchEntryParser.parse("Empty=en:")
 
@@ -45,35 +45,35 @@ struct BatchEntryParserTests {
         #expect(result.translations["en"] == "")
     }
 
-    @Test
+    @Test("parse throws invalidFormat for missing equals")
     func parseMissingEquals() throws {
         #expect(throws: BatchEntryParseError.self) {
             try BatchEntryParser.parse("HelloWorld")
         }
     }
 
-    @Test
+    @Test("parse throws emptyKey for empty key")
     func parseEmptyKey() throws {
         #expect(throws: BatchEntryParseError.self) {
             try BatchEntryParser.parse("=en:Hello")
         }
     }
 
-    @Test
+    @Test("parse throws invalidTranslationFormat for missing colon")
     func parseMissingColon() throws {
         #expect(throws: BatchEntryParseError.self) {
             try BatchEntryParser.parse("Hello=enHello")
         }
     }
 
-    @Test
+    @Test("parse throws emptyLanguage for empty language code")
     func parseEmptyLanguage() throws {
         #expect(throws: BatchEntryParseError.self) {
             try BatchEntryParser.parse("Hello=:Hello")
         }
     }
 
-    @Test
+    @Test("parse throws noTranslations for empty translations")
     func parseNoTranslations() throws {
         #expect(throws: BatchEntryParseError.self) {
             try BatchEntryParser.parse("Hello=")

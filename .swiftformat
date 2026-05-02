@@ -6,6 +6,7 @@
 --stripunusedargs closure-only
 
 --disable redundantSwiftTestingSuite
+--disable swiftTestingTestCaseNames
 --test-case-name-format standard-identifiers
 
 --exclude .build

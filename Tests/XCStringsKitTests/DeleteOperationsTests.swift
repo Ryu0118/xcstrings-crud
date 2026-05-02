@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Deleting keys and translations from xcstrings files")
 struct DeleteOperationsTests {
-    @Test(arguments: [
+    @Test("deleteKey removes key entirely", arguments: [
         (FixtureType.singleKeySingleLang, "Hello"),
         (FixtureType.multipleKeysPartialTranslations, "Hello"),
         (FixtureType.multipleKeysPartialTranslations, "Goodbye"),
@@ -32,7 +32,7 @@ struct DeleteOperationsTests {
         #expect(afterCount == beforeCount - 1)
     }
 
-    @Test(arguments: FixtureType.allCases)
+    @Test("deleteKey throws for non-existent key", arguments: FixtureType.allCases)
     func deleteKeyNonExistent(fixture: FixtureType) async throws {
         let path = try TestHelper.createTempFile(content: fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -44,7 +44,7 @@ struct DeleteOperationsTests {
         }
     }
 
-    @Test(arguments: [
+    @Test("deleteTranslation removes specific language", arguments: [
         (FixtureType.singleKeyMultipleLangs, "Hello", "ja"),
         (FixtureType.singleKeyMultipleLangs, "Hello", "de"),
         (FixtureType.multipleKeysPartialTranslations, "Welcome", "de"),
@@ -70,7 +70,7 @@ struct DeleteOperationsTests {
         #expect(keyStillExists == true)
     }
 
-    @Test(arguments: [
+    @Test("deleteTranslation throws for non-existent translation", arguments: [
         (FixtureType.singleKeySingleLang, "Hello", "fr"),
         (FixtureType.multipleKeysPartialTranslations, "Goodbye", "ja"),
     ])

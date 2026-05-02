@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Thread safety for concurrent read operations")
 struct ConcurrentAccessTests {
-    @Test
+    @Test("Concurrent reads are safe")
     func concurrentReads() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.manyKeys)
         defer { TestHelper.removeTempFile(at: path) }

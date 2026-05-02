@@ -8,7 +8,7 @@ import Testing
 struct ToolHandlerIntegrationTests {
     // MARK: - List Handlers
 
-    @Test
+    @Test("ListKeysHandler returns all keys")
     func listKeysHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.multipleKeysPartialTranslations)
         defer { TestHelper.removeTempFile(at: path) }
@@ -24,7 +24,7 @@ struct ToolHandlerIntegrationTests {
         #expect(result.contains("Welcome"))
     }
 
-    @Test
+    @Test("ListLanguagesHandler returns all languages")
     func listLanguagesHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.singleKeyMultipleLangs)
         defer { TestHelper.removeTempFile(at: path) }
@@ -40,7 +40,7 @@ struct ToolHandlerIntegrationTests {
         #expect(result.contains("de"))
     }
 
-    @Test
+    @Test("ListUntranslatedHandler returns untranslated keys")
     func listUntranslatedHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.multipleKeysPartialTranslations)
         defer { TestHelper.removeTempFile(at: path) }
@@ -55,7 +55,7 @@ struct ToolHandlerIntegrationTests {
         #expect(result.contains("Goodbye"))
     }
 
-    @Test
+    @Test("ListStaleHandler returns stale keys")
     func listStaleHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)
         defer { TestHelper.removeTempFile(at: path) }
@@ -71,7 +71,7 @@ struct ToolHandlerIntegrationTests {
         #expect(!result.contains("\"ActiveKey\""))
     }
 
-    @Test
+    @Test("BatchListStaleHandler returns stale keys across multiple files")
     func batchListStaleHandler() async throws {
         let path1 = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)
         let path2 = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
@@ -94,7 +94,7 @@ struct ToolHandlerIntegrationTests {
 
     // MARK: - Get Handlers
 
-    @Test
+    @Test("GetSourceLanguageHandler returns source language")
     func getSourceLanguageHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.japaneseSource)
         defer { TestHelper.removeTempFile(at: path) }
@@ -108,7 +108,7 @@ struct ToolHandlerIntegrationTests {
         #expect(result == "ja")
     }
 
-    @Test
+    @Test("GetKeyHandler returns translations for key")
     func getKeyHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.singleKeyMultipleLangs)
         defer { TestHelper.removeTempFile(at: path) }
@@ -124,7 +124,7 @@ struct ToolHandlerIntegrationTests {
         #expect(result.contains("Hallo"))
     }
 
-    @Test
+    @Test("CheckKeyHandler returns true for existing key")
     func checkKeyHandlerExists() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
         defer { TestHelper.removeTempFile(at: path) }
@@ -139,7 +139,7 @@ struct ToolHandlerIntegrationTests {
         #expect(result == "true")
     }
 
-    @Test
+    @Test("CheckKeyHandler returns false for non-existing key")
     func checkKeyHandlerNotExists() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
         defer { TestHelper.removeTempFile(at: path) }
@@ -156,7 +156,7 @@ struct ToolHandlerIntegrationTests {
 
     // MARK: - Stats Handlers
 
-    @Test
+    @Test("StatsCoverageHandler returns coverage stats")
     func statsCoverageHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.manyKeys)
         defer { TestHelper.removeTempFile(at: path) }
@@ -172,7 +172,7 @@ struct ToolHandlerIntegrationTests {
         #expect(result.contains("10"))
     }
 
-    @Test
+    @Test("StatsProgressHandler returns progress for language")
     func statsProgressHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.manyKeys)
         defer { TestHelper.removeTempFile(at: path) }
@@ -190,7 +190,7 @@ struct ToolHandlerIntegrationTests {
 
     // MARK: - Create Handlers
 
-    @Test
+    @Test("CreateFileHandler creates new file")
     func createFileHandler() async throws {
         let tempDir = FileManager.default.temporaryDirectory
         let path = tempDir.appendingPathComponent("create_test_\(UUID().uuidString).xcstrings").path
@@ -209,7 +209,7 @@ struct ToolHandlerIntegrationTests {
 
     // MARK: - Write Handlers
 
-    @Test
+    @Test("AddTranslationHandler adds translation")
     func addTranslationHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
         defer { TestHelper.removeTempFile(at: path) }
@@ -231,7 +231,7 @@ struct ToolHandlerIntegrationTests {
         #expect(translation["ja"]?.value == "新しいキー")
     }
 
-    @Test
+    @Test("UpdateTranslationHandler updates translation")
     func updateTranslationHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
         defer { TestHelper.removeTempFile(at: path) }
@@ -253,7 +253,7 @@ struct ToolHandlerIntegrationTests {
         #expect(translation["en"]?.value == "Hi there")
     }
 
-    @Test
+    @Test("RenameKeyHandler renames key")
     func renameKeyHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
         defer { TestHelper.removeTempFile(at: path) }
@@ -278,7 +278,7 @@ struct ToolHandlerIntegrationTests {
 
     // MARK: - Delete Handlers
 
-    @Test
+    @Test("DeleteKeyHandler deletes key")
     func deleteKeyHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.multipleKeysPartialTranslations)
         defer { TestHelper.removeTempFile(at: path) }
@@ -298,7 +298,7 @@ struct ToolHandlerIntegrationTests {
         #expect(!exists)
     }
 
-    @Test
+    @Test("DeleteTranslationHandler deletes translation")
     func deleteTranslationHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.singleKeyMultipleLangs)
         defer { TestHelper.removeTempFile(at: path) }
@@ -321,7 +321,7 @@ struct ToolHandlerIntegrationTests {
 
     // MARK: - Batch Handlers
 
-    @Test
+    @Test("BatchCheckKeysHandler checks multiple keys")
     func batchCheckKeysHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.multipleKeysPartialTranslations)
         defer { TestHelper.removeTempFile(at: path) }
@@ -338,7 +338,7 @@ struct ToolHandlerIntegrationTests {
         #expect(result.contains("NonExistent"))
     }
 
-    @Test
+    @Test("BatchAddTranslationsHandler adds multiple translations")
     func batchAddTranslationsHandler() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.empty)
         defer { TestHelper.removeTempFile(at: path) }

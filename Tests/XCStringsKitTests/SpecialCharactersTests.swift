@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Special Characters Handling")
 struct SpecialCharactersTests {
-    @Test(arguments: [
+    @Test("Handles keys with format specifiers", arguments: [
         ("Hello, %@!", "ja", "こんにちは、%@！"),
         ("Items: %lld", "en", "Items: %lld"),
     ])
@@ -18,7 +18,7 @@ struct SpecialCharactersTests {
         #expect(translations[language]?.value == expectedValue)
     }
 
-    @Test
+    @Test("Handles keys with escape sequences")
     func escapeSequences() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.specialCharacters)
         defer { TestHelper.removeTempFile(at: path) }
@@ -30,7 +30,7 @@ struct SpecialCharactersTests {
         #expect(exists == true)
     }
 
-    @Test
+    @Test("Add and retrieve translation with special characters")
     func addSpecialCharacters() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.empty)
         defer { TestHelper.removeTempFile(at: path) }

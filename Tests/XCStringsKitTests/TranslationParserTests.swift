@@ -6,7 +6,7 @@ import Testing
 struct TranslationParserTests {
     // MARK: - parse
 
-    @Test
+    @Test("parse converts array of lang:value strings to dictionary")
     func parseMultiple() throws {
         let inputs = ["ja:こんにちは", "en:Hello", "de:Hallo"]
 
@@ -15,14 +15,14 @@ struct TranslationParserTests {
         #expect(result == ["ja": "こんにちは", "en": "Hello", "de": "Hallo"])
     }
 
-    @Test
+    @Test("parse returns empty dictionary for empty input")
     func parseEmpty() throws {
         let result = try TranslationParser.parse([])
 
         #expect(result.isEmpty)
     }
 
-    @Test
+    @Test("parse handles value containing colons")
     func parseValueWithColons() throws {
         let inputs = ["en:Time: 10:30"]
 
@@ -31,7 +31,7 @@ struct TranslationParserTests {
         #expect(result == ["en": "Time: 10:30"])
     }
 
-    @Test
+    @Test("parse handles empty value")
     func parseEmptyValue() throws {
         let inputs = ["en:"]
 
@@ -40,7 +40,7 @@ struct TranslationParserTests {
         #expect(result == ["en": ""])
     }
 
-    @Test
+    @Test("parse throws for missing colon")
     func parseMissingColon() {
         let inputs = ["ja-invalid"]
 
@@ -49,7 +49,7 @@ struct TranslationParserTests {
         }
     }
 
-    @Test
+    @Test("parse throws for empty language")
     func parseEmptyLanguage() {
         let inputs = [":value"]
 
@@ -60,7 +60,7 @@ struct TranslationParserTests {
 
     // MARK: - parseSingle
 
-    @Test
+    @Test("parseSingle extracts language and value")
     func parseSingle() throws {
         let (language, value) = try TranslationParser.parseSingle("ja:こんにちは")
 
@@ -68,7 +68,7 @@ struct TranslationParserTests {
         #expect(value == "こんにちは")
     }
 
-    @Test
+    @Test("parseSingle handles hyphenated language codes")
     func parseSingleHyphenatedLang() throws {
         let (language, value) = try TranslationParser.parseSingle("zh-Hans:你好")
 
@@ -78,7 +78,7 @@ struct TranslationParserTests {
 
     // MARK: - TranslationParseError
 
-    @Test
+    @Test("TranslationParseError.invalidFormat has descriptive message")
     func errorInvalidFormat() {
         let error = TranslationParseError.invalidFormat("bad-input")
 
@@ -86,7 +86,7 @@ struct TranslationParserTests {
         #expect(error.errorDescription?.contains("lang:value") == true)
     }
 
-    @Test
+    @Test("TranslationParseError.emptyLanguage has descriptive message")
     func errorEmptyLanguage() {
         let error = TranslationParseError.emptyLanguage(":value")
 

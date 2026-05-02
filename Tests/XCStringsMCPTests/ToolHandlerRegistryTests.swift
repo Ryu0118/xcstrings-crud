@@ -5,7 +5,7 @@ import Testing
 
 @Suite("ToolHandlerRegistry tests")
 struct ToolHandlerRegistryTests {
-    @Test
+    @Test("All expected handlers are registered")
     func allHandlersRegistered() async {
         let registry = ToolHandlerRegistry.shared
         let registeredTools = await registry.registeredToolNames
@@ -48,7 +48,7 @@ struct ToolHandlerRegistryTests {
         #expect(registeredTools.contains("xcstrings_batch_update_translations"))
     }
 
-    @Test
+    @Test("Execute throws for unknown tool")
     func executeUnknownToolThrows() async {
         let registry = ToolHandlerRegistry.shared
 
@@ -57,14 +57,14 @@ struct ToolHandlerRegistryTests {
         }
     }
 
-    @Test
+    @Test("handler(for:) returns handler for registered tool")
     func handlerForRegisteredTool() async {
         let registry = ToolHandlerRegistry.shared
         let handler = await registry.handler(for: "xcstrings_list_keys")
         #expect(handler != nil)
     }
 
-    @Test
+    @Test("handler(for:) returns nil for unregistered tool")
     func handlerForUnregisteredTool() async {
         let registry = ToolHandlerRegistry.shared
         let handler = await registry.handler(for: "nonexistent_tool")

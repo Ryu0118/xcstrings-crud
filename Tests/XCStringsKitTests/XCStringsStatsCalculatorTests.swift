@@ -6,7 +6,7 @@ import Testing
 struct XCStringsStatsCalculatorTests {
     // MARK: - getStats
 
-    @Test
+    @Test("getStats returns correct total key count")
     func getStatsTotalKeys() throws {
         let file = try loadFixture(TestFixtures.manyKeys)
         let calculator = XCStringsStatsCalculator(file: file)
@@ -16,7 +16,7 @@ struct XCStringsStatsCalculatorTests {
         #expect(stats.totalKeys == 10)
     }
 
-    @Test
+    @Test("getStats returns correct source language")
     func getStatsSourceLanguage() throws {
         let file = try loadFixture(TestFixtures.japaneseSource)
         let calculator = XCStringsStatsCalculator(file: file)
@@ -26,7 +26,7 @@ struct XCStringsStatsCalculatorTests {
         #expect(stats.sourceLanguage == "ja")
     }
 
-    @Test
+    @Test("getStats returns all languages")
     func getStatsLanguages() throws {
         let file = try loadFixture(TestFixtures.manyLanguages)
         let calculator = XCStringsStatsCalculator(file: file)
@@ -40,7 +40,7 @@ struct XCStringsStatsCalculatorTests {
         #expect(stats.languages.contains("es"))
     }
 
-    @Test
+    @Test("getStats calculates coverage by language")
     func getStatsCoverage() throws {
         let file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
         let calculator = XCStringsStatsCalculator(file: file)
@@ -51,7 +51,7 @@ struct XCStringsStatsCalculatorTests {
         #expect(stats.coverageByLanguage["ja"]?.coveragePercent == 100.0)
     }
 
-    @Test
+    @Test("getStats returns zero for empty file")
     func getStatsEmpty() throws {
         let file = try loadFixture(TestFixtures.empty)
         let calculator = XCStringsStatsCalculator(file: file)
@@ -61,7 +61,7 @@ struct XCStringsStatsCalculatorTests {
         #expect(stats.totalKeys == 0)
     }
 
-    @Test
+    @Test("getStats calculates partial coverage correctly")
     func getStatsPartialCoverage() throws {
         let file = try loadFixture(TestFixtures.multipleKeysPartialTranslations)
         let calculator = XCStringsStatsCalculator(file: file)
@@ -79,7 +79,7 @@ struct XCStringsStatsCalculatorTests {
 
     // MARK: - getProgress
 
-    @Test
+    @Test("getProgress returns stats for specific language")
     func getProgressSpecificLanguage() throws {
         let file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
         let calculator = XCStringsStatsCalculator(file: file)
@@ -91,7 +91,7 @@ struct XCStringsStatsCalculatorTests {
         #expect(progress.coveragePercent == 100.0)
     }
 
-    @Test
+    @Test("getProgress throws for non-existent language")
     func getProgressLanguageNotFound() throws {
         let file = try loadFixture(TestFixtures.singleKeySingleLang)
         let calculator = XCStringsStatsCalculator(file: file)
@@ -101,7 +101,7 @@ struct XCStringsStatsCalculatorTests {
         }
     }
 
-    @Test
+    @Test("getProgress calculates untranslated count correctly")
     func getProgressUntranslated() throws {
         let file = try loadFixture(TestFixtures.multipleKeysPartialTranslations)
         let calculator = XCStringsStatsCalculator(file: file)

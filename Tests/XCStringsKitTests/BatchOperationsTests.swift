@@ -97,7 +97,7 @@ struct BatchOperationsTests {
 
     // MARK: - Check Keys Tests
 
-    @Test(arguments: CheckKeysTestCase.allCases)
+    @Test("checkKeys returns correct results for multiple keys", arguments: CheckKeysTestCase.allCases)
     func checkKeysMultiple(testCase: CheckKeysTestCase) async throws {
         let path = try TestHelper.createTempFile(content: testCase.fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -111,7 +111,7 @@ struct BatchOperationsTests {
 
     // MARK: - Batch Add Translations Tests
 
-    @Test
+    @Test("addTranslationsBatch adds multiple keys successfully")
     func addTranslationsBatchMultipleKeys() async throws {
         let path = try TestHelper.createTempFile(content: FixtureType.empty.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -138,7 +138,7 @@ struct BatchOperationsTests {
         #expect(translation["ja"]?.value == "こんにちは")
     }
 
-    @Test(arguments: BatchAddTestCase.allCases)
+    @Test("addTranslationsBatch handles duplicate and overwrite scenarios", arguments: BatchAddTestCase.allCases)
     func addTranslationsBatchDuplicateHandling(testCase: BatchAddTestCase) async throws {
         let path = try TestHelper.createTempFile(content: testCase.fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -159,7 +159,7 @@ struct BatchOperationsTests {
 
     // MARK: - Batch Update Translations Tests
 
-    @Test
+    @Test("updateTranslationsBatch updates multiple keys successfully")
     func updateTranslationsBatchMultipleKeys() async throws {
         let path = try TestHelper.createTempFile(content: FixtureType.multipleKeysPartialTranslations.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -182,7 +182,7 @@ struct BatchOperationsTests {
         #expect(welcomeTranslation["en"]?.value == "Welcome!")
     }
 
-    @Test(arguments: BatchUpdateFailureTestCase.allCases)
+    @Test("updateTranslationsBatch fails for invalid scenarios", arguments: BatchUpdateFailureTestCase.allCases)
     func updateTranslationsBatchFailures(testCase: BatchUpdateFailureTestCase) async throws {
         let path = try TestHelper.createTempFile(content: testCase.fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -199,7 +199,7 @@ struct BatchOperationsTests {
         #expect(result.failed[0].key == testCase.expectedFailedKey)
     }
 
-    @Test
+    @Test("updateTranslationsBatch with mixed success and failure")
     func updateTranslationsBatchMixed() async throws {
         let path = try TestHelper.createTempFile(content: FixtureType.singleKeySingleLang.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -220,7 +220,7 @@ struct BatchOperationsTests {
 
     // MARK: - Edge Cases
 
-    @Test(arguments: [
+    @Test("batch operations with empty entries array", arguments: [
         FixtureType.empty,
         FixtureType.singleKeySingleLang,
     ])
@@ -239,7 +239,7 @@ struct BatchOperationsTests {
         #expect(updateResult.failedCount == 0)
     }
 
-    @Test
+    @Test("batch add preserves file integrity on partial failure")
     func batchAddPartialFailureIntegrity() async throws {
         let path = try TestHelper.createTempFile(content: FixtureType.singleKeySingleLang.content)
         defer { TestHelper.removeTempFile(at: path) }

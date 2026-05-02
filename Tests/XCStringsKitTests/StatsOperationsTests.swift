@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Calculating translation coverage and progress statistics")
 struct StatsOperationsTests {
-    @Test(arguments: FixtureType.allCases)
+    @Test("getStats returns correct total keys", arguments: FixtureType.allCases)
     func getStatsTotalKeys(fixture: FixtureType) async throws {
         let path = try TestHelper.createTempFile(content: fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -15,7 +15,7 @@ struct StatsOperationsTests {
         #expect(stats.totalKeys == fixture.expectedKeyCount)
     }
 
-    @Test(arguments: FixtureType.allCases)
+    @Test("getStats returns correct source language", arguments: FixtureType.allCases)
     func getStatsSourceLanguage(fixture: FixtureType) async throws {
         let path = try TestHelper.createTempFile(content: fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -26,7 +26,7 @@ struct StatsOperationsTests {
         #expect(stats.sourceLanguage == fixture.expectedSourceLanguage)
     }
 
-    @Test(arguments: [
+    @Test("getProgress returns correct progress", arguments: [
         (FixtureType.multipleKeysPartialTranslations, "ja", 2, 1),
         (FixtureType.multipleKeysPartialTranslations, "de", 1, 2),
         (FixtureType.manyKeys, "ja", 3, 7),

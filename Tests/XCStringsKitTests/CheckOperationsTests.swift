@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Checking key existence and translation coverage")
 struct CheckOperationsTests {
-    @Test(arguments: [
+    @Test("checkKey returns true for existing key", arguments: [
         (FixtureType.singleKeySingleLang, "Hello"),
         (FixtureType.multipleKeysPartialTranslations, "Hello"),
         (FixtureType.multipleKeysPartialTranslations, "Goodbye"),
@@ -21,7 +21,7 @@ struct CheckOperationsTests {
         #expect(exists == true)
     }
 
-    @Test(arguments: FixtureType.allCases)
+    @Test("checkKey returns false for non-existent key", arguments: FixtureType.allCases)
     func checkKeyNotExists(fixture: FixtureType) async throws {
         let path = try TestHelper.createTempFile(content: fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -32,7 +32,7 @@ struct CheckOperationsTests {
         #expect(exists == false)
     }
 
-    @Test(arguments: [
+    @Test("checkKey with language returns correct result", arguments: [
         (FixtureType.singleKeyMultipleLangs, "Hello", "ja", true),
         (FixtureType.singleKeyMultipleLangs, "Hello", "fr", false),
         (FixtureType.multipleKeysPartialTranslations, "Goodbye", "en", true),
@@ -48,7 +48,7 @@ struct CheckOperationsTests {
         #expect(exists == expected)
     }
 
-    @Test(arguments: [
+    @Test("checkCoverage returns correct coverage", arguments: [
         (FixtureType.singleKeyMultipleLangs, "Hello", 3, 0),
         (FixtureType.multipleKeysPartialTranslations, "Hello", 2, 1),
         (FixtureType.multipleKeysPartialTranslations, "Goodbye", 1, 2),

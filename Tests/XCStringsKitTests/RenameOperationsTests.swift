@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Renaming keys while preserving all translations")
 struct RenameOperationsTests {
-    @Test(arguments: [
+    @Test("renameKey renames key preserving translations", arguments: [
         (FixtureType.singleKeySingleLang, "Hello", "Greeting"),
         (FixtureType.singleKeyMultipleLangs, "Hello", "Salutation"),
         (FixtureType.multipleKeysPartialTranslations, "Hello", "Hi"),
@@ -33,7 +33,7 @@ struct RenameOperationsTests {
         #expect(newTranslations.count == originalTranslations.count)
     }
 
-    @Test(arguments: FixtureType.allCases)
+    @Test("renameKey throws for non-existent key", arguments: FixtureType.allCases)
     func renameKeyNonExistent(fixture: FixtureType) async throws {
         let path = try TestHelper.createTempFile(content: fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -45,7 +45,7 @@ struct RenameOperationsTests {
         }
     }
 
-    @Test(arguments: [
+    @Test("renameKey throws when target key already exists", arguments: [
         (FixtureType.multipleKeysPartialTranslations, "Hello", "Goodbye"),
         (FixtureType.multipleKeysPartialTranslations, "Goodbye", "Welcome"),
     ])

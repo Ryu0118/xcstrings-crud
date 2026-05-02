@@ -7,14 +7,14 @@ import Testing
 struct ToolArgumentsTests {
     // MARK: - String Tests
 
-    @Test
+    @Test("requireString returns value for existing key")
     func requireStringExisting() throws {
         let args = ToolArguments(raw: ["file": .string("/path/to/file.xcstrings")])
         let value = try args.requireString("file")
         #expect(value == "/path/to/file.xcstrings")
     }
 
-    @Test
+    @Test("requireString throws for missing key")
     func requireStringMissing() throws {
         let args = ToolArguments(raw: [:])
         #expect(throws: Error.self) {
@@ -22,14 +22,14 @@ struct ToolArgumentsTests {
         }
     }
 
-    @Test
+    @Test("optionalString returns value for existing key")
     func optionalStringExisting() {
         let args = ToolArguments(raw: ["language": .string("ja")])
         let value = args.optionalString("language")
         #expect(value == "ja")
     }
 
-    @Test
+    @Test("optionalString returns nil for missing key")
     func optionalStringMissing() {
         let args = ToolArguments(raw: [:])
         let value = args.optionalString("language")
@@ -38,14 +38,14 @@ struct ToolArgumentsTests {
 
     // MARK: - Bool Tests
 
-    @Test
+    @Test("bool returns value for existing key")
     func boolExisting() {
         let args = ToolArguments(raw: ["compact": .bool(false)])
         let value = args.bool("compact", default: true)
         #expect(value == false)
     }
 
-    @Test
+    @Test("bool returns default for missing key")
     func boolMissing() {
         let args = ToolArguments(raw: [:])
         let value = args.bool("compact", default: true)
@@ -54,7 +54,7 @@ struct ToolArgumentsTests {
 
     // MARK: - Array Tests
 
-    @Test
+    @Test("requireStringArray returns values for existing key")
     func requireStringArrayExisting() throws {
         let args = ToolArguments(raw: [
             "keys": .array([.string("Hello"), .string("Goodbye"), .string("Welcome")]),
@@ -63,7 +63,7 @@ struct ToolArgumentsTests {
         #expect(values == ["Hello", "Goodbye", "Welcome"])
     }
 
-    @Test
+    @Test("requireStringArray throws for missing key")
     func requireStringArrayMissing() throws {
         let args = ToolArguments(raw: [:])
         #expect(throws: Error.self) {
@@ -71,7 +71,7 @@ struct ToolArgumentsTests {
         }
     }
 
-    @Test
+    @Test("optionalStringArray returns values for existing key")
     func optionalStringArrayExisting() {
         let args = ToolArguments(raw: [
             "languages": .array([.string("ja"), .string("en")]),
@@ -80,7 +80,7 @@ struct ToolArgumentsTests {
         #expect(values == ["ja", "en"])
     }
 
-    @Test
+    @Test("optionalStringArray returns nil for missing key")
     func optionalStringArrayMissing() {
         let args = ToolArguments(raw: [:])
         let values = args.optionalStringArray("languages")
@@ -89,7 +89,7 @@ struct ToolArgumentsTests {
 
     // MARK: - Translations Tests
 
-    @Test
+    @Test("requireTranslations parses object correctly")
     func requireTranslationsParsing() throws {
         let args = ToolArguments(raw: [
             "translations": .object([
@@ -105,7 +105,7 @@ struct ToolArgumentsTests {
         #expect(translations["de"] == "Hallo")
     }
 
-    @Test
+    @Test("requireTranslations throws for missing key")
     func requireTranslationsMissing() throws {
         let args = ToolArguments(raw: [:])
         #expect(throws: Error.self) {
@@ -115,7 +115,7 @@ struct ToolArgumentsTests {
 
     // MARK: - Batch Entries Tests
 
-    @Test
+    @Test("requireBatchEntries parses array of entries correctly")
     func requireBatchEntriesParsing() throws {
         let args = ToolArguments(raw: [
             "entries": .array([
@@ -145,7 +145,7 @@ struct ToolArgumentsTests {
         #expect(entries[1].translations["ja"] == "さようなら")
     }
 
-    @Test
+    @Test("requireBatchEntries throws for missing key")
     func requireBatchEntriesMissing() throws {
         let args = ToolArguments(raw: [:])
         #expect(throws: Error.self) {
@@ -153,7 +153,7 @@ struct ToolArgumentsTests {
         }
     }
 
-    @Test
+    @Test("requireBatchEntries throws for invalid entry format")
     func requireBatchEntriesInvalidFormat() throws {
         let args = ToolArguments(raw: [
             "entries": .array([

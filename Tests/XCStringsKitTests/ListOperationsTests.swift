@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Listing keys, languages, and untranslated entries from xcstrings files")
 struct ListOperationsTests {
-    @Test(arguments: FixtureType.allCases)
+    @Test("listKeys returns correct count", arguments: FixtureType.allCases)
     func listKeysCount(fixture: FixtureType) async throws {
         let path = try TestHelper.createTempFile(content: fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -15,7 +15,7 @@ struct ListOperationsTests {
         #expect(keys.count == fixture.expectedKeyCount)
     }
 
-    @Test(arguments: [
+    @Test("listKeys returns sorted keys", arguments: [
         FixtureType.multipleKeysPartialTranslations,
         FixtureType.manyKeys,
     ])
@@ -30,7 +30,7 @@ struct ListOperationsTests {
         #expect(keys == sortedKeys)
     }
 
-    @Test(arguments: [
+    @Test("listLanguages returns all languages", arguments: [
         (FixtureType.singleKeySingleLang, 1),
         (FixtureType.singleKeyMultipleLangs, 3),
         (FixtureType.manyLanguages, 7),
@@ -45,7 +45,7 @@ struct ListOperationsTests {
         #expect(languages.count == expectedCount)
     }
 
-    @Test(arguments: [
+    @Test("listUntranslated returns correct keys", arguments: [
         (FixtureType.multipleKeysPartialTranslations, "ja", ["Goodbye"]),
         (FixtureType.multipleKeysPartialTranslations, "de", ["Goodbye", "Hello"]),
         (FixtureType.manyKeys, "ja", ["Key1", "Key10", "Key2", "Key3", "Key4", "Key5", "Key9"]),
@@ -60,7 +60,7 @@ struct ListOperationsTests {
         #expect(untranslated == expectedKeys)
     }
 
-    @Test
+    @Test("listStaleKeys returns keys with stale extraction state")
     func listStaleKeys() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)
         defer { TestHelper.removeTempFile(at: path) }
@@ -71,7 +71,7 @@ struct ListOperationsTests {
         #expect(staleKeys == ["StaleKey1", "StaleKey2"])
     }
 
-    @Test
+    @Test("listStaleKeys returns empty array when no stale keys")
     func listStaleKeysEmpty() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
         defer { TestHelper.removeTempFile(at: path) }
@@ -82,7 +82,7 @@ struct ListOperationsTests {
         #expect(staleKeys.isEmpty)
     }
 
-    @Test
+    @Test("listStaleKeys ignores other extraction states")
     func listStaleKeysIgnoresOtherStates() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.withComments)
         defer { TestHelper.removeTempFile(at: path) }
@@ -96,7 +96,7 @@ struct ListOperationsTests {
 
     // MARK: - Batch Stale Keys Tests
 
-    @Test
+    @Test("getBatchStaleKeys returns stale keys across multiple files")
     func batchListStaleKeys() throws {
         let path1 = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)
         let path2 = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
@@ -119,7 +119,7 @@ struct ListOperationsTests {
         #expect(file2Summary?.count == 0)
     }
 
-    @Test
+    @Test("getBatchStaleKeys returns correct note message")
     func batchListStaleKeysNote() throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)
         defer { TestHelper.removeTempFile(at: path) }
@@ -129,7 +129,7 @@ struct ListOperationsTests {
         #expect(result.note == StaleKeysConstants.note)
     }
 
-    @Test
+    @Test("getBatchStaleKeys handles empty file list")
     func batchListStaleKeysEmptyFiles() throws {
         let result = try XCStringsParser.getBatchStaleKeys(paths: [])
 

@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Verifying changes are correctly saved to disk after operations")
 struct PersistenceTests {
-    @Test(arguments: [
+    @Test("Changes are persisted to file", arguments: [
         FixtureType.empty,
         FixtureType.singleKeySingleLang,
     ])
@@ -25,7 +25,7 @@ struct PersistenceTests {
         #expect(translations["en"]?.value == "Persisted Value")
     }
 
-    @Test
+    @Test("Multiple operations persist correctly")
     func multipleOperationsPersist() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.empty)
         defer { TestHelper.removeTempFile(at: path) }
