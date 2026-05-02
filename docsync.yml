@@ -13,7 +13,7 @@ rules:
   doc: README.md
   message: "MCP tool handlers changed \u2014 update README (MCP tools table) if tools
     were added, removed, or renamed."
-  checksum: 5f6af8a6220a2f8dca839f63fa2fd56c1793ac1e274632ef2a7ddeca4cee23b9
+  checksum: af0a625fdde480750d066f28b9bbb3ce67a5662272b82c73f659a9d875c0d188
 - name: readme-cli
   sources:
   - Sources/XCStringsCLI/XCStringsCLI.swift
@@ -31,7 +31,7 @@ rules:
   doc: README.md
   message: "CLI command surface changed \u2014 update README (CLI usage section) if
     commands or options changed."
-  checksum: 084c0e08c232d933268f5e16d22f7f9d4f40bbcf1ce4e919340d4a1a0bbb5a00
+  checksum: eb16604892d5631138cdf735a0fdd751adf36d54764ffb8668ccee1f6918248a
 - name: readme-core
   sources:
   - Sources/XCStringsKit/Models/XCStrings.swift
@@ -40,7 +40,7 @@ rules:
   doc: README.md
   message: "Core data model or error types changed \u2014 update README if the behavior
     or output format changed."
-  checksum: 35188a9bc8b082064e7b9b4d3133c030d70fb98ea44802d834b79cf3aefb885f
+  checksum: c52fb55bb3404bfa39cb28f899aa542efe7db8884851bf808f4cdb07e7a61265
 - name: agents-claude
   sources:
   - Package.swift
@@ -50,4 +50,4 @@ rules:
   doc: CLAUDE.md
   message: "Core architecture changed \u2014 update CLAUDE.md if the architecture
     description is affected."
-  checksum: 3109147a2e5d07093184a7db02a4b841cd44601b5ca12f52278a2a4a6a309c2e
+  checksum: c4b16de604196c832f501d7516433309408466b3fae724bbf94f7ed0edb8ede6
