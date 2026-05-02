@@ -1,6 +1,11 @@
 #!/bin/sh
 SRCROOT=$(git rev-parse --show-toplevel)
 
+GITLEAKS=$(mise which gitleaks 2>/dev/null || command -v gitleaks 2>/dev/null || true)
+if [ -n "$GITLEAKS" ]; then
+  "$GITLEAKS" protect --staged --source "$SRCROOT" -v
+fi
+
 # docsync: check doc/source sync
 DOCSYNC="$SRCROOT/.nest/bin/docsync"
 if [ -x "$DOCSYNC" ] && [ -f "$SRCROOT/docsync.yml" ]; then
