@@ -1,4 +1,4 @@
-name: Test
+name: Check
 
 on:
   push:
@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  check:
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v6
@@ -29,8 +29,8 @@ jobs:
       - name: Select Xcode 26.1.1
         run: sudo xcode-select -s /Applications/Xcode_26.1.1.app/Contents/Developer
 
-      - name: Build
-        run: swift build
+      - name: Bootstrap dev tools
+        run: make setup
 
-      - name: Run tests
-        run: swift test
+      - name: Run checks
+        run: make check

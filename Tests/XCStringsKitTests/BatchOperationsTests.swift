@@ -6,7 +6,7 @@ import Testing
 struct BatchOperationsTests {
     // MARK: - Test Cases
 
-    struct CheckKeysTestCase: Sendable {
+    struct CheckKeysTestCase {
         let fixture: FixtureType
         let keys: [String]
         let language: String?
@@ -45,7 +45,7 @@ struct BatchOperationsTests {
         ]
     }
 
-    struct BatchAddTestCase: Sendable {
+    struct BatchAddTestCase {
         let fixture: FixtureType
         let allowOverwrite: Bool
         let expectedSuccess: Int
@@ -73,7 +73,7 @@ struct BatchOperationsTests {
         ]
     }
 
-    struct BatchUpdateFailureTestCase: Sendable {
+    struct BatchUpdateFailureTestCase {
         let fixture: FixtureType
         let key: String
         let translations: [String: String]

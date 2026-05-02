@@ -20,7 +20,7 @@ protocol ToolHandler: Sendable {
 
 /// Context for tool execution, containing parsed arguments and utilities.
 /// This abstraction allows for easier testing by decoupling from MCP types.
-struct ToolContext: Sendable {
+struct ToolContext {
     let arguments: ToolArguments
 
     init(arguments: [String: Value]) {
@@ -35,7 +35,7 @@ struct ToolContext: Sendable {
 // MARK: - Tool Arguments
 
 /// Type-safe wrapper for tool arguments with convenient accessors.
-struct ToolArguments: Sendable {
+struct ToolArguments {
     private let raw: [String: Value]
 
     init(raw: [String: Value]) {
@@ -65,12 +65,12 @@ struct ToolArguments: Sendable {
         guard let arrayValue = raw[key]?.arrayValue else {
             throw XCStringsError.invalidJSON(reason: "Missing '\(key)' parameter")
         }
-        return arrayValue.compactMap { $0.stringValue }
+        return arrayValue.compactMap(\.stringValue)
     }
 
     /// Get an optional array of strings
     func optionalStringArray(_ key: String) -> [String]? {
-        raw[key]?.arrayValue?.compactMap { $0.stringValue }
+        raw[key]?.arrayValue?.compactMap(\.stringValue)
     }
 
     /// Get a required translations dictionary (language -> value)
@@ -121,7 +121,7 @@ enum JSONEncoderHelper {
         return encoder
     }()
 
-    static func encode<T: Encodable>(_ value: T) throws -> String {
+    static func encode(_ value: some Encodable) throws -> String {
         let data = try encoder.encode(value)
         return String(data: data, encoding: .utf8) ?? "{}"
     }

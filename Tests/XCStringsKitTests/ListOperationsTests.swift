@@ -97,7 +97,7 @@ struct ListOperationsTests {
     // MARK: - Batch Stale Keys Tests
 
     @Test("getBatchStaleKeys returns stale keys across multiple files")
-    func batchListStaleKeys() async throws {
+    func batchListStaleKeys() throws {
         let path1 = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)
         let path2 = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
         defer {
@@ -120,7 +120,7 @@ struct ListOperationsTests {
     }
 
     @Test("getBatchStaleKeys returns correct note message")
-    func batchListStaleKeysNote() async throws {
+    func batchListStaleKeysNote() throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.withStaleKeys)
         defer { TestHelper.removeTempFile(at: path) }
 
@@ -130,7 +130,7 @@ struct ListOperationsTests {
     }
 
     @Test("getBatchStaleKeys handles empty file list")
-    func batchListStaleKeysEmptyFiles() async throws {
+    func batchListStaleKeysEmptyFiles() throws {
         let result = try XCStringsParser.getBatchStaleKeys(paths: [])
 
         #expect(result.files.isEmpty)

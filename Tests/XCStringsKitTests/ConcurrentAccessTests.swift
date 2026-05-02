@@ -15,7 +15,7 @@ struct ConcurrentAccessTests {
         await withTaskGroup(of: [String].self) { group in
             for _ in 0 ..< 10 {
                 group.addTask {
-                    (try? await parser.listKeys()) ?? []
+                    await (try? parser.listKeys()) ?? []
                 }
             }
 

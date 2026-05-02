@@ -1,12 +1,10 @@
 import Foundation
 import MCP
 import Testing
-
 @testable import XCStringsMCP
 
 @Suite("ToolArguments parsing tests")
 struct ToolArgumentsTests {
-
     // MARK: - String Tests
 
     @Test("requireString returns value for existing key")
@@ -59,7 +57,7 @@ struct ToolArgumentsTests {
     @Test("requireStringArray returns values for existing key")
     func requireStringArrayExisting() throws {
         let args = ToolArguments(raw: [
-            "keys": .array([.string("Hello"), .string("Goodbye"), .string("Welcome")])
+            "keys": .array([.string("Hello"), .string("Goodbye"), .string("Welcome")]),
         ])
         let values = try args.requireStringArray("keys")
         #expect(values == ["Hello", "Goodbye", "Welcome"])
@@ -76,7 +74,7 @@ struct ToolArgumentsTests {
     @Test("optionalStringArray returns values for existing key")
     func optionalStringArrayExisting() {
         let args = ToolArguments(raw: [
-            "languages": .array([.string("ja"), .string("en")])
+            "languages": .array([.string("ja"), .string("en")]),
         ])
         let values = args.optionalStringArray("languages")
         #expect(values == ["ja", "en"])
@@ -97,8 +95,8 @@ struct ToolArgumentsTests {
             "translations": .object([
                 "ja": .string("こんにちは"),
                 "en": .string("Hello"),
-                "de": .string("Hallo")
-            ])
+                "de": .string("Hallo"),
+            ]),
         ])
         let translations = try args.requireTranslations("translations")
         #expect(translations.count == 3)
@@ -125,16 +123,16 @@ struct ToolArgumentsTests {
                     "key": .string("Hello"),
                     "translations": .object([
                         "ja": .string("こんにちは"),
-                        "en": .string("Hello")
-                    ])
+                        "en": .string("Hello"),
+                    ]),
                 ]),
                 .object([
                     "key": .string("Goodbye"),
                     "translations": .object([
-                        "ja": .string("さようなら")
-                    ])
-                ])
-            ])
+                        "ja": .string("さようなら"),
+                    ]),
+                ]),
+            ]),
         ])
 
         let entries = try args.requireBatchEntries("entries")
@@ -160,10 +158,10 @@ struct ToolArgumentsTests {
         let args = ToolArguments(raw: [
             "entries": .array([
                 .object([
-                    "key": .string("Hello")
+                    "key": .string("Hello"),
                     // missing translations
-                ])
-            ])
+                ]),
+            ]),
         ])
         #expect(throws: Error.self) {
             _ = try args.requireBatchEntries("entries")

@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Bootstrap dev tools (nest)
-        run: ./scripts/nest.sh bootstrap nestfile.yaml
+        run: make nest
 
       - name: Check doc sync
-        run: .nest/bin/docsync check
+        run: make docsync

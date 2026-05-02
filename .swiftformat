@@ -1,0 +1,17 @@
+# SwiftFormat configuration for xcstrings-crud.
+
+--swiftversion 6.0
+--indent 4
+--indentcase false
+--stripunusedargs closure-only
+
+--disable redundantSwiftTestingSuite
+--disable swiftTestingTestCaseNames
+--test-case-name-format standard-identifiers
+
+--exclude .build
+--exclude .swiftpm
+--exclude .nest
+--exclude "**/.build/**"
+--exclude "**/.swiftpm/**"
+--exclude "**/.nest/**"

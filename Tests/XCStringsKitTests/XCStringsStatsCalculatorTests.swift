@@ -74,7 +74,7 @@ struct XCStringsStatsCalculatorTests {
 
         #expect(enStats != nil)
         #expect(jaStats != nil)
-        #expect(enStats!.translated >= jaStats!.translated)
+        #expect(try #require(enStats?.translated) >= jaStats!.translated)
     }
 
     // MARK: - getProgress

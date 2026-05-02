@@ -1,7 +1,7 @@
 import Foundation
 
 /// Root structure of xcstrings file
-package struct XCStringsFile: Codable, Sendable {
+package struct XCStringsFile: Codable {
     var sourceLanguage: String
     var strings: [String: StringEntry]
     var version: String
@@ -14,7 +14,7 @@ package struct XCStringsFile: Codable, Sendable {
 }
 
 /// String entry for each key
-package struct StringEntry: Codable, Sendable {
+package struct StringEntry: Codable {
     var comment: String?
     var extractionState: String?
     var localizations: [String: Localization]?
@@ -27,7 +27,7 @@ package struct StringEntry: Codable, Sendable {
 }
 
 /// Localization entry
-package struct Localization: Codable, Sendable {
+package struct Localization: Codable {
     var stringUnit: StringUnit?
     var variations: Variations?
 
@@ -38,7 +38,7 @@ package struct Localization: Codable, Sendable {
 }
 
 /// String unit containing the actual translation value
-package struct StringUnit: Codable, Sendable {
+package struct StringUnit: Codable {
     var state: String
     var value: String
 
@@ -49,7 +49,7 @@ package struct StringUnit: Codable, Sendable {
 }
 
 /// Variations (plural, device, etc.)
-package struct Variations: Codable, Sendable {
+package struct Variations: Codable {
     var plural: PluralVariation?
     var device: DeviceVariation?
 
@@ -61,7 +61,7 @@ package struct Variations: Codable, Sendable {
 
 /// Wrapper for a variation category value (e.g. each plural form or device category)
 /// In xcstrings JSON, each variation value is `{ "stringUnit": { "state": "...", "value": "..." } }`
-package struct VariationValue: Codable, Sendable {
+package struct VariationValue: Codable {
     var stringUnit: StringUnit?
 
     package init(stringUnit: StringUnit? = nil) {
@@ -70,7 +70,7 @@ package struct VariationValue: Codable, Sendable {
 }
 
 /// Plural variation
-package struct PluralVariation: Codable, Sendable {
+package struct PluralVariation: Codable {
     var zero: VariationValue?
     var one: VariationValue?
     var two: VariationValue?
@@ -96,7 +96,7 @@ package struct PluralVariation: Codable, Sendable {
 }
 
 /// Device variation
-package struct DeviceVariation: Codable, Sendable {
+package struct DeviceVariation: Codable {
     var iphone: VariationValue?
     var ipad: VariationValue?
     var mac: VariationValue?
@@ -121,7 +121,7 @@ package struct DeviceVariation: Codable, Sendable {
 // MARK: - Output Models
 
 /// Key information for output
-package struct KeyInfo: Codable, Sendable {
+package struct KeyInfo: Codable {
     package let key: String
     package let comment: String?
     package let extractionState: String?
@@ -136,7 +136,7 @@ package struct KeyInfo: Codable, Sendable {
 }
 
 /// Translation information for output
-package struct TranslationInfo: Codable, Sendable {
+package struct TranslationInfo: Codable {
     package let key: String
     package let language: String
     package let value: String?
@@ -153,7 +153,7 @@ package struct TranslationInfo: Codable, Sendable {
 }
 
 /// Coverage information for output
-package struct CoverageInfo: Codable, Sendable {
+package struct CoverageInfo: Codable {
     package let key: String
     package let translatedLanguages: [String]
     package let missingLanguages: [String]
@@ -168,7 +168,7 @@ package struct CoverageInfo: Codable, Sendable {
 }
 
 /// Overall statistics for output
-package struct StatsInfo: Codable, Sendable {
+package struct StatsInfo: Codable {
     package let totalKeys: Int
     package let sourceLanguage: String
     package let languages: [String]
@@ -183,7 +183,7 @@ package struct StatsInfo: Codable, Sendable {
 }
 
 /// Per-language statistics
-package struct LanguageStats: Codable, Sendable {
+package struct LanguageStats: Codable {
     package let translated: Int
     package let untranslated: Int
     package let total: Int
@@ -198,7 +198,7 @@ package struct LanguageStats: Codable, Sendable {
 }
 
 /// Token-efficient batch coverage summary for multiple files
-package struct BatchCoverageSummary: Codable, Sendable {
+package struct BatchCoverageSummary: Codable {
     package let files: [FileCoverageSummary]
     package let aggregated: AggregatedCoverage
 
@@ -209,10 +209,10 @@ package struct BatchCoverageSummary: Codable, Sendable {
 }
 
 /// Compact coverage summary for a single file
-package struct FileCoverageSummary: Codable, Sendable {
+package struct FileCoverageSummary: Codable {
     package let file: String
     package let totalKeys: Int
-    package let languages: [String: Double]  // lang -> coveragePercent
+    package let languages: [String: Double] // lang -> coveragePercent
 
     package init(file: String, totalKeys: Int, languages: [String: Double]) {
         self.file = file
@@ -222,7 +222,7 @@ package struct FileCoverageSummary: Codable, Sendable {
 }
 
 /// Aggregated coverage across all files
-package struct AggregatedCoverage: Codable, Sendable {
+package struct AggregatedCoverage: Codable {
     package let totalFiles: Int
     package let totalKeys: Int
     package let averageCoverageByLanguage: [String: Double]
@@ -237,60 +237,60 @@ package struct AggregatedCoverage: Codable, Sendable {
 // MARK: - Compact Output Models (100% languages omitted)
 
 /// Compact stats info - only shows languages under 100%
-package struct CompactStatsInfo: Codable, Sendable {
+package struct CompactStatsInfo: Codable {
     package let totalKeys: Int
     package let sourceLanguage: String
     package let totalLanguages: Int
     package let allComplete: Bool
-    package let incompleteLanguages: [String: LanguageStats]?  // nil if all complete
-    package let completeCount: Int  // number of languages at 100%
+    package let incompleteLanguages: [String: LanguageStats]? // nil if all complete
+    package let completeCount: Int // number of languages at 100%
 
     package init(from stats: StatsInfo) {
-        self.totalKeys = stats.totalKeys
-        self.sourceLanguage = stats.sourceLanguage
-        self.totalLanguages = stats.languages.count
+        totalKeys = stats.totalKeys
+        sourceLanguage = stats.sourceLanguage
+        totalLanguages = stats.languages.count
 
         let incomplete = stats.coverageByLanguage.filter { $0.value.coveragePercent < 100 }
-        self.allComplete = incomplete.isEmpty
-        self.incompleteLanguages = incomplete.isEmpty ? nil : incomplete
-        self.completeCount = stats.coverageByLanguage.count - incomplete.count
+        allComplete = incomplete.isEmpty
+        incompleteLanguages = incomplete.isEmpty ? nil : incomplete
+        completeCount = stats.coverageByLanguage.count - incomplete.count
     }
 }
 
 /// Compact file coverage summary - only shows languages under 100%
-package struct CompactFileCoverageSummary: Codable, Sendable {
+package struct CompactFileCoverageSummary: Codable {
     package let file: String
     package let totalKeys: Int
     package let totalLanguages: Int
     package let allComplete: Bool
-    package let incompleteLanguages: [String: Double]?  // nil if all complete
+    package let incompleteLanguages: [String: Double]? // nil if all complete
     package let completeCount: Int
 
     package init(from summary: FileCoverageSummary) {
-        self.file = summary.file
-        self.totalKeys = summary.totalKeys
-        self.totalLanguages = summary.languages.count
+        file = summary.file
+        totalKeys = summary.totalKeys
+        totalLanguages = summary.languages.count
 
         let incomplete = summary.languages.filter { $0.value < 100 }
-        self.allComplete = incomplete.isEmpty
-        self.incompleteLanguages = incomplete.isEmpty ? nil : incomplete
-        self.completeCount = summary.languages.count - incomplete.count
+        allComplete = incomplete.isEmpty
+        incompleteLanguages = incomplete.isEmpty ? nil : incomplete
+        completeCount = summary.languages.count - incomplete.count
     }
 }
 
 /// Compact batch coverage summary
-package struct CompactBatchCoverageSummary: Codable, Sendable {
+package struct CompactBatchCoverageSummary: Codable {
     package let files: [CompactFileCoverageSummary]
     package let aggregated: CompactAggregatedCoverage
 
     package init(from batch: BatchCoverageSummary) {
-        self.files = batch.files.map { CompactFileCoverageSummary(from: $0) }
-        self.aggregated = CompactAggregatedCoverage(from: batch.aggregated)
+        files = batch.files.map { CompactFileCoverageSummary(from: $0) }
+        aggregated = CompactAggregatedCoverage(from: batch.aggregated)
     }
 }
 
 /// Compact aggregated coverage
-package struct CompactAggregatedCoverage: Codable, Sendable {
+package struct CompactAggregatedCoverage: Codable {
     package let totalFiles: Int
     package let totalKeys: Int
     package let totalLanguages: Int
@@ -299,36 +299,36 @@ package struct CompactAggregatedCoverage: Codable, Sendable {
     package let completeCount: Int
 
     package init(from agg: AggregatedCoverage) {
-        self.totalFiles = agg.totalFiles
-        self.totalKeys = agg.totalKeys
-        self.totalLanguages = agg.averageCoverageByLanguage.count
+        totalFiles = agg.totalFiles
+        totalKeys = agg.totalKeys
+        totalLanguages = agg.averageCoverageByLanguage.count
 
         let incomplete = agg.averageCoverageByLanguage.filter { $0.value < 100 }
-        self.allComplete = incomplete.isEmpty
-        self.incompleteLanguages = incomplete.isEmpty ? nil : incomplete
-        self.completeCount = agg.averageCoverageByLanguage.count - incomplete.count
+        allComplete = incomplete.isEmpty
+        incompleteLanguages = incomplete.isEmpty ? nil : incomplete
+        completeCount = agg.averageCoverageByLanguage.count - incomplete.count
     }
 }
 
 // MARK: - Batch Operation Models
 
 /// Result of batch key existence check
-package struct BatchCheckKeysResult: Codable, Sendable {
-    package let results: [String: Bool]  // key -> exists
+package struct BatchCheckKeysResult: Codable {
+    package let results: [String: Bool] // key -> exists
     package let existingKeys: [String]
     package let missingKeys: [String]
 
     package init(results: [String: Bool]) {
         self.results = results
-        self.existingKeys = results.filter { $0.value }.keys.sorted()
-        self.missingKeys = results.filter { !$0.value }.keys.sorted()
+        existingKeys = results.filter(\.value).keys.sorted()
+        missingKeys = results.filter { !$0.value }.keys.sorted()
     }
 }
 
 /// Single entry for batch add/update operations
-package struct BatchTranslationEntry: Codable, Sendable {
+package struct BatchTranslationEntry: Codable {
     package let key: String
-    package let translations: [String: String]  // language -> value
+    package let translations: [String: String] // language -> value
 
     package init(key: String, translations: [String: String]) {
         self.key = key
@@ -337,7 +337,7 @@ package struct BatchTranslationEntry: Codable, Sendable {
 }
 
 /// Result of batch add/update operations
-package struct BatchWriteResult: Codable, Sendable {
+package struct BatchWriteResult: Codable {
     package let success: Bool
     package let successCount: Int
     package let failedCount: Int
@@ -345,9 +345,9 @@ package struct BatchWriteResult: Codable, Sendable {
     package let failed: [BatchWriteError]
 
     package init(succeeded: [String], failed: [BatchWriteError]) {
-        self.success = failed.isEmpty
-        self.successCount = succeeded.count
-        self.failedCount = failed.count
+        success = failed.isEmpty
+        successCount = succeeded.count
+        failedCount = failed.count
         self.succeeded = succeeded
         self.failed = failed
     }
@@ -372,7 +372,7 @@ package struct BatchWriteResult: Codable, Sendable {
 }
 
 /// Error info for batch write operations
-package struct BatchWriteError: Codable, Sendable {
+package struct BatchWriteError: Codable {
     package let key: String
     package let error: String
 
@@ -390,7 +390,7 @@ package enum StaleKeysConstants {
 }
 
 /// Stale keys for a single file
-package struct FileStaleKeysSummary: Codable, Sendable {
+package struct FileStaleKeysSummary: Codable {
     package let file: String
     package let staleKeys: [String]
     package let count: Int
@@ -398,32 +398,32 @@ package struct FileStaleKeysSummary: Codable, Sendable {
     package init(file: String, staleKeys: [String]) {
         self.file = file
         self.staleKeys = staleKeys
-        self.count = staleKeys.count
+        count = staleKeys.count
     }
 }
 
 /// Stale keys result for a single file
-package struct StaleKeysResult: Codable, Sendable {
+package struct StaleKeysResult: Codable {
     package let staleKeys: [String]
     package let count: Int
     package let note: String
 
     package init(staleKeys: [String]) {
         self.staleKeys = staleKeys
-        self.count = staleKeys.count
-        self.note = StaleKeysConstants.note
+        count = staleKeys.count
+        note = StaleKeysConstants.note
     }
 }
 
 /// Batch stale keys summary for multiple files
-package struct BatchStaleKeysSummary: Codable, Sendable {
+package struct BatchStaleKeysSummary: Codable {
     package let files: [FileStaleKeysSummary]
     package let totalStaleKeys: Int
     package let note: String
 
     package init(files: [FileStaleKeysSummary]) {
         self.files = files
-        self.totalStaleKeys = files.reduce(0) { $0 + $1.count }
-        self.note = StaleKeysConstants.note
+        totalStaleKeys = files.reduce(0) { $0 + $1.count }
+        note = StaleKeysConstants.note
     }
 }

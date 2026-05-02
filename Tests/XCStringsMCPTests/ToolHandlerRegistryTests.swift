@@ -1,12 +1,10 @@
 import Foundation
 import MCP
 import Testing
-
 @testable import XCStringsMCP
 
 @Suite("ToolHandlerRegistry tests")
 struct ToolHandlerRegistryTests {
-
     @Test("All expected handlers are registered")
     func allHandlersRegistered() async {
         let registry = ToolHandlerRegistry.shared

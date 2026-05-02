@@ -1,13 +1,11 @@
 import Foundation
 import MCP
 import Testing
-
-@testable import XCStringsMCP
 @testable import XCStringsKit
+@testable import XCStringsMCP
 
 @Suite("Tool handler integration tests")
 struct ToolHandlerIntegrationTests {
-
     // MARK: - List Handlers
 
     @Test("ListKeysHandler returns all keys")
@@ -17,7 +15,7 @@ struct ToolHandlerIntegrationTests {
 
         let handler = ListKeysHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
-            "file": .string(path)
+            "file": .string(path),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -33,7 +31,7 @@ struct ToolHandlerIntegrationTests {
 
         let handler = ListLanguagesHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
-            "file": .string(path)
+            "file": .string(path),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -50,7 +48,7 @@ struct ToolHandlerIntegrationTests {
         let handler = ListUntranslatedHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
             "file": .string(path),
-            "language": .string("ja")
+            "language": .string("ja"),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -64,7 +62,7 @@ struct ToolHandlerIntegrationTests {
 
         let handler = ListStaleHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
-            "file": .string(path)
+            "file": .string(path),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -84,7 +82,7 @@ struct ToolHandlerIntegrationTests {
 
         let handler = BatchListStaleHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
-            "files": .array([.string(path1), .string(path2)])
+            "files": .array([.string(path1), .string(path2)]),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -103,7 +101,7 @@ struct ToolHandlerIntegrationTests {
 
         let handler = GetSourceLanguageHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
-            "file": .string(path)
+            "file": .string(path),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -118,7 +116,7 @@ struct ToolHandlerIntegrationTests {
         let handler = GetKeyHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
             "file": .string(path),
-            "key": .string("Hello")
+            "key": .string("Hello"),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -134,7 +132,7 @@ struct ToolHandlerIntegrationTests {
         let handler = CheckKeyHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
             "file": .string(path),
-            "key": .string("Hello")
+            "key": .string("Hello"),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -149,7 +147,7 @@ struct ToolHandlerIntegrationTests {
         let handler = CheckKeyHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
             "file": .string(path),
-            "key": .string("NonExistent")
+            "key": .string("NonExistent"),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -166,7 +164,7 @@ struct ToolHandlerIntegrationTests {
         let handler = StatsCoverageHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
             "file": .string(path),
-            "compact": .bool(false)
+            "compact": .bool(false),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -182,7 +180,7 @@ struct ToolHandlerIntegrationTests {
         let handler = StatsProgressHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
             "file": .string(path),
-            "language": .string("ja")
+            "language": .string("ja"),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -201,7 +199,7 @@ struct ToolHandlerIntegrationTests {
         let handler = CreateFileHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
             "file": .string(path),
-            "sourceLanguage": .string("ja")
+            "sourceLanguage": .string("ja"),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -221,7 +219,7 @@ struct ToolHandlerIntegrationTests {
             "file": .string(path),
             "key": .string("NewKey"),
             "language": .string("ja"),
-            "value": .string("新しいキー")
+            "value": .string("新しいキー"),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -243,7 +241,7 @@ struct ToolHandlerIntegrationTests {
             "file": .string(path),
             "key": .string("Hello"),
             "language": .string("en"),
-            "value": .string("Hi there")
+            "value": .string("Hi there"),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -264,7 +262,7 @@ struct ToolHandlerIntegrationTests {
         let context = ToolContext(arguments: ToolArguments(raw: [
             "file": .string(path),
             "oldKey": .string("Hello"),
-            "newKey": .string("Greeting")
+            "newKey": .string("Greeting"),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -288,7 +286,7 @@ struct ToolHandlerIntegrationTests {
         let handler = DeleteKeyHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
             "file": .string(path),
-            "key": .string("Hello")
+            "key": .string("Hello"),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -309,7 +307,7 @@ struct ToolHandlerIntegrationTests {
         let context = ToolContext(arguments: ToolArguments(raw: [
             "file": .string(path),
             "key": .string("Hello"),
-            "language": .string("ja")
+            "language": .string("ja"),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -331,7 +329,7 @@ struct ToolHandlerIntegrationTests {
         let handler = BatchCheckKeysHandler()
         let context = ToolContext(arguments: ToolArguments(raw: [
             "file": .string(path),
-            "keys": .array([.string("Hello"), .string("Goodbye"), .string("NonExistent")])
+            "keys": .array([.string("Hello"), .string("Goodbye"), .string("NonExistent")]),
         ]))
 
         let result = try await handler.execute(with: context)
@@ -353,16 +351,16 @@ struct ToolHandlerIntegrationTests {
                     "key": .string("Hello"),
                     "translations": .object([
                         "ja": .string("こんにちは"),
-                        "en": .string("Hello")
-                    ])
+                        "en": .string("Hello"),
+                    ]),
                 ]),
                 .object([
                     "key": .string("Goodbye"),
                     "translations": .object([
-                        "ja": .string("さようなら")
-                    ])
-                ])
-            ])
+                        "ja": .string("さようなら"),
+                    ]),
+                ]),
+            ]),
         ]))
 
         let result = try await handler.execute(with: context)
