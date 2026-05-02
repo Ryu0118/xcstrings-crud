@@ -15,7 +15,7 @@ hooks:
 	./scripts/setup-hooks.sh
 
 setup: nest hooks
-	mise install
+	@if command -v mise >/dev/null 2>&1; then mise install; else echo "mise not found; skipping mise install"; fi
 
 format:
 	@test -x "$(SWIFTFORMAT)" || (echo "Run: make setup" && exit 1)
