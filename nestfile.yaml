@@ -1,0 +1,6 @@
+nestPath: ./.nest
+targets:
+  - reference: Ryu0118/docsync
+    version: 0.1.0
+    assetName: docsync-0.1.0.artifactbundle.zip
+    checksum: 5c3f2e187cd07743145dfe5f9e60de1a38215708bde928eab8dae90bb26072cb

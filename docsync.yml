@@ -1,0 +1,53 @@
+rules:
+- name: readme-mcp-tools
+  sources:
+  - Sources/XCStringsMCP/Handlers/CreateToolHandlers.swift
+  - Sources/XCStringsMCP/Handlers/GetToolHandlers.swift
+  - Sources/XCStringsMCP/Handlers/ListToolHandlers.swift
+  - Sources/XCStringsMCP/Handlers/WriteToolHandlers.swift
+  - Sources/XCStringsMCP/Handlers/StatsToolHandlers.swift
+  - Sources/XCStringsMCP/Handlers/DeleteToolHandlers.swift
+  - Sources/XCStringsMCP/Handlers/BatchToolHandlers.swift
+  - Sources/XCStringsMCP/MCPServer.swift
+  - Sources/XCStringsMCP/ToolHandlerRegistry.swift
+  doc: README.md
+  message: "MCP tool handlers changed \u2014 update README (MCP tools table) if tools
+    were added, removed, or renamed."
+  checksum: 5f6af8a6220a2f8dca839f63fa2fd56c1793ac1e274632ef2a7ddeca4cee23b9
+- name: readme-cli
+  sources:
+  - Sources/XCStringsCLI/XCStringsCLI.swift
+  - Sources/XCStringsCLI/AddCommand.swift
+  - Sources/XCStringsCLI/UpdateCommand.swift
+  - Sources/XCStringsCLI/DeleteCommand.swift
+  - Sources/XCStringsCLI/RenameCommand.swift
+  - Sources/XCStringsCLI/GetCommand.swift
+  - Sources/XCStringsCLI/CheckCommand.swift
+  - Sources/XCStringsCLI/ListCommand.swift
+  - Sources/XCStringsCLI/StatsCommand.swift
+  - Sources/XCStringsCLI/CreateCommand.swift
+  - Sources/XCStringsCLI/BatchCommand.swift
+  - Sources/XCStringsCLI/MCPCommand.swift
+  doc: README.md
+  message: "CLI command surface changed \u2014 update README (CLI usage section) if
+    commands or options changed."
+  checksum: 084c0e08c232d933268f5e16d22f7f9d4f40bbcf1ce4e919340d4a1a0bbb5a00
+- name: readme-core
+  sources:
+  - Sources/XCStringsKit/Models/XCStrings.swift
+  - Sources/XCStringsKit/Errors.swift
+  - Sources/XCStringsKit/XCStringsParser.swift
+  doc: README.md
+  message: "Core data model or error types changed \u2014 update README if the behavior
+    or output format changed."
+  checksum: 35188a9bc8b082064e7b9b4d3133c030d70fb98ea44802d834b79cf3aefb885f
+- name: agents-claude
+  sources:
+  - Package.swift
+  - Sources/XCStringsKit/XCStringsReader.swift
+  - Sources/XCStringsKit/XCStringsWriter.swift
+  - Sources/XCStringsKit/XCStringsFileHandler.swift
+  doc: CLAUDE.md
+  message: "Core architecture changed \u2014 update CLAUDE.md if the architecture
+    description is affected."
+  checksum: 3109147a2e5d07093184a7db02a4b841cd44601b5ca12f52278a2a4a6a309c2e
