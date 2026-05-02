@@ -1,13 +1,13 @@
 import Foundation
 
 /// Handles statistics calculations for xcstrings files
-struct XCStringsStatsCalculator: Sendable {
+struct XCStringsStatsCalculator {
     private let file: XCStringsFile
     private let reader: XCStringsReader
 
     init(file: XCStringsFile) {
         self.file = file
-        self.reader = XCStringsReader(file: file)
+        reader = XCStringsReader(file: file)
     }
 
     /// Get overall statistics
@@ -16,10 +16,10 @@ struct XCStringsStatsCalculator: Sendable {
         let entries = file.strings.values
 
         let coverageByLanguage = Dictionary(uniqueKeysWithValues: allLanguages.lazy.map { language in
-            let translated = entries.lazy.filter { entry in
+            let translated = entries.lazy.count(where: { entry in
                 let localization = entry.localizations?[language]
                 return localization?.stringUnit?.value != nil || localization?.variations != nil
-            }.count
+            })
 
             let total = entries.count
             let untranslated = total - translated
@@ -65,7 +65,7 @@ struct XCStringsStatsCalculator: Sendable {
 
     /// Get batch coverage for multiple files
     static func getBatchCoverage(files: [(path: String, file: XCStringsFile)]) -> BatchCoverageSummary {
-        let summaries = files.map { (path, file) in
+        let summaries = files.map { path, file in
             XCStringsStatsCalculator(file: file).getCoverageSummary(fileName: path)
         }
 

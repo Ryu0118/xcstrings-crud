@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Thread safety for concurrent read operations")
 struct ConcurrentAccessTests {
-    @Test("Concurrent reads are safe")
+    @Test
     func concurrentReads() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.manyKeys)
         defer { TestHelper.removeTempFile(at: path) }
@@ -15,7 +15,7 @@ struct ConcurrentAccessTests {
         await withTaskGroup(of: [String].self) { group in
             for _ in 0 ..< 10 {
                 group.addTask {
-                    (try? await parser.listKeys()) ?? []
+                    await (try? parser.listKeys()) ?? []
                 }
             }
 

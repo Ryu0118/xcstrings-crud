@@ -20,7 +20,9 @@ enum FixtureType: String, CaseIterable, CustomTestStringConvertible {
     case deviceVariations
     case withStaleKeys
 
-    var testDescription: String { rawValue }
+    var testDescription: String {
+        rawValue
+    }
 
     var content: String {
         switch self {

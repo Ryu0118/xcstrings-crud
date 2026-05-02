@@ -4,7 +4,7 @@ import Testing
 
 @Suite("File I/O operations for xcstrings files")
 struct XCStringsFileHandlerTests {
-    @Test("load returns XCStringsFile for valid file")
+    @Test
     func loadValidFile() throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.singleKeySingleLang)
         defer { TestHelper.removeTempFile(at: path) }
@@ -16,7 +16,7 @@ struct XCStringsFileHandlerTests {
         #expect(file.strings.count == 1)
     }
 
-    @Test("load throws fileNotFound for non-existent path")
+    @Test
     func loadNonExistentFile() {
         let handler = XCStringsFileHandler(path: "/nonexistent/path/file.xcstrings")
 
@@ -25,7 +25,7 @@ struct XCStringsFileHandlerTests {
         }
     }
 
-    @Test("load throws invalidFileFormat for invalid JSON")
+    @Test
     func loadInvalidJSON() throws {
         let path = try TestHelper.createTempFile(content: "{ invalid json }")
         defer { TestHelper.removeTempFile(at: path) }
@@ -37,7 +37,7 @@ struct XCStringsFileHandlerTests {
         }
     }
 
-    @Test("save writes file to disk")
+    @Test
     func saveFile() throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.empty)
         defer { TestHelper.removeTempFile(at: path) }
@@ -57,7 +57,7 @@ struct XCStringsFileHandlerTests {
         #expect(reloaded.strings["NewKey"]?.localizations?["en"]?.stringUnit?.value == "New Value")
     }
 
-    @Test("save preserves file structure")
+    @Test
     func savePreservesStructure() throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.singleKeyMultipleLangs)
         defer { TestHelper.removeTempFile(at: path) }

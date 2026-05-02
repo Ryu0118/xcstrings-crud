@@ -6,6 +6,31 @@ if [ -n "$GITLEAKS" ]; then
   "$GITLEAKS" protect --staged --source "$SRCROOT" -v
 fi
 
+SWIFTFORMAT="$SRCROOT/.nest/bin/swiftformat"
+SWIFTLINT="$SRCROOT/.nest/bin/swiftlint"
+
+STAGED_SWIFT_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.swift$' || true)
+if [ -n "$STAGED_SWIFT_FILES" ]; then
+  if [ -x "$SWIFTFORMAT" ] && [ -f "$SRCROOT/.swiftformat" ]; then
+    printf '%s\n' "$STAGED_SWIFT_FILES" | xargs "$SWIFTFORMAT" --cache ignore --config "$SRCROOT/.swiftformat"
+    printf '%s\n' "$STAGED_SWIFT_FILES" | xargs git add
+  fi
+
+  if [ -x "$SWIFTLINT" ] && [ -f "$SRCROOT/.swiftlint.yml" ]; then
+    ABSOLUTE_FILES=""
+    for file in $STAGED_SWIFT_FILES; do
+      if [ -f "$SRCROOT/$file" ]; then
+        ABSOLUTE_FILES="$ABSOLUTE_FILES $SRCROOT/$file"
+      fi
+    done
+
+    if [ -n "$ABSOLUTE_FILES" ]; then
+      # shellcheck disable=SC2086
+      "$SWIFTLINT" lint --config "$SRCROOT/.swiftlint.yml" --force-exclude --quiet --no-cache $ABSOLUTE_FILES
+    fi
+  fi
+fi
+
 # docsync: check doc/source sync
 DOCSYNC="$SRCROOT/.nest/bin/docsync"
 if [ -x "$DOCSYNC" ] && [ -f "$SRCROOT/docsync.yml" ]; then

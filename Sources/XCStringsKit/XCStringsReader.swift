@@ -1,7 +1,7 @@
 import Foundation
 
 /// Handles read operations for xcstrings files
-struct XCStringsReader: Sendable {
+struct XCStringsReader {
     private let file: XCStringsFile
 
     init(file: XCStringsFile) {
@@ -36,7 +36,7 @@ struct XCStringsReader: Sendable {
     func listStaleKeys() -> [String] {
         file.strings
             .filter { $0.value.extractionState == "stale" }
-            .map { $0.key }
+            .map(\.key)
             .sorted()
     }
 

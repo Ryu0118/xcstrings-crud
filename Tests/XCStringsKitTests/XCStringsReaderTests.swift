@@ -6,7 +6,7 @@ import Testing
 struct XCStringsReaderTests {
     // MARK: - listKeys
 
-    @Test("listKeys returns sorted keys")
+    @Test
     func listKeysSorted() throws {
         let file = try loadFixture(TestFixtures.manyKeys)
         let reader = XCStringsReader(file: file)
@@ -16,7 +16,7 @@ struct XCStringsReaderTests {
         #expect(keys == keys.sorted())
     }
 
-    @Test("listKeys returns empty array for empty file")
+    @Test
     func listKeysEmpty() throws {
         let file = try loadFixture(TestFixtures.empty)
         let reader = XCStringsReader(file: file)
@@ -28,7 +28,7 @@ struct XCStringsReaderTests {
 
     // MARK: - listLanguages
 
-    @Test("listLanguages includes source language")
+    @Test
     func listLanguagesIncludesSource() throws {
         let file = try loadFixture(TestFixtures.singleKeySingleLang)
         let reader = XCStringsReader(file: file)
@@ -38,7 +38,7 @@ struct XCStringsReaderTests {
         #expect(languages.contains("en"))
     }
 
-    @Test("listLanguages returns all languages")
+    @Test
     func listLanguagesAll() throws {
         let file = try loadFixture(TestFixtures.manyLanguages)
         let reader = XCStringsReader(file: file)
@@ -54,7 +54,7 @@ struct XCStringsReaderTests {
 
     // MARK: - listUntranslated
 
-    @Test("listUntranslated returns keys without translation")
+    @Test
     func listUntranslatedKeys() throws {
         let file = try loadFixture(TestFixtures.multipleKeysPartialTranslations)
         let reader = XCStringsReader(file: file)
@@ -67,7 +67,7 @@ struct XCStringsReaderTests {
 
     // MARK: - getSourceLanguage
 
-    @Test("getSourceLanguage returns correct language")
+    @Test
     func getSourceLanguage() throws {
         let file = try loadFixture(TestFixtures.japaneseSource)
         let reader = XCStringsReader(file: file)
@@ -79,7 +79,7 @@ struct XCStringsReaderTests {
 
     // MARK: - getKey
 
-    @Test("getKey returns key info")
+    @Test
     func getKeyInfo() throws {
         let file = try loadFixture(TestFixtures.withComments)
         let reader = XCStringsReader(file: file)
@@ -90,7 +90,7 @@ struct XCStringsReaderTests {
         #expect(info.comment == "Greeting message shown on home screen")
     }
 
-    @Test("getKey throws for non-existent key")
+    @Test
     func getKeyNotFound() throws {
         let file = try loadFixture(TestFixtures.empty)
         let reader = XCStringsReader(file: file)
@@ -102,7 +102,7 @@ struct XCStringsReaderTests {
 
     // MARK: - getTranslation
 
-    @Test("getTranslation returns all translations when language is nil")
+    @Test
     func getTranslationAll() throws {
         let file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
         let reader = XCStringsReader(file: file)
@@ -114,7 +114,7 @@ struct XCStringsReaderTests {
         #expect(translations["ja"]?.value == "こんにちは")
     }
 
-    @Test("getTranslation returns specific language")
+    @Test
     func getTranslationSpecific() throws {
         let file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
         let reader = XCStringsReader(file: file)
@@ -127,7 +127,7 @@ struct XCStringsReaderTests {
 
     // MARK: - checkKey
 
-    @Test("checkKey returns true for existing key")
+    @Test
     func checkKeyExists() throws {
         let file = try loadFixture(TestFixtures.singleKeySingleLang)
         let reader = XCStringsReader(file: file)
@@ -137,7 +137,7 @@ struct XCStringsReaderTests {
         #expect(exists == true)
     }
 
-    @Test("checkKey returns false for non-existent key")
+    @Test
     func checkKeyNotExists() throws {
         let file = try loadFixture(TestFixtures.singleKeySingleLang)
         let reader = XCStringsReader(file: file)
@@ -147,7 +147,7 @@ struct XCStringsReaderTests {
         #expect(exists == false)
     }
 
-    @Test("checkKey with language returns correct result")
+    @Test
     func checkKeyWithLanguage() throws {
         let file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
         let reader = XCStringsReader(file: file)
@@ -158,7 +158,7 @@ struct XCStringsReaderTests {
 
     // MARK: - checkCoverage
 
-    @Test("checkCoverage returns correct coverage info")
+    @Test
     func checkCoverage() throws {
         let file = try loadFixture(TestFixtures.singleKeyMultipleLangs)
         let reader = XCStringsReader(file: file)

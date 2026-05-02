@@ -1,7 +1,7 @@
 import Foundation
 
 /// Handles file I/O operations for xcstrings files
-struct XCStringsFileHandler: Sendable {
+struct XCStringsFileHandler {
     private let path: String
 
     init(path: String) {
@@ -55,7 +55,7 @@ struct XCStringsFileHandler: Sendable {
     func create(sourceLanguage: String, overwrite: Bool = false) throws {
         let url = URL(fileURLWithPath: path)
 
-        if !overwrite && FileManager.default.fileExists(atPath: path) {
+        if !overwrite, FileManager.default.fileExists(atPath: path) {
             throw XCStringsError.fileAlreadyExists(path: path)
         }
 

@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Updating existing translations in xcstrings files")
 struct UpdateOperationsTests {
-    @Test("updateTranslation updates existing translation", arguments: [
+    @Test(arguments: [
         (FixtureType.singleKeySingleLang, "Hello", "en", "Hi there"),
         (FixtureType.singleKeyMultipleLangs, "Hello", "ja", "やあ"),
         (FixtureType.multipleKeysPartialTranslations, "Welcome", "de", "Willkommen!"),
@@ -28,7 +28,7 @@ struct UpdateOperationsTests {
         #expect(updatedTranslations[language]?.value == newValue)
     }
 
-    @Test("updateTranslation throws for non-existent key", arguments: FixtureType.allCases)
+    @Test(arguments: FixtureType.allCases)
     func updateTranslationNonExistentKey(fixture: FixtureType) async throws {
         let path = try TestHelper.createTempFile(content: fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -40,7 +40,7 @@ struct UpdateOperationsTests {
         }
     }
 
-    @Test("updateTranslation throws for non-existent language", arguments: [
+    @Test(arguments: [
         (FixtureType.singleKeySingleLang, "Hello", "fr"),
         (FixtureType.multipleKeysPartialTranslations, "Goodbye", "ja"),
     ])

@@ -6,7 +6,7 @@ package actor XCStringsParser {
     private let fileHandler: XCStringsFileHandler
 
     package init(path: String) {
-        self.fileHandler = XCStringsFileHandler(path: path)
+        fileHandler = XCStringsFileHandler(path: path)
     }
 
     // MARK: - File Operations

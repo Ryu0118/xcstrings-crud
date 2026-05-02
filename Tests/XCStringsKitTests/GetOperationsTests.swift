@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Retrieving translations, key info, and source language from xcstrings files")
 struct GetOperationsTests {
-    @Test("getSourceLanguage returns correct language", arguments: FixtureType.allCases)
+    @Test(arguments: FixtureType.allCases)
     func getSourceLanguage(fixture: FixtureType) async throws {
         let path = try TestHelper.createTempFile(content: fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -15,7 +15,7 @@ struct GetOperationsTests {
         #expect(sourceLanguage == fixture.expectedSourceLanguage)
     }
 
-    @Test("getTranslation returns all translations for key", arguments: [
+    @Test(arguments: [
         (FixtureType.singleKeyMultipleLangs, "Hello", 3),
         (FixtureType.manyLanguages, "Hello", 7),
         (FixtureType.multipleKeysPartialTranslations, "Hello", 2),
@@ -31,7 +31,7 @@ struct GetOperationsTests {
         #expect(translations.count == expectedCount)
     }
 
-    @Test("getTranslation returns specific language", arguments: [
+    @Test(arguments: [
         (FixtureType.singleKeyMultipleLangs, "Hello", "ja", "こんにちは"),
         (FixtureType.singleKeyMultipleLangs, "Hello", "de", "Hallo"),
         (FixtureType.manyLanguages, "Hello", "fr", "Bonjour"),
@@ -48,7 +48,7 @@ struct GetOperationsTests {
         #expect(translations[language]?.value == expectedValue)
     }
 
-    @Test("getTranslation throws for non-existent key", arguments: FixtureType.allCases.filter { $0 != .empty })
+    @Test(arguments: FixtureType.allCases.filter { $0 != .empty })
     func getTranslationNonExistentKey(fixture: FixtureType) async throws {
         let path = try TestHelper.createTempFile(content: fixture.content)
         defer { TestHelper.removeTempFile(at: path) }

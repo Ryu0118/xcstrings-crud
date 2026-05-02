@@ -6,7 +6,7 @@ import Testing
 struct BatchOperationsTests {
     // MARK: - Test Cases
 
-    struct CheckKeysTestCase: Sendable {
+    struct CheckKeysTestCase {
         let fixture: FixtureType
         let keys: [String]
         let language: String?
@@ -45,7 +45,7 @@ struct BatchOperationsTests {
         ]
     }
 
-    struct BatchAddTestCase: Sendable {
+    struct BatchAddTestCase {
         let fixture: FixtureType
         let allowOverwrite: Bool
         let expectedSuccess: Int
@@ -73,7 +73,7 @@ struct BatchOperationsTests {
         ]
     }
 
-    struct BatchUpdateFailureTestCase: Sendable {
+    struct BatchUpdateFailureTestCase {
         let fixture: FixtureType
         let key: String
         let translations: [String: String]
@@ -97,7 +97,7 @@ struct BatchOperationsTests {
 
     // MARK: - Check Keys Tests
 
-    @Test("checkKeys returns correct results for multiple keys", arguments: CheckKeysTestCase.allCases)
+    @Test(arguments: CheckKeysTestCase.allCases)
     func checkKeysMultiple(testCase: CheckKeysTestCase) async throws {
         let path = try TestHelper.createTempFile(content: testCase.fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -111,7 +111,7 @@ struct BatchOperationsTests {
 
     // MARK: - Batch Add Translations Tests
 
-    @Test("addTranslationsBatch adds multiple keys successfully")
+    @Test
     func addTranslationsBatchMultipleKeys() async throws {
         let path = try TestHelper.createTempFile(content: FixtureType.empty.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -138,7 +138,7 @@ struct BatchOperationsTests {
         #expect(translation["ja"]?.value == "こんにちは")
     }
 
-    @Test("addTranslationsBatch handles duplicate and overwrite scenarios", arguments: BatchAddTestCase.allCases)
+    @Test(arguments: BatchAddTestCase.allCases)
     func addTranslationsBatchDuplicateHandling(testCase: BatchAddTestCase) async throws {
         let path = try TestHelper.createTempFile(content: testCase.fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -159,7 +159,7 @@ struct BatchOperationsTests {
 
     // MARK: - Batch Update Translations Tests
 
-    @Test("updateTranslationsBatch updates multiple keys successfully")
+    @Test
     func updateTranslationsBatchMultipleKeys() async throws {
         let path = try TestHelper.createTempFile(content: FixtureType.multipleKeysPartialTranslations.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -182,7 +182,7 @@ struct BatchOperationsTests {
         #expect(welcomeTranslation["en"]?.value == "Welcome!")
     }
 
-    @Test("updateTranslationsBatch fails for invalid scenarios", arguments: BatchUpdateFailureTestCase.allCases)
+    @Test(arguments: BatchUpdateFailureTestCase.allCases)
     func updateTranslationsBatchFailures(testCase: BatchUpdateFailureTestCase) async throws {
         let path = try TestHelper.createTempFile(content: testCase.fixture.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -199,7 +199,7 @@ struct BatchOperationsTests {
         #expect(result.failed[0].key == testCase.expectedFailedKey)
     }
 
-    @Test("updateTranslationsBatch with mixed success and failure")
+    @Test
     func updateTranslationsBatchMixed() async throws {
         let path = try TestHelper.createTempFile(content: FixtureType.singleKeySingleLang.content)
         defer { TestHelper.removeTempFile(at: path) }
@@ -220,7 +220,7 @@ struct BatchOperationsTests {
 
     // MARK: - Edge Cases
 
-    @Test("batch operations with empty entries array", arguments: [
+    @Test(arguments: [
         FixtureType.empty,
         FixtureType.singleKeySingleLang,
     ])
@@ -239,7 +239,7 @@ struct BatchOperationsTests {
         #expect(updateResult.failedCount == 0)
     }
 
-    @Test("batch add preserves file integrity on partial failure")
+    @Test
     func batchAddPartialFailureIntegrity() async throws {
         let path = try TestHelper.createTempFile(content: FixtureType.singleKeySingleLang.content)
         defer { TestHelper.removeTempFile(at: path) }

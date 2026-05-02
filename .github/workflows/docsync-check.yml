@@ -26,4 +26,4 @@ jobs:
         run: ./scripts/nest.sh bootstrap nestfile.yaml
 
       - name: Check doc sync
-        run: .nest/bin/docsync check
+        run: make docsync

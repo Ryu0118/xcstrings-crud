@@ -39,11 +39,11 @@ extension AddCommand {
             let hasSingleLang = lang != nil && value != nil
             let hasMultiple = !translations.isEmpty
 
-            if hasSingleLang && hasMultiple {
+            if hasSingleLang, hasMultiple {
                 throw ValidationError("Cannot use both -l/-v and -t options together")
             }
 
-            if !hasSingleLang && !hasMultiple {
+            if !hasSingleLang, !hasMultiple {
                 throw ValidationError("Either -l and -v, or -t must be specified")
             }
 
@@ -58,7 +58,7 @@ extension AddCommand {
             if !translations.isEmpty {
                 let translationsDict = try TranslationParser.parse(translations)
                 try await parser.addTranslations(key: key, translations: translationsDict)
-            } else if let lang = lang, let value = value {
+            } else if let lang, let value {
                 try await parser.addTranslation(key: key, language: lang, value: value)
             } else {
                 return

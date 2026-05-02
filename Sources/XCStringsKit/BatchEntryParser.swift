@@ -53,16 +53,16 @@ package enum BatchEntryParseError: Error, LocalizedError {
 
     package var errorDescription: String? {
         switch self {
-        case .invalidFormat(let input):
-            return "Invalid batch entry format: '\(input)'. Expected 'key=lang:value,lang:value'"
-        case .emptyKey(let input):
-            return "Empty key in: '\(input)'"
-        case .invalidTranslationFormat(let input):
-            return "Invalid translation format: '\(input)'. Expected 'lang:value'"
-        case .emptyLanguage(let input):
-            return "Empty language code in: '\(input)'"
-        case .noTranslations(let input):
-            return "No translations specified for: '\(input)'"
+        case let .invalidFormat(input):
+            "Invalid batch entry format: '\(input)'. Expected 'key=lang:value,lang:value'"
+        case let .emptyKey(input):
+            "Empty key in: '\(input)'"
+        case let .invalidTranslationFormat(input):
+            "Invalid translation format: '\(input)'. Expected 'lang:value'"
+        case let .emptyLanguage(input):
+            "Empty language code in: '\(input)'"
+        case let .noTranslations(input):
+            "No translations specified for: '\(input)'"
         }
     }
 }

@@ -6,7 +6,7 @@ public enum CLIOutput {
     /// - Parameters:
     ///   - value: The value to encode
     ///   - pretty: Whether to use pretty-printed formatting
-    public static func printJSON<T: Encodable>(_ value: T, pretty: Bool) throws {
+    public static func printJSON(_ value: some Encodable, pretty: Bool) throws {
         let encoder = JSONEncoder()
         if pretty {
             encoder.outputFormatting = [.prettyPrinted, .sortedKeys]

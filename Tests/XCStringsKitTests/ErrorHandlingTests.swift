@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Error handling for invalid files, malformed JSON, and edge cases")
 struct ErrorHandlingTests {
-    @Test("Parser throws for non-existent file")
+    @Test
     func fileNotFound() async throws {
         let parser = XCStringsParser(path: "/nonexistent/path/file.xcstrings")
 
@@ -13,7 +13,7 @@ struct ErrorHandlingTests {
         }
     }
 
-    @Test("Parser throws for invalid JSON")
+    @Test
     func invalidJSON() async throws {
         let invalidContent = "{ invalid json content }"
         let path = try TestHelper.createTempFile(content: invalidContent)
@@ -26,7 +26,7 @@ struct ErrorHandlingTests {
         }
     }
 
-    @Test("Parser throws for malformed xcstrings structure")
+    @Test
     func malformedStructure() async throws {
         let malformedContent = """
         {

@@ -4,7 +4,7 @@ import Testing
 
 @Suite("Adding new keys and translations to xcstrings files")
 struct AddOperationsTests {
-    @Test("addTranslation adds new translation to existing key", arguments: [
+    @Test(arguments: [
         (FixtureType.singleKeySingleLang, "Hello", "ja", "こんにちは"),
         (FixtureType.singleKeySingleLang, "Hello", "de", "Hallo"),
         (FixtureType.multipleKeysPartialTranslations, "Goodbye", "ja", "さようなら"),
@@ -30,7 +30,7 @@ struct AddOperationsTests {
         #expect(translations[language]?.value == value)
     }
 
-    @Test("addTranslation creates new key", arguments: [
+    @Test(arguments: [
         FixtureType.empty,
         FixtureType.singleKeySingleLang,
         FixtureType.multipleKeysPartialTranslations,
@@ -59,7 +59,7 @@ struct AddOperationsTests {
         #expect(keys.contains(newKey))
     }
 
-    @Test("addTranslation throws when translation already exists", arguments: [
+    @Test(arguments: [
         (FixtureType.singleKeySingleLang, "Hello", "en"),
         (FixtureType.singleKeyMultipleLangs, "Hello", "ja"),
         (FixtureType.multipleKeysPartialTranslations, "Welcome", "de"),

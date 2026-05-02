@@ -1,13 +1,11 @@
 import Foundation
 import MCP
 import Testing
-
 @testable import XCStringsMCP
 
 @Suite("ToolHandlerRegistry tests")
 struct ToolHandlerRegistryTests {
-
-    @Test("All expected handlers are registered")
+    @Test
     func allHandlersRegistered() async {
         let registry = ToolHandlerRegistry.shared
         let registeredTools = await registry.registeredToolNames
@@ -50,7 +48,7 @@ struct ToolHandlerRegistryTests {
         #expect(registeredTools.contains("xcstrings_batch_update_translations"))
     }
 
-    @Test("Execute throws for unknown tool")
+    @Test
     func executeUnknownToolThrows() async {
         let registry = ToolHandlerRegistry.shared
 
@@ -59,14 +57,14 @@ struct ToolHandlerRegistryTests {
         }
     }
 
-    @Test("handler(for:) returns handler for registered tool")
+    @Test
     func handlerForRegisteredTool() async {
         let registry = ToolHandlerRegistry.shared
         let handler = await registry.handler(for: "xcstrings_list_keys")
         #expect(handler != nil)
     }
 
-    @Test("handler(for:) returns nil for unregistered tool")
+    @Test
     func handlerForUnregisteredTool() async {
         let registry = ToolHandlerRegistry.shared
         let handler = await registry.handler(for: "nonexistent_tool")

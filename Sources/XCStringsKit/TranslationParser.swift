@@ -30,7 +30,6 @@ public enum TranslationParser {
 
         return (lang, value)
     }
-
 }
 
 /// Errors that can occur when parsing translation input
@@ -40,10 +39,10 @@ public enum TranslationParseError: Error, LocalizedError, Equatable {
 
     public var errorDescription: String? {
         switch self {
-        case .invalidFormat(let input):
-            return "Invalid translation format: '\(input)'. Expected 'lang:value'"
-        case .emptyLanguage(let input):
-            return "Empty language code in: '\(input)'"
+        case let .invalidFormat(input):
+            "Invalid translation format: '\(input)'. Expected 'lang:value'"
+        case let .emptyLanguage(input):
+            "Empty language code in: '\(input)'"
         }
     }
 }
