@@ -232,6 +232,21 @@ enum TestFixtures {
     }
     """
 
+    /// Keys containing numeric components for Xcode-like sorting
+    static let numericKeys = """
+    {
+      "sourceLanguage": "en",
+      "strings": {
+        "product.type.1_1": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "1" } } } },
+        "product.type.2_1": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "2" } } } },
+        "product.type.3_1": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "3" } } } },
+        "product.type.11_1": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "11" } } } },
+        "product.type.12_1": { "localizations": { "en": { "stringUnit": { "state": "translated", "value": "12" } } } }
+      },
+      "version": "1.1"
+    }
+    """
+
     /// Keys with special characters
     static let specialCharacters = """
     {
