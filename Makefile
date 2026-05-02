@@ -8,6 +8,7 @@ SWIFT_SOURCES := Package.swift Sources Tests
 .PHONY: nest hooks setup format format-lint lint gitnagg test build release docsync docsync-update-checksum check
 
 nest:
+	rm -f .nest/bin/swiftformat .nest/bin/swiftlint .nest/bin/gitnagg .nest/bin/docsync
 	./scripts/nest.sh bootstrap nestfile.yaml
 
 hooks:
