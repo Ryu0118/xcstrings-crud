@@ -12,7 +12,7 @@ enum XCStringsKeySorter {
     }
 }
 
-extension Sequence where Element == String {
+extension Sequence<String> {
     func withXcodeSort() -> [String] {
         XCStringsKeySorter.sort(self)
     }

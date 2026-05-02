@@ -50,4 +50,4 @@ rules:
   doc: CLAUDE.md
   message: "Core architecture changed \u2014 update CLAUDE.md if the architecture
     description is affected."
-  checksum: 279c9b586f06bb652c5702c7e48b12a5363b0033e0f89791be0655a208fe081d
+  checksum: 8695c2bf2bf2ae11096d906f500967f6a83688cc65a1be346619b32511329f32

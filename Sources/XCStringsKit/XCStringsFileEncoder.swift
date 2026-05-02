@@ -10,7 +10,7 @@ enum XCStringsFileEncoder {
                 )
             }
 
-            return JSONMember(key: key, value: try encodeJSONValue(entry))
+            return try JSONMember(key: key, value: encodeJSONValue(entry))
         }
 
         let root = JSONValue.object([
@@ -22,7 +22,7 @@ enum XCStringsFileEncoder {
         return Data((root.render() + "\n").utf8)
     }
 
-    private static func encodeJSONValue<T: Encodable>(_ value: T) throws -> JSONValue {
+    private static func encodeJSONValue(_ value: some Encodable) throws -> JSONValue {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
         let data = try encoder.encode(value)
@@ -47,11 +47,11 @@ private enum JSONValue {
     init(jsonObject: Any) throws {
         switch jsonObject {
         case let object as [String: Any]:
-            self = .object(try object.keys.sorted().map { key in
-                JSONMember(key: key, value: try JSONValue(jsonObject: object[key] as Any))
+            self = try .object(object.keys.sorted().map { key in
+                try JSONMember(key: key, value: JSONValue(jsonObject: object[key] as Any))
             })
         case let array as [Any]:
-            self = .array(try array.map { try JSONValue(jsonObject: $0) })
+            self = try .array(array.map { try JSONValue(jsonObject: $0) })
         case let string as String:
             self = .string(string)
         case let number as NSNumber:
@@ -72,7 +72,7 @@ private enum JSONValue {
 
     func render(indentation: Int = 0) -> String {
         switch self {
-        case .object(let members):
+        case let .object(members):
             guard !members.isEmpty else {
                 return "{}"
             }
@@ -82,7 +82,7 @@ private enum JSONValue {
                 "\(String.spaces(childIndentation))\(member.key.jsonEscaped()) : \(member.value.render(indentation: childIndentation))"
             }
             return "{\n\(lines.joined(separator: ",\n"))\n\(String.spaces(indentation))}"
-        case .array(let values):
+        case let .array(values):
             guard !values.isEmpty else {
                 return "[]"
             }
@@ -92,11 +92,11 @@ private enum JSONValue {
                 "\(String.spaces(childIndentation))\(value.render(indentation: childIndentation))"
             }
             return "[\n\(lines.joined(separator: ",\n"))\n\(String.spaces(indentation))]"
-        case .string(let string):
+        case let .string(string):
             return string.jsonEscaped()
-        case .number(let number):
+        case let .number(number):
             return number
-        case .bool(let bool):
+        case let .bool(bool):
             return bool ? "true" : "false"
         case .null:
             return "null"
