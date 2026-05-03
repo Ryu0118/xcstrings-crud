@@ -34,12 +34,9 @@ struct XCStringsFileHandler {
     func save(_ file: XCStringsFile) throws {
         let url = URL(fileURLWithPath: path)
 
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-
         let data: Data
         do {
-            data = try encoder.encode(file)
+            data = try XCStringsFileEncoder.encode(file)
         } catch {
             throw XCStringsError.writeError(path: path, reason: error.localizedDescription)
         }
@@ -60,12 +57,9 @@ struct XCStringsFileHandler {
         }
 
         let file = XCStringsFile(sourceLanguage: sourceLanguage)
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-
         let data: Data
         do {
-            data = try encoder.encode(file)
+            data = try XCStringsFileEncoder.encode(file)
         } catch {
             throw XCStringsError.writeError(path: path, reason: error.localizedDescription)
         }

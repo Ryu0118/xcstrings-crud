@@ -13,7 +13,23 @@ struct XCStringsReaderTests {
 
         let keys = reader.listKeys()
 
-        #expect(keys == keys.sorted())
+        #expect(keys == XCStringsKeySorter.sort(keys))
+    }
+
+    @Test("listKeys sorts numeric key components like Xcode")
+    func listKeysNumericSort() throws {
+        let file = try loadFixture(TestFixtures.numericKeys)
+        let reader = XCStringsReader(file: file)
+
+        let keys = reader.listKeys()
+
+        #expect(keys == [
+            "product.type.1_1",
+            "product.type.2_1",
+            "product.type.3_1",
+            "product.type.11_1",
+            "product.type.12_1",
+        ])
     }
 
     @Test("listKeys returns empty array for empty file")

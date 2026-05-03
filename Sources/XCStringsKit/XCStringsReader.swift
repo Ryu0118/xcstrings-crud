@@ -10,7 +10,7 @@ struct XCStringsReader {
 
     /// Get all keys sorted alphabetically
     func listKeys() -> [String] {
-        file.strings.keys.sorted()
+        XCStringsKeySorter.sort(file.strings.keys)
     }
 
     /// Get all languages used in the file
@@ -33,7 +33,7 @@ struct XCStringsReader {
                 return localization?.stringUnit?.value == nil && localization?.variations == nil
             }
             .keys
-            .sorted()
+            .withXcodeSort()
     }
 
     /// Get keys with stale extraction state
@@ -41,7 +41,7 @@ struct XCStringsReader {
         file.strings
             .filter { $0.value.extractionState == "stale" }
             .map(\.key)
-            .sorted()
+            .withXcodeSort()
     }
 
     /// Get source language
