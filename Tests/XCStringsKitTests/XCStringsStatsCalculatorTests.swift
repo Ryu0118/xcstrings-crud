@@ -77,6 +77,21 @@ struct XCStringsStatsCalculatorTests {
         #expect(try #require(enStats?.translated) >= jaStats!.translated)
     }
 
+    @Test("getStats excludes keys marked shouldTranslate false from coverage totals")
+    func getStatsExcludesNonTranslatableKeys() throws {
+        let file = try loadFixture(TestFixtures.withNonTranslatableKey)
+        let calculator = XCStringsStatsCalculator(file: file)
+
+        let stats = calculator.getStats()
+        let enStats = stats.coverageByLanguage["en"]
+
+        #expect(stats.totalKeys == 2)
+        #expect(enStats?.translated == 1)
+        #expect(enStats?.untranslated == 0)
+        #expect(enStats?.total == 1)
+        #expect(enStats?.coveragePercent == 100.0)
+    }
+
     // MARK: - getProgress
 
     @Test("getProgress returns stats for specific language")

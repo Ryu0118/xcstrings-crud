@@ -40,7 +40,7 @@ rules:
   doc: README.md
   message: "Core data model or error types changed \u2014 update README if the behavior
     or output format changed."
-  checksum: 1797b6cc488b43d38c47c798f8200d71917f8735f968daf62ca76b1d5a69e9d8
+  checksum: 25796f9c02f3e4cade48e914a0155bbaca93feefbd322ba6fb0063abac2d6fa4
 - name: agents-claude
   sources:
   - Package.swift
@@ -50,4 +50,4 @@ rules:
   doc: CLAUDE.md
   message: "Core architecture changed \u2014 update CLAUDE.md if the architecture
     description is affected."
-  checksum: 55fdde9f5050a45f783e66889025384f99dc1845b4a4c1bedfebc141b935e780
+  checksum: 7b911c08e1a0b5580005662a5f536a7f8fad04114ebf0247a9096cea9de722b3
