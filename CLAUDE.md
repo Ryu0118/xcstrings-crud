@@ -26,9 +26,9 @@ swift build -c release # Release build
 
 ## Key Files
 
-- `XCStrings.swift` - Data models (`StringCatalog`, `StringUnit`, etc.)
+- `XCStrings.swift` - Data models (`StringCatalog`, `StringUnit`, Xcode metadata fields, etc.)
 - `XCStringsParser.swift` - Facade for file operations
-- `XCStringsReader.swift` - Read operations (list, get, check), including `shouldTranslate == false` handling for untranslated lists and per-key coverage
+- `XCStringsReader.swift` - Read operations (list, get, check), including key metadata and `shouldTranslate == false` handling for untranslated lists and per-key coverage
 - `XCStringsWriter.swift` - Write operations (add, update, delete, rename)
 - `XCStringsStatsCalculator.swift` - Coverage and progress stats; non-translatable keys are excluded from language totals
 
