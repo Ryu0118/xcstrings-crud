@@ -74,7 +74,7 @@ Add to your Claude Code MCP settings:
 | `xcstrings_batch_list_stale` | List stale keys across multiple files |
 | `xcstrings_get_source_language` | Get source language |
 | `xcstrings_get_key` | Get translations for a key |
-| `xcstrings_check_key` | Check if key exists |
+| `xcstrings_check_key` | Check if key exists; suggests NFKC-equivalent keys when not found |
 | `xcstrings_check_coverage` | Check key language coverage |
 | `xcstrings_stats_coverage` | Get overall coverage statistics |
 | `xcstrings_stats_progress` | Get translation progress by language |

@@ -49,10 +49,20 @@ struct XCStringsReader {
         file.sourceLanguage
     }
 
+    /// Find keys whose NFKC-normalized form matches the given key's NFKC-normalized form.
+    /// Used to surface suggestions when a key is not found due to visually identical
+    /// but Unicode-distinct characters (e.g. U+0027 vs U+2019 apostrophes).
+    func suggestions(for key: String) -> [String] {
+        let normalized = key.precomposedStringWithCompatibilityMapping
+        return file.strings.keys
+            .filter { $0 != key && $0.precomposedStringWithCompatibilityMapping == normalized }
+            .withXcodeSort()
+    }
+
     /// Get key information
     func getKey(_ key: String) throws -> KeyInfo {
         guard let entry = file.strings[key] else {
-            throw XCStringsError.keyNotFound(key: key)
+            throw XCStringsError.keyNotFound(key: key, suggestions: suggestions(for: key))
         }
 
         let languages = entry.localizations?.keys.sorted() ?? []
@@ -70,7 +80,7 @@ struct XCStringsReader {
     /// Get translation for a key
     func getTranslation(key: String, language: String?) throws -> [String: TranslationInfo] {
         guard let entry = file.strings[key] else {
-            throw XCStringsError.keyNotFound(key: key)
+            throw XCStringsError.keyNotFound(key: key, suggestions: suggestions(for: key))
         }
 
         var result: [String: TranslationInfo] = [:]
@@ -126,7 +136,7 @@ struct XCStringsReader {
         let allLanguages = listLanguages()
 
         guard let entry = file.strings[key] else {
-            throw XCStringsError.keyNotFound(key: key)
+            throw XCStringsError.keyNotFound(key: key, suggestions: suggestions(for: key))
         }
 
         guard entry.requiresTranslation else {
@@ -140,7 +150,9 @@ struct XCStringsReader {
 
         let translatedLanguages = entry.localizations?.keys.sorted() ?? []
         let missingLanguages = allLanguages.filter { !translatedLanguages.contains($0) }
-        let coveragePercent = allLanguages.isEmpty ? 0 : Double(translatedLanguages.count) / Double(allLanguages.count) * 100
+        let coveragePercent = allLanguages.isEmpty
+            ? 0
+            : Double(translatedLanguages.count) / Double(allLanguages.count) * 100
 
         return CoverageInfo(
             key: key,

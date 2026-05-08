@@ -42,7 +42,15 @@ struct CheckKeyHandler: ToolHandler {
 
         let parser = XCStringsParser(path: file)
         let exists = try await parser.checkKey(key, language: language)
-        return String(exists)
+        if exists {
+            return "true"
+        }
+        let suggestions = try await parser.suggestions(for: key)
+        if suggestions.isEmpty {
+            return "false"
+        }
+        let list = suggestions.map { "'\($0)'" }.joined(separator: ", ")
+        return "false (key not found; did you mean: \(list)?)"
     }
 }
 

@@ -5,7 +5,7 @@ package enum XCStringsError: Error, LocalizedError {
     case fileNotFound(path: String)
     case fileAlreadyExists(path: String)
     case invalidFileFormat(path: String, reason: String)
-    case keyNotFound(key: String)
+    case keyNotFound(key: String, suggestions: [String] = [])
     case keyAlreadyExists(key: String)
     case languageNotFound(language: String, key: String)
     case writeError(path: String, reason: String)
@@ -19,8 +19,12 @@ package enum XCStringsError: Error, LocalizedError {
             "File already exists: \(path)"
         case let .invalidFileFormat(path, reason):
             "Invalid file format at '\(path)': \(reason)"
-        case let .keyNotFound(key):
-            "Key not found: '\(key)'"
+        case let .keyNotFound(key, suggestions):
+            if suggestions.isEmpty {
+                "Key not found: '\(key)'"
+            } else {
+                "Key not found: '\(key)'. Did you mean: \(suggestions.map { "'\($0)'" }.joined(separator: ", "))?"
+            }
         case let .keyAlreadyExists(key):
             "Key already exists: '\(key)'"
         case let .languageNotFound(language, key):
