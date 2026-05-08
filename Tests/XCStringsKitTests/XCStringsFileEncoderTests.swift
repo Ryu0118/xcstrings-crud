@@ -43,7 +43,7 @@ struct XCStringsFileEncoderTests {
         let file = makeFile(keys: inputKeys)
 
         let encoded = try XCStringsFileEncoder.encode(file)
-        let encodedString = String(decoding: encoded, as: UTF8.self)
+        let encodedString = try #require(String(bytes: encoded, encoding: .utf8))
         let keyOrder = try topLevelStringKeyOrder(in: encodedString)
 
         #expect(keyOrder == XCStringsKeySorter.sort(inputKeys))
@@ -60,7 +60,8 @@ struct XCStringsFileEncoderTests {
         ])
 
         let outputs = try Set((0 ..< 20).map { _ in
-            try String(decoding: XCStringsFileEncoder.encode(file), as: UTF8.self)
+            let data = try XCStringsFileEncoder.encode(file)
+            return try #require(String(bytes: data, encoding: .utf8))
         })
 
         #expect(outputs.count == 1)
@@ -70,11 +71,12 @@ struct XCStringsFileEncoderTests {
     func preservesEscapedKeysAndValues() throws {
         let key = "quote\"backslash\\newline\n"
         let value = "value with \"quotes\", slash \\, and newline\nend"
-        let file = XCStringsFile(sourceLanguage: "en", strings: [
+        let strings: [String: StringEntry] = [
             key: StringEntry(localizations: [
                 "en": Localization(stringUnit: StringUnit(state: "translated", value: value)),
             ]),
-        ], version: "1.1")
+        ]
+        let file = XCStringsFile(sourceLanguage: "en", strings: strings, version: "1.1")
 
         let encoded = try XCStringsFileEncoder.encode(file)
         let decoded = try JSONDecoder().decode(XCStringsFile.self, from: encoded)
@@ -82,6 +84,30 @@ struct XCStringsFileEncoderTests {
         let localization = try #require(entry.localizations?["en"])
 
         #expect(localization.stringUnit?.value == value)
+    }
+
+    @Test("Encoded files do not escape forward slashes")
+    func doesNotEscapeForwardSlashes() throws {
+        let values = ["Domestic / Foreign", "Add / Remove", "Cash / Card"]
+        let strings = Dictionary(
+            uniqueKeysWithValues: values.map { value in
+                (value, StringEntry(localizations: [
+                    "en": Localization(stringUnit: StringUnit(state: "translated", value: value)),
+                ]))
+            }
+        )
+        let file = XCStringsFile(sourceLanguage: "en", strings: strings, version: "1.1")
+
+        let encoded = try XCStringsFileEncoder.encode(file)
+        let encodedString = try #require(String(bytes: encoded, encoding: .utf8))
+
+        #expect(!encodedString.contains("\\/"), "Forward slashes must not be escaped as \\/")
+
+        let decoded = try JSONDecoder().decode(XCStringsFile.self, from: encoded)
+        for value in values {
+            let localization = try #require(decoded.strings[value]?.localizations?["en"])
+            #expect(localization.stringUnit?.value == value)
+        }
     }
 
     @Test("Encoded files preserve variation structures", arguments: [
@@ -102,11 +128,14 @@ struct XCStringsFileEncoderTests {
     }
 
     private func makeFile(keys: [String]) -> XCStringsFile {
-        XCStringsFile(sourceLanguage: "en", strings: Dictionary(uniqueKeysWithValues: keys.map { key in
-            (key, StringEntry(localizations: [
-                "en": Localization(stringUnit: StringUnit(state: "translated", value: "Value for \(key)")),
-            ]))
-        }), version: "1.1")
+        let strings = Dictionary(
+            uniqueKeysWithValues: keys.map { key in
+                (key, StringEntry(localizations: [
+                    "en": Localization(stringUnit: StringUnit(state: "translated", value: "Value for \(key)")),
+                ]))
+            }
+        )
+        return XCStringsFile(sourceLanguage: "en", strings: strings, version: "1.1")
     }
 
     private func decodeFixture(_ content: String) throws -> XCStringsFile {

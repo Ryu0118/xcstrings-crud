@@ -110,7 +110,9 @@ private extension String {
     }
 
     func jsonEscaped() -> String {
-        let data = try? JSONEncoder().encode(self)
-        return data.map { String(decoding: $0, as: UTF8.self) } ?? "\"\""
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.withoutEscapingSlashes]
+        let data = try? encoder.encode(self)
+        return data.flatMap { String(bytes: $0, encoding: .utf8) } ?? "\"\""
     }
 }
