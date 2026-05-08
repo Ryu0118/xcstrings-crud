@@ -2,33 +2,6 @@ import Foundation
 import Testing
 @testable import XCStringsKit
 
-/// Fixture containing a key with a curly apostrophe (U+2019).
-/// Defined locally to avoid inflating TestFixtures enum body length.
-private let curlyApostropheFixture = #"""
-{
-  "sourceLanguage" : "en",
-  "strings" : {
-    "Record today’s progress" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Record today’s progress"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "今日の継続を記録しよう"
-          }
-        }
-      }
-    }
-  },
-  "version" : "1.0"
-}
-"""#
-
 @Suite("Special Characters Handling")
 struct SpecialCharactersTests {
     @Test("Handles keys with format specifiers", arguments: [
@@ -59,37 +32,35 @@ struct SpecialCharactersTests {
 
     @Test("checkKey returns true for key containing curly apostrophe (U+2019)")
     func checkKeyWithCurlyApostrophe() async throws {
-        let path = try TestHelper.createTempFile(content: curlyApostropheFixture)
+        let path = try TestHelper.createTempFile(content: TestFixtures.curlyApostrophe)
         defer { TestHelper.removeTempFile(at: path) }
 
         let parser = XCStringsParser(path: path)
-        let key = "Record today\u{2019}s progress"
-        let exists = try await parser.checkKey(key, language: nil)
+        let exists = try await parser.checkKey("It\u{2019}s working", language: nil)
 
         #expect(exists == true)
     }
 
     @Test("getTranslation returns correct value for key containing curly apostrophe (U+2019)")
     func getTranslationWithCurlyApostrophe() async throws {
-        let path = try TestHelper.createTempFile(content: curlyApostropheFixture)
+        let path = try TestHelper.createTempFile(content: TestFixtures.curlyApostrophe)
         defer { TestHelper.removeTempFile(at: path) }
 
         let parser = XCStringsParser(path: path)
-        let key = "Record today\u{2019}s progress"
-        let translations = try await parser.getTranslation(key: key, language: "ja")
+        let translations = try await parser.getTranslation(key: "It\u{2019}s working", language: "de")
 
-        #expect(translations["ja"]?.value == "今日の継続を記録しよう")
+        #expect(translations["de"]?.value == "Es funktioniert")
     }
 
     @Test("listKeys includes key containing curly apostrophe (U+2019)")
     func listKeysWithCurlyApostrophe() async throws {
-        let path = try TestHelper.createTempFile(content: curlyApostropheFixture)
+        let path = try TestHelper.createTempFile(content: TestFixtures.curlyApostrophe)
         defer { TestHelper.removeTempFile(at: path) }
 
         let parser = XCStringsParser(path: path)
         let keys = try await parser.listKeys()
 
-        #expect(keys.contains("Record today\u{2019}s progress"))
+        #expect(keys.contains("It\u{2019}s working"))
     }
 
     @Test("Add and retrieve translation with special characters")
