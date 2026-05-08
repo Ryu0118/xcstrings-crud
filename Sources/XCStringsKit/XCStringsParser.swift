@@ -82,6 +82,14 @@ package actor XCStringsParser {
         return XCStringsReader(file: file).checkKey(key, language: language)
     }
 
+    /// Find keys that are NFKC-equivalent to the given key.
+    /// Useful for surfacing suggestions when a key lookup fails due to visually
+    /// identical but Unicode-distinct characters (e.g. U+0027 vs U+2019).
+    package func suggestions(for key: String) throws -> [String] {
+        let file = try load()
+        return XCStringsReader(file: file).suggestions(for: key)
+    }
+
     /// Check if multiple keys exist
     package func checkKeys(_ keys: [String], language: String?) throws -> BatchCheckKeysResult {
         let file = try load()

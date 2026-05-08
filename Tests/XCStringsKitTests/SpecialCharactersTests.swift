@@ -30,6 +30,39 @@ struct SpecialCharactersTests {
         #expect(exists == true)
     }
 
+    @Test("checkKey returns true for key containing curly apostrophe (U+2019)")
+    func checkKeyWithCurlyApostrophe() async throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.curlyApostrophe)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let parser = XCStringsParser(path: path)
+        let exists = try await parser.checkKey("It\u{2019}s working", language: nil)
+
+        #expect(exists == true)
+    }
+
+    @Test("getTranslation returns correct value for key containing curly apostrophe (U+2019)")
+    func getTranslationWithCurlyApostrophe() async throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.curlyApostrophe)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let parser = XCStringsParser(path: path)
+        let translations = try await parser.getTranslation(key: "It\u{2019}s working", language: "de")
+
+        #expect(translations["de"]?.value == "Es funktioniert")
+    }
+
+    @Test("listKeys includes key containing curly apostrophe (U+2019)")
+    func listKeysWithCurlyApostrophe() async throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.curlyApostrophe)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let parser = XCStringsParser(path: path)
+        let keys = try await parser.listKeys()
+
+        #expect(keys.contains("It\u{2019}s working"))
+    }
+
     @Test("Add and retrieve translation with special characters")
     func addSpecialCharacters() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.empty)

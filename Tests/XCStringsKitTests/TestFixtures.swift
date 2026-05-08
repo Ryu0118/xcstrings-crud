@@ -293,6 +293,33 @@ enum TestFixtures {
     }
     """
 
+    /// Key whose name contains a curly apostrophe (RIGHT SINGLE QUOTATION MARK, U+2019).
+    /// Used to verify that Unicode-distinct but visually identical characters are handled correctly.
+    static let curlyApostrophe = """
+    {
+      "sourceLanguage" : "en",
+      "strings" : {
+        "It\u{2019}s working" : {
+          "localizations" : {
+            "de" : {
+              "stringUnit" : {
+                "state" : "translated",
+                "value" : "Es funktioniert"
+              }
+            },
+            "en" : {
+              "stringUnit" : {
+                "state" : "translated",
+                "value" : "It\u{2019}s working"
+              }
+            }
+          }
+        }
+      },
+      "version" : "1.0"
+    }
+    """
+
     /// Keys with empty localizations
     static let emptyLocalizations = """
     {
