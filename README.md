@@ -139,6 +139,23 @@ xcstrings-crud check key "Hello" --file path/to/Localizable.xcstrings
 xcstrings-crud check coverage "Hello" --file path/to/Localizable.xcstrings
 # Non-translatable keys are treated as complete.
 
+# Check untranslated entries across specific files and languages
+xcstrings-crud check untranslated \
+  --files App/Localizable.xcstrings Package/Localizable.xcstrings \
+  --languages ja de fr
+# Emits JSON and exits with status 1 when untranslated entries are found.
+# Keys marked `"shouldTranslate": false` are omitted from untranslated results.
+
+# Emit hook-compatible blocking JSON instead of failing the command.
+xcstrings-crud check untranslated \
+  --files App/Localizable.xcstrings \
+  --languages ja \
+  --codex-hook
+xcstrings-crud check untranslated \
+  --files App/Localizable.xcstrings \
+  --languages ja \
+  --claude-hook
+
 # Get overall statistics
 xcstrings-crud stats coverage --file path/to/Localizable.xcstrings
 # Coverage totals exclude keys marked `"shouldTranslate": false`.
@@ -213,6 +230,8 @@ xcstrings-crud batch update --file path/to/Localizable.xcstrings \
 
 - `--file <path>`: xcstrings file path (required)
 - `--pretty`: Pretty-printed JSON output
+
+For `check untranslated`, `--files <paths...>` and `--languages <codes...>` are required. `--codex-hook` and `--claude-hook` are mutually exclusive and intended for CLI hook integrations only.
 
 ## Requirements
 

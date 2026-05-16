@@ -164,4 +164,61 @@ struct ListOperationsTests {
         #expect(result.files.isEmpty)
         #expect(result.totalStaleKeys == 0)
     }
+
+    // MARK: - Untranslated Check Tests
+
+    @Test("checkUntranslated reports missing, empty, stale state, and variation issues")
+    func checkUntranslatedReportsIssues() throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.untranslatedCheckCases)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let result = try XCStringsParser.checkUntranslated(paths: [path], languages: ["ja"])
+
+        #expect(result.isComplete == false)
+        #expect(result.issues == [
+            UntranslatedIssue(file: path, language: "ja", key: "EmptyValue", reason: .emptyValue),
+            UntranslatedIssue(file: path, language: "ja", key: "MissingLocalization", reason: .missingLocalization),
+            UntranslatedIssue(file: path, language: "ja", key: "NeedsReview", reason: .stateNotTranslated, state: "needs_review"),
+            UntranslatedIssue(file: path, language: "ja", key: "VariationNeedsReview", reason: .variationStateNotTranslated, state: "new"),
+        ])
+    }
+
+    @Test("checkUntranslated excludes non-translatable keys")
+    func checkUntranslatedExcludesNonTranslatableKeys() throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.untranslatedCheckCases)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let result = try XCStringsParser.checkUntranslated(paths: [path], languages: ["ja"])
+
+        #expect(!result.issues.contains { $0.key == "BrandName" })
+    }
+
+    @Test("checkUntranslated handles multiple files and languages")
+    func checkUntranslatedHandlesMultipleFilesAndLanguages() throws {
+        let path1 = try TestHelper.createTempFile(content: TestFixtures.singleKeyMultipleLangs)
+        let path2 = try TestHelper.createTempFile(content: TestFixtures.multipleKeysPartialTranslations)
+        defer {
+            TestHelper.removeTempFile(at: path1)
+            TestHelper.removeTempFile(at: path2)
+        }
+
+        let result = try XCStringsParser.checkUntranslated(paths: [path1, path2], languages: ["de", "ja"])
+
+        #expect(result.issues == [
+            UntranslatedIssue(file: path2, language: "de", key: "Goodbye", reason: .missingLocalization),
+            UntranslatedIssue(file: path2, language: "de", key: "Hello", reason: .missingLocalization),
+            UntranslatedIssue(file: path2, language: "ja", key: "Goodbye", reason: .missingLocalization),
+        ])
+    }
+
+    @Test("checkUntranslated is complete when all requested languages are translated")
+    func checkUntranslatedComplete() throws {
+        let path = try TestHelper.createTempFile(content: TestFixtures.singleKeyMultipleLangs)
+        defer { TestHelper.removeTempFile(at: path) }
+
+        let result = try XCStringsParser.checkUntranslated(paths: [path], languages: ["de", "ja"])
+
+        #expect(result.isComplete)
+        #expect(result.issues.isEmpty)
+    }
 }

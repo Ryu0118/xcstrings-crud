@@ -47,5 +47,12 @@ let package = Package(
             name: "XCStringsKitTests",
             dependencies: ["XCStringsKit"]
         ),
+        .testTarget(
+            name: "XCStringsCLITests",
+            dependencies: [
+                "XCStringsCLI",
+                "XCStringsKit",
+            ]
+        ),
     ]
 )

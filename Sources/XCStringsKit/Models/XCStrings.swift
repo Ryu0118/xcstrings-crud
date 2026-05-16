@@ -71,6 +71,22 @@ package struct Variations: Codable {
         self.plural = plural
         self.device = device
     }
+
+    var allValues: [VariationValue] {
+        [
+            plural?.zero,
+            plural?.one,
+            plural?.two,
+            plural?.few,
+            plural?.many,
+            plural?.other,
+            device?.iphone,
+            device?.ipad,
+            device?.mac,
+            device?.applewatch,
+            device?.appletv,
+        ].compactMap(\.self)
+    }
 }
 
 /// Wrapper for a variation category value (e.g. each plural form or device category)
@@ -219,6 +235,69 @@ package struct LanguageStats: Codable {
         self.untranslated = untranslated
         self.total = total
         self.coveragePercent = coveragePercent
+    }
+}
+
+/// A single untranslated entry found in an xcstrings file.
+package struct UntranslatedIssue: Codable, Equatable {
+    package let file: String
+    package let language: String
+    package let key: String
+    package let reason: UntranslatedReason
+    package let state: String?
+
+    package init(file: String, language: String, key: String, reason: UntranslatedReason, state: String? = nil) {
+        self.file = file
+        self.language = language
+        self.key = key
+        self.reason = reason
+        self.state = state
+    }
+}
+
+/// Stable machine-readable reason for an untranslated issue.
+package enum UntranslatedReason: String, Codable, Equatable {
+    case missingLocalization
+    case emptyValue
+    case stateNotTranslated
+    case missingStringUnit
+    case missingVariationValues
+    case missingVariationStringUnit
+    case emptyVariationValue
+    case variationStateNotTranslated
+
+    package func message(state: String?) -> String {
+        switch self {
+        case .missingLocalization:
+            "missing localization"
+        case .emptyValue:
+            "empty value"
+        case .stateNotTranslated:
+            "state is \(state ?? "unknown")"
+        case .missingStringUnit:
+            "missing string unit"
+        case .missingVariationValues:
+            "missing variation values"
+        case .missingVariationStringUnit:
+            "missing variation string unit"
+        case .emptyVariationValue:
+            "empty variation value"
+        case .variationStateNotTranslated:
+            "variation state is \(state ?? "unknown")"
+        }
+    }
+}
+
+/// Result of checking untranslated entries across one or more xcstrings files.
+package struct UntranslatedCheckResult: Codable, Equatable {
+    package let issues: [UntranslatedIssue]
+
+    package var isComplete: Bool {
+        issues.isEmpty
+    }
+
+    package init(issues: [UntranslatedIssue]) {
+        self.issues = issues
     }
 }
 
