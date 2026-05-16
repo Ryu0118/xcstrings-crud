@@ -36,6 +36,24 @@ struct XCStringsReader {
             .withXcodeSort()
     }
 
+    /// Check untranslated entries for hook/CI usage.
+    func checkUntranslated(file path: String, languages: [String]) -> [UntranslatedIssue] {
+        let sortedLanguages = Set(languages).sorted()
+        let sortedKeys = file.strings.keys.withXcodeSort()
+
+        return sortedLanguages.flatMap { language in
+            sortedKeys.compactMap { key in
+                guard let entry = file.strings[key], entry.requiresTranslation else { return nil }
+                return untranslatedIssue(
+                    file: path,
+                    language: language,
+                    key: key,
+                    localization: entry.localizations?[language]
+                )
+            }
+        }
+    }
+
     /// Get keys with stale extraction state
     func listStaleKeys() -> [String] {
         file.strings
@@ -160,5 +178,49 @@ struct XCStringsReader {
             missingLanguages: missingLanguages,
             coveragePercent: coveragePercent
         )
+    }
+
+    private func untranslatedIssue(file: String, language: String, key: String, localization: Localization?) -> UntranslatedIssue? {
+        guard let localization else {
+            return UntranslatedIssue(file: file, language: language, key: key, reason: .missingLocalization)
+        }
+
+        if let stringUnit = localization.stringUnit {
+            if stringUnit.value.isEmpty {
+                return UntranslatedIssue(file: file, language: language, key: key, reason: .emptyValue)
+            }
+            if stringUnit.state != "translated" {
+                return UntranslatedIssue(file: file, language: language, key: key, reason: .stateNotTranslated, state: stringUnit.state)
+            }
+            return nil
+        }
+
+        if let variations = localization.variations {
+            return untranslatedVariationIssue(file: file, language: language, key: key, variations: variations)
+        }
+
+        return UntranslatedIssue(file: file, language: language, key: key, reason: .missingStringUnit)
+    }
+
+    private func untranslatedVariationIssue(file: String, language: String, key: String, variations: Variations) -> UntranslatedIssue? {
+        let values = variations.allValues
+
+        guard !values.isEmpty else {
+            return UntranslatedIssue(file: file, language: language, key: key, reason: .missingVariationValues)
+        }
+
+        for value in values {
+            guard let stringUnit = value.stringUnit else {
+                return UntranslatedIssue(file: file, language: language, key: key, reason: .missingVariationStringUnit)
+            }
+            if stringUnit.value.isEmpty {
+                return UntranslatedIssue(file: file, language: language, key: key, reason: .emptyVariationValue)
+            }
+            if stringUnit.state != "translated" {
+                return UntranslatedIssue(file: file, language: language, key: key, reason: .variationStateNotTranslated, state: stringUnit.state)
+            }
+        }
+
+        return nil
     }
 }

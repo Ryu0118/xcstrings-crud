@@ -31,7 +31,7 @@ rules:
   doc: README.md
   message: "CLI command surface changed \u2014 update README (CLI usage section) if
     commands or options changed."
-  checksum: de43e9f0454e2f61e898e508fd0a8e229cb946146fc001ce72ac61bb35bc6da7
+  checksum: d6f52bbd76c1b5591f702feab89b0f7422c78196179ddbd20cd7213d14705940
 - name: readme-core
   sources:
   - Sources/XCStringsKit/Models/XCStrings.swift
@@ -40,7 +40,7 @@ rules:
   doc: README.md
   message: "Core data model or error types changed \u2014 update README if the behavior
     or output format changed."
-  checksum: f00f5be2a766ab85fc0d4f3a092b9edd6fab788d20329893b468823e8f1c7bba
+  checksum: e80adb8af9aeb3df931cd26a36767d7df4dcd9422e134883bcf7bbb51a1df125
 - name: agents-claude
   sources:
   - Package.swift
@@ -50,4 +50,4 @@ rules:
   doc: CLAUDE.md
   message: "Core architecture changed \u2014 update CLAUDE.md if the architecture
     description is affected."
-  checksum: df0ec9a4b41b1a39a8a8bef6173e519a574ded0532acd3ced8098178b7e9f1bd
+  checksum: 0b381044188af699483c1bf1c63b3c3e58e21f47e86b34088dda700be193c3d9

@@ -155,6 +155,16 @@ package actor XCStringsParser {
         return BatchStaleKeysSummary(files: fileSummaries)
     }
 
+    /// Check untranslated entries across multiple files and languages.
+    package static func checkUntranslated(paths: [String], languages: [String]) throws -> UntranslatedCheckResult {
+        let issues = try paths.sorted().flatMap { path in
+            let handler = XCStringsFileHandler(path: path)
+            let file = try handler.load()
+            return XCStringsReader(file: file).checkUntranslated(file: path, languages: languages)
+        }
+        return UntranslatedCheckResult(issues: issues)
+    }
+
     // MARK: - Write Operations
 
     /// Add a translation

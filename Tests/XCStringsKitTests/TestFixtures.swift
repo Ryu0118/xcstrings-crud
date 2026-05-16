@@ -534,6 +534,58 @@ enum TestFixtures {
       "version": "1.0"
     }
     """
+
+    /// Keys covering untranslated check edge cases
+    static let untranslatedCheckCases = """
+    {
+      "sourceLanguage": "en",
+      "strings": {
+        "Complete": {
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Complete" } },
+            "ja": { "stringUnit": { "state": "translated", "value": "完了" } }
+          }
+        },
+        "MissingLocalization": {
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Missing" } }
+          }
+        },
+        "EmptyValue": {
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Empty" } },
+            "ja": { "stringUnit": { "state": "translated", "value": "" } }
+          }
+        },
+        "NeedsReview": {
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Review" } },
+            "ja": { "stringUnit": { "state": "needs_review", "value": "レビュー" } }
+          }
+        },
+        "VariationNeedsReview": {
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Count" } },
+            "ja": {
+              "variations": {
+                "plural": {
+                  "one": { "stringUnit": { "state": "translated", "value": "%lld 件" } },
+                  "other": { "stringUnit": { "state": "new", "value": "%lld 件" } }
+                }
+              }
+            }
+          }
+        },
+        "BrandName": {
+          "shouldTranslate": false,
+          "localizations": {
+            "en": { "stringUnit": { "state": "translated", "value": "Brand" } }
+          }
+        }
+      },
+      "version": "1.0"
+    }
+    """
 }
 
 /// Test helper utilities
