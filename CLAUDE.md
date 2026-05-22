@@ -30,6 +30,8 @@ swift build -c release # Release build
 - `XCStringsParser.swift` - Facade for file operations, including multi-file untranslated checks
 - `XCStringsReader.swift` - Read operations (list, get, check), including key metadata, `shouldTranslate == false` handling, and untranslated issue detection for specific files and languages
 - `XCStringsWriter.swift` - Write operations (add, update, delete, rename)
+- `XCStringsFileHandler.swift` - Disk I/O facade; `load`/`save` route through `XCStringsStore`, raw disk access lives in its static helpers
+- `XCStringsStore.swift` - Process-wide cache with optional coalesced (debounced) writes. The MCP server enables coalescing and flushes on shutdown (EOF/SIGINT/SIGTERM); the CLI stays write-through. Tunable via `XCSTRINGS_FLUSH_MS` (default 250ms; 0 = write-through)
 - `XCStringsFileEncoder.swift` - Deterministic xcstrings JSON encoding with Xcode-like key order
 - `XCStringsKeySorter.swift` - Xcode-like natural sorting for string catalog keys
 - `XCStringsStatsCalculator.swift` - Coverage and progress stats; non-translatable keys are excluded from language totals

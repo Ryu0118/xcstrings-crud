@@ -6,6 +6,10 @@ public struct XCStringsMCPServer {
     public init() {}
 
     public func run() async throws {
+        let flushMilliseconds = ProcessInfo.processInfo.environment["XCSTRINGS_FLUSH_MS"].flatMap(Int.init) ?? 250
+        XCStringsStore.shared.enableCoalescing(delayMilliseconds: flushMilliseconds)
+        Self.installShutdownHandlers()
+
         let server = Server(
             name: "xcstrings-mcp",
             version: "0.2.0",
@@ -27,6 +31,29 @@ public struct XCStringsMCPServer {
         let transport = StdioTransport()
         try await server.start(transport: transport)
         await server.waitUntilCompleted()
+
+        // Persist any coalesced writes before exiting on graceful (EOF) shutdown.
+        XCStringsStore.shared.flushAll()
+    }
+
+    // MARK: - Shutdown Handling
+
+    /// Signal sources kept alive for the process lifetime. Created once via the
+    /// thread-safe lazy initialization of a `static let`, so no mutable global is needed.
+    private static let shutdownSignalSources: [DispatchSourceSignal] = [SIGINT, SIGTERM].map { signalNumber in
+        signal(signalNumber, SIG_IGN)
+        let source = DispatchSource.makeSignalSource(signal: signalNumber, queue: .global())
+        source.setEventHandler {
+            XCStringsStore.shared.flushAll()
+            exit(0)
+        }
+        source.resume()
+        return source
+    }
+
+    /// Flush pending coalesced writes on SIGINT/SIGTERM so deferred edits are not lost.
+    private static func installShutdownHandlers() {
+        _ = shutdownSignalSources
     }
 
     // MARK: - Tool Definitions
