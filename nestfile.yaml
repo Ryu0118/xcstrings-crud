@@ -13,6 +13,6 @@ targets:
   assetName: gitnagg-0.3.0.artifactbundle.zip
   checksum: 1a320a35e981e91efc035b4b2f7016d0e19c0afb51b7c62ba4154dc4c5ad1c75
 - reference: Ryu0118/docsync
-  version: 0.1.2
-  assetName: docsync-0.1.2.artifactbundle.zip
-  checksum: 2b4c60ca9b2910d653ba769725ca591f5e0e834517aab7d904e5cf897d1e7484
+  version: 0.2.0
+  assetName: docsync-0.2.0.artifactbundle.zip
+  checksum: 357d4ac35c057a5a1a650b537045264e8b288f0c06b48b0a2b2177e55d23bbdc
