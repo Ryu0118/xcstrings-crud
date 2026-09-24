@@ -3,11 +3,17 @@ import Foundation
 enum XCStringsFileEncoder {
     static func encode(_ file: XCStringsFile) throws -> Data {
         let strings = try XCStringsKeySorter.sort(file.strings.keys).map { key in
-            guard let entry = file.strings[key] else {
+            guard var entry = file.strings[key] else {
                 throw EncodingError.invalidValue(
                     key,
                     EncodingError.Context(codingPath: [], debugDescription: "Missing string entry for key \(key)")
                 )
+            }
+
+            // xcstringstool omits an empty `localizations` object entirely, the same as when
+            // it's nil (e.g. after deleting a key's last language). Match that.
+            if entry.localizations?.isEmpty == true {
+                entry.localizations = nil
             }
 
             return try JSONMember(key: key, value: encodeJSONValue(entry))
@@ -19,7 +25,8 @@ enum XCStringsFileEncoder {
             JSONMember(key: "version", value: .string(file.version)),
         ])
 
-        return Data((root.render() + "\n").utf8)
+        // xcstringstool does not append a trailing newline.
+        return Data(root.render().utf8)
     }
 
     private static func encodeJSONValue(_ value: some Encodable) throws -> JSONValue {
@@ -47,7 +54,7 @@ private enum JSONValue {
     init(jsonObject: Any) throws {
         switch jsonObject {
         case let object as [String: Any]:
-            self = try .object(object.keys.sorted().map { key in
+            self = try .object(object.keys.sorted(by: XCStringsKeySorter.areInIncreasingOrder).map { key in
                 try JSONMember(key: key, value: JSONValue(jsonObject: object[key] as Any))
             })
         case let array as [Any]:
@@ -74,7 +81,9 @@ private enum JSONValue {
         switch self {
         case let .object(members):
             guard !members.isEmpty else {
-                return "{}"
+                // Matches xcstringstool: an open brace, a blank line, then a closing
+                // brace on its own line at the object's own indentation.
+                return "{\n\n\(String.spaces(indentation))}"
             }
 
             let childIndentation = indentation + 2

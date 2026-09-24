@@ -6,7 +6,7 @@ import Testing
 struct XCStringsReaderTests {
     // MARK: - listKeys
 
-    @Test("listKeys returns sorted keys")
+    @Test("listKeys returns keys in the sorter's order")
     func listKeysSorted() throws {
         let file = try loadFixture(TestFixtures.manyKeys)
         let reader = XCStringsReader(file: file)
@@ -16,7 +16,7 @@ struct XCStringsReaderTests {
         #expect(keys == XCStringsKeySorter.sort(keys))
     }
 
-    @Test("listKeys sorts numeric key components like Xcode")
+    @Test("listKeys sorts numeric key components using UTF-8 byte order, like xcstringstool")
     func listKeysNumericSort() throws {
         let file = try loadFixture(TestFixtures.numericKeys)
         let reader = XCStringsReader(file: file)
@@ -24,11 +24,11 @@ struct XCStringsReaderTests {
         let keys = reader.listKeys()
 
         #expect(keys == [
+            "product.type.11_1",
+            "product.type.12_1",
             "product.type.1_1",
             "product.type.2_1",
             "product.type.3_1",
-            "product.type.11_1",
-            "product.type.12_1",
         ])
     }
 
