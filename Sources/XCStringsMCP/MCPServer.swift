@@ -369,9 +369,12 @@ public struct XCStringsMCPServer {
         do {
             let args = params.arguments ?? [:]
             let result = try await ToolHandlerRegistry.shared.execute(toolName: params.name, arguments: args)
-            return .init(content: [.text(result)], isError: false)
+            return .init(content: [.text(text: result, annotations: nil, _meta: nil)], isError: false)
         } catch {
-            return .init(content: [.text("Error: \(error.localizedDescription)")], isError: true)
+            return .init(
+                content: [.text(text: "Error: \(error.localizedDescription)", annotations: nil, _meta: nil)],
+                isError: true
+            )
         }
     }
 }
