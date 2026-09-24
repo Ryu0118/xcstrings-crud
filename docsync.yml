@@ -11,9 +11,9 @@ rules:
   - Sources/XCStringsMCP/MCPServer.swift
   - Sources/XCStringsMCP/ToolHandlerRegistry.swift
   doc: README.md
-  message: "MCP tool handlers changed \u2014 update README (MCP tools table) if tools
-    were added, removed, or renamed."
-  checksum: 4d8c87b4d1e43f1d21a9ae57d16d88186c86ca5629e1cc9f2640a158b41bf489
+  message: MCP tool handlers changed — update README (MCP tools table) if tools were
+    added, removed, or renamed.
+  checksum: 933564d9deeee7835dfe6bf1d7a8c135558b3b4e25c773ddb3bdad67d854d6ce
 - name: readme-cli
   sources:
   - Sources/XCStringsCLI/XCStringsCLI.swift
@@ -29,8 +29,8 @@ rules:
   - Sources/XCStringsCLI/BatchCommand.swift
   - Sources/XCStringsCLI/MCPCommand.swift
   doc: README.md
-  message: "CLI command surface changed \u2014 update README (CLI usage section) if
-    commands or options changed."
+  message: CLI command surface changed — update README (CLI usage section) if commands
+    or options changed.
   checksum: d6f52bbd76c1b5591f702feab89b0f7422c78196179ddbd20cd7213d14705940
 - name: readme-core
   sources:
@@ -38,8 +38,8 @@ rules:
   - Sources/XCStringsKit/Errors.swift
   - Sources/XCStringsKit/XCStringsParser.swift
   doc: README.md
-  message: "Core data model or error types changed \u2014 update README if the behavior
-    or output format changed."
+  message: Core data model or error types changed — update README if the behavior
+    or output format changed.
   checksum: e80adb8af9aeb3df931cd26a36767d7df4dcd9422e134883bcf7bbb51a1df125
 - name: agents-claude
   sources:
@@ -48,6 +48,6 @@ rules:
   - Sources/XCStringsKit/XCStringsWriter.swift
   - Sources/XCStringsKit/XCStringsFileHandler.swift
   doc: CLAUDE.md
-  message: "Core architecture changed \u2014 update CLAUDE.md if the architecture
-    description is affected."
-  checksum: 0b381044188af699483c1bf1c63b3c3e58e21f47e86b34088dda700be193c3d9
+  message: Core architecture changed — update CLAUDE.md if the architecture description
+    is affected.
+  checksum: da52db297811c09902f9bb7b953671e71f777eddf7143977e49e35a86ac60cea
