@@ -24,29 +24,48 @@ struct XCStringsFileEncoderTests {
         #expect(Set(decoded.strings.keys) == Set(original.strings.keys))
     }
 
-    @Test("Encoded strings use Xcode-like numeric key order", arguments: [
-        [
-            "product.type.12_1",
-            "product.type.1_1",
-            "product.type.11_1",
-            "product.type.3_1",
-            "product.type.2_1",
-        ],
-        [
-            "Key10",
-            "Key2",
-            "Key1",
-            "Key9",
-        ],
+    @Test("Encoded strings use xcstringstool's UTF-8 byte key order", arguments: [
+        (
+            [
+                "product.type.12_1",
+                "product.type.1_1",
+                "product.type.11_1",
+                "product.type.3_1",
+                "product.type.2_1",
+            ],
+            [
+                "product.type.11_1",
+                "product.type.12_1",
+                "product.type.1_1",
+                "product.type.2_1",
+                "product.type.3_1",
+            ]
+        ),
+        (
+            ["Key10", "Key2", "Key1", "Key9"],
+            ["Key1", "Key10", "Key2", "Key9"]
+        ),
     ])
-    func encodedStringsUseNaturalKeyOrder(inputKeys: [String]) throws {
+    func encodedStringsUseByteKeyOrder(inputKeys: [String], expectedOrder: [String]) throws {
         let file = makeFile(keys: inputKeys)
 
         let encoded = try XCStringsFileEncoder.encode(file)
         let encodedString = try #require(String(bytes: encoded, encoding: .utf8))
         let keyOrder = try topLevelStringKeyOrder(in: encodedString)
 
-        #expect(keyOrder == XCStringsKeySorter.sort(inputKeys))
+        #expect(keyOrder == expectedOrder)
+    }
+
+    @Test("Encoded strings order non-ASCII keys by UTF-8 byte order, matching xcstringstool")
+    func encodedStringsOrderNonASCIIKeysByByteOrder() throws {
+        let inputKeys = ["f", "~x", "-x", "_x", "Z", "a", "é", "éa", "ω", "日本", "ａ", "～", "😀", "😀x"]
+        let file = makeFile(keys: inputKeys)
+
+        let encoded = try XCStringsFileEncoder.encode(file)
+        let encodedString = try #require(String(bytes: encoded, encoding: .utf8))
+        let keyOrder = try topLevelStringKeyOrder(in: encodedString)
+
+        #expect(keyOrder == ["-x", "Z", "_x", "a", "f", "~x", "é", "éa", "ω", "日本", "ａ", "～", "😀", "😀x"])
     }
 
     @Test("Encoded string order is deterministic across repeated runs")
@@ -108,6 +127,37 @@ struct XCStringsFileEncoderTests {
             let localization = try #require(decoded.strings[value]?.localizations?["en"])
             #expect(localization.stringUnit?.value == value)
         }
+    }
+
+    @Test("Encoded files omit an empty localizations dictionary, matching xcstringstool")
+    func omitsEmptyLocalizationsDictionary() throws {
+        let file = XCStringsFile(sourceLanguage: "en", strings: ["Key": StringEntry(localizations: [:])], version: "1.1")
+
+        let encoded = try XCStringsFileEncoder.encode(file)
+        let encodedString = try #require(String(bytes: encoded, encoding: .utf8))
+
+        #expect(!encodedString.contains("localizations"))
+        #expect(encodedString.contains("\"Key\" : {\n\n    }"))
+    }
+
+    @Test("Encoded files render an empty object as an open brace, a blank line, then a closing brace on its own indented line")
+    func rendersEmptyObjectWithBlankLine() throws {
+        let file = XCStringsFile(sourceLanguage: "en", strings: ["Empty": StringEntry()], version: "1.1")
+
+        let encoded = try XCStringsFileEncoder.encode(file)
+        let encodedString = try #require(String(bytes: encoded, encoding: .utf8))
+
+        #expect(encodedString.contains("\"Empty\" : {\n\n    }"))
+    }
+
+    @Test("Encoded files have no trailing newline, matching xcstringstool")
+    func encodedFilesHaveNoTrailingNewline() throws {
+        let file = makeFile(keys: ["Hello"])
+
+        let encoded = try XCStringsFileEncoder.encode(file)
+
+        #expect(encoded.last != UInt8(ascii: "\n"))
+        #expect(encoded.last == UInt8(ascii: "}"))
     }
 
     @Test("Encoded files preserve variation structures", arguments: [

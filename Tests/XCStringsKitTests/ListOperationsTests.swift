@@ -30,7 +30,7 @@ struct ListOperationsTests {
         #expect(keys == sortedKeys)
     }
 
-    @Test("listKeys sorts numeric key components like Xcode")
+    @Test("listKeys sorts numeric key components using UTF-8 byte order, like xcstringstool")
     func listKeysNumericSort() async throws {
         let path = try TestHelper.createTempFile(content: TestFixtures.numericKeys)
         defer { TestHelper.removeTempFile(at: path) }
@@ -39,11 +39,11 @@ struct ListOperationsTests {
         let keys = try await parser.listKeys()
 
         #expect(keys == [
+            "product.type.11_1",
+            "product.type.12_1",
             "product.type.1_1",
             "product.type.2_1",
             "product.type.3_1",
-            "product.type.11_1",
-            "product.type.12_1",
         ])
     }
 
@@ -65,7 +65,7 @@ struct ListOperationsTests {
     @Test("listUntranslated returns correct keys", arguments: [
         (FixtureType.multipleKeysPartialTranslations, "ja", ["Goodbye"]),
         (FixtureType.multipleKeysPartialTranslations, "de", ["Goodbye", "Hello"]),
-        (FixtureType.manyKeys, "ja", ["Key1", "Key2", "Key3", "Key4", "Key5", "Key9", "Key10"]),
+        (FixtureType.manyKeys, "ja", ["Key1", "Key10", "Key2", "Key3", "Key4", "Key5", "Key9"]),
     ])
     func listUntranslated(fixture: FixtureType, language: String, expectedKeys: [String]) async throws {
         let path = try TestHelper.createTempFile(content: fixture.content)

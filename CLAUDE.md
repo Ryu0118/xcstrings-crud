@@ -30,8 +30,8 @@ swift build -c release # Release build
 - `XCStringsParser.swift` - Facade for file operations, including multi-file untranslated checks
 - `XCStringsReader.swift` - Read operations (list, get, check), including key metadata, `shouldTranslate == false` handling, and untranslated issue detection for specific files and languages
 - `XCStringsWriter.swift` - Write operations (add, update, delete, rename)
-- `XCStringsFileEncoder.swift` - Deterministic xcstrings JSON encoding with Xcode-like key order
-- `XCStringsKeySorter.swift` - Xcode-like natural sorting for string catalog keys
+- `XCStringsFileEncoder.swift` - Deterministic xcstrings JSON encoding, byte-for-byte compatible with Xcode's `xcstringstool`
+- `XCStringsKeySorter.swift` - UTF-8 byte-order sorting for string catalog keys, matching `xcstringstool`
 - `XCStringsStatsCalculator.swift` - Coverage and progress stats; non-translatable keys are excluded from language totals
 
 ## Testing
