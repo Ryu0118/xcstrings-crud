@@ -1,13 +1,13 @@
 nestPath: ./.nest
 targets:
 - reference: nicklockwood/SwiftFormat
-  version: 0.61.1
+  version: 0.63.0
   assetName: swiftformat.artifactbundle.zip
-  checksum: 47f7932f35c714b00430f56df1cfaf1bea0b4baae299bb2a09874cb52ee45350
+  checksum: d3c350a6655c0f687e2c23aac3e777b35345313a6428bb36b915fe7d9840ec78
 - reference: realm/SwiftLint
-  version: 0.63.3
+  version: 0.65.1
   assetName: SwiftLintBinary.artifactbundle.zip
-  checksum: a0a59ee28019171fb43a4278ae2f7eac610e194b4d98abf47fd6092c7aff65aa
+  checksum: c3a1d77647ca18c1b7e9be7dbc6cd4490d26422f28814b76370244ff61970869
 - reference: Ryu0118/gitnagg
   version: 0.3.0
   assetName: gitnagg-0.3.0.artifactbundle.zip
