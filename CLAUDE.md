@@ -23,6 +23,7 @@ swift build -c release # Release build
 - Use `async/await` for async operations
 - Errors defined in `Errors.swift`, use `XCStringsError` enum
 - All public APIs should have clear parameter names
+- When documentation and the existing code disagree, follow the conventions used in the existing code, and in your final reply list every inconsistency you found between the documentation and the code.
 
 ## Key Files
 
